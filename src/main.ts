@@ -1,41 +1,36 @@
-import say from 'say'
 import * as io from './io'
 import { Log } from './log'
 import { State } from './state'
-import { Operation, Operator } from './operation'
+import Operation from './operation'
+import Operator from './operator'
+import { Operand, Integer } from './operands'
 import { Range } from './types'
 
 const log = new Log()
 const state = new State(log)
 
 const operators = Object.values(Operator)
+// const operators = [Operator.Addition, Operator.Subtraction, Operator.Multiplication]
 
 function randomSign(): number {
   return Math.random() > 0.5 ? 1 : -1
 }
-function randomOperand(range: Range): number {
-  return (range.min + Math.floor(Math.random() * (range.max - range.min))) * randomSign()
+function randomOperand(range: Range): Integer {
+  return new Integer((range.min + Math.floor(Math.random() * (range.max - range.min))) * randomSign())
+}
+function randomOperator(): Operator {
+  return operators[Math.floor(Math.random() * operators.length)]
 }
 function randomOperation(): Operation {
-  const operator = operators[Math.floor(Math.random() * operators.length)]
+  // const operators = [...Array(2).keys()].map((_) => randomOperator())
+  const operators = [Operator.Subtraction, Operator.Division]
   const operandRange = new Range(1, Math.round(100 * state.difficulty))
-  let lhs: number
-  let rhs: number
+  // const operands = [randomOperand(operandRange)]
+  //   .concat(operators.map((_) => randomOperand(operandRange)))
+  const operands = [7, -1, 1].map(n => new Integer(n))
+  // console.log(operands.length, operators.length)
   
-  switch (operator) {
-    case Operator.Addition:
-    case Operator.Multiplication:
-    case Operator.Subtraction:
-      lhs = randomOperand(operandRange)
-      rhs = randomOperand(operandRange)
-      break
-    case Operator.Division:
-      rhs = randomOperand(operandRange)
-      lhs = rhs * randomOperand(operandRange.dividedBy(2).rounded())
-      break
-  }
-  
-  return new Operation(lhs, operator, rhs)
+  return new Operation(operands, operators)
 }
 
 (async () => {
@@ -49,14 +44,18 @@ function randomOperation(): Operation {
   
   while(true) {
     try {
-      const result = await io.askForInput(`${operation.text()} = `, (str) => {
-        if (str.length == 0) {
-          throw new Error()
+      const result = await io.askForInput(
+        `${operation.textRepresentation} = `, 
+        (str) => {
+          // if (str.length == 0) {
+          //   throw new Error()
+          // }
+          // return Number(str)
+          return str
         }
-        return Number(str)
-      })
+      )
       
-      if (result == operation.result) {
+      if (result == operation.result.textRepresentation) {
         log.correctAnswer(operation, isRetry)
         resume()
       } else {
@@ -68,7 +67,3 @@ function randomOperation(): Operation {
     }
   }
 })()
-
-// say.speak(`${operation.text()}`, undefined, 1.0, (err) => {
-//   console.log(`${operation.text(false)} = ${operation.result}`, err)
-// })

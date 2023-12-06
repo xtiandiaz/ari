@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tsx src/main.ts"
   },
-  "author": "Cristian Díaz",
+  "author": "Cristian Diaz",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.10.1",
