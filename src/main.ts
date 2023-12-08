@@ -22,12 +22,10 @@ function randomOperator(): Operator {
   return operators[Math.floor(Math.random() * operators.length)]
 }
 function randomOperation(): Operation {
-  // const operators = [...Array(2).keys()].map((_) => randomOperator())
-  const operators = [Operator.Subtraction, Operator.Division]
+  const operators = [...Array(2).keys()].map((_) => randomOperator())
   const operandRange = new Range(1, Math.round(100 * state.difficulty))
-  // const operands = [randomOperand(operandRange)]
-  //   .concat(operators.map((_) => randomOperand(operandRange)))
-  const operands = [7, -1, 1].map(n => new Integer(n))
+  const operands = [randomOperand(operandRange)]
+    .concat(operators.map((_) => randomOperand(operandRange)))
   // console.log(operands.length, operators.length)
   
   return new Operation(operands, operators)
@@ -55,14 +53,15 @@ function randomOperation(): Operation {
         }
       )
       
-      if (result == operation.result.textRepresentation) {
+      if (result === operation.result.textRepresentation) {
         log.correctAnswer(operation, isRetry)
         resume()
       } else {
         log.mistake(operation)
         isRetry = true
       }
-    } catch {
+    } catch(error) {
+      console.log(error)
       continue
     }
   }

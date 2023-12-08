@@ -1,5 +1,5 @@
 import * as io from './io'
-import { Operation } from './operation'
+import Operation from './operation'
 
 export class Log {
   readonly hits: Operation[] = []
@@ -9,7 +9,7 @@ export class Log {
     return `${this.hits.length}/${this.hits.length + this.misses.length}`
   }
   
-  correctAnswer(operation:  Operation, isRetry: boolean): void {
+  correctAnswer(operation: Operation, isRetry: boolean): void {
     if (!isRetry) {
       this._recordHit(operation)
     }

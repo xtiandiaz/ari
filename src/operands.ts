@@ -1,12 +1,12 @@
 import Operator from './operator'
+import * as Utils from './utils'
 
 export interface Operand {
   value: number
   textRepresentation: string
   
-  simplify()
-  
   operated(opr: Operator, rhs: Operand): Operand
+  simplified(): Operand
 }
 
 export class Integer implements Operand {
@@ -17,7 +17,7 @@ export class Integer implements Operand {
   }
   
   get textRepresentation(): string {
-    return `${this.value}`    
+    return this.value < 0 ? `${this.value}` : `${this.value}`
   }
   
   operated(opr: Operator, rhs: Operand): Operand {
@@ -31,7 +31,7 @@ export class Integer implements Operand {
             case Operator.Multiplication:
               return new Integer(this.value * rhs.value)
             case Operator.Division:
-              return (new Fraction(this, rhs)).simplify()
+              return new Fraction(this, rhs)
           }
         case Fraction:
           return (new Fraction(this, 1)).operated(opr, rhs)
@@ -40,7 +40,8 @@ export class Integer implements Operand {
       }
   }
   
-  simplify() {
+  simplified(): Operand {
+    return this
   }
 }
 
@@ -60,7 +61,7 @@ export class Fraction implements Operand {
     }
     
     if (simplified) {
-      this.simplify()
+      this._simplify()
     }
   }
   
@@ -83,9 +84,11 @@ export class Fraction implements Operand {
     }
   }
   
-  simplify() {
-    if (Math.abs(this._dividend) == Math.abs(this._divisor)) {
-      return new Integer(Math.sign(this._dividend))
+  simplified(): Operand {
+    this._simplify()
+    
+    if (this._divisor == 1) {
+      return new Integer(this._dividend)
     }
     
     return this
@@ -108,5 +111,17 @@ export class Fraction implements Operand {
       case Operator.Division:
         return new Fraction(this._dividend * rhs._divisor, this._divisor * rhs._dividend)
     }
+  }
+  
+  private _simplify() {
+    const gcd = Math.abs(Utils.gcd(this._dividend, this._divisor))
+    if (gcd == 1) {
+      return
+    }
+    
+    console.log(this.textRepresentation, `gcd: ${gcd}`)
+    this._dividend /= gcd
+    this._divisor /= gcd
+    console.log(this.textRepresentation)
   }
 }

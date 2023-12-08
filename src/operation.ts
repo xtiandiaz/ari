@@ -1,5 +1,4 @@
 import { Operand, Integer } from './operands'
-import { Fraction } from './Fraction'
 import Operator from './operator'
 
 export default class Operation {
@@ -49,9 +48,9 @@ export default class Operation {
       result = result.operated(sweepOperators[i], squashedOperands[i + 1])
     }
     
-    console.log(squashedOperands, sweepOperators, result)
+    // console.log(squashedOperands, sweepOperators, result)
     
-    return result
+    return result.simplified()
   }
   
   get textRepresentation(): string {
