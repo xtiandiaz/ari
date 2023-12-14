@@ -1,32 +1,56 @@
-import { Operand, Integer } from './operands'
+import { Operand, OperandKind, Integer } from './operands'
 import Operator from './operator'
 
-export default class Operation {
+export default class Operation implements Operand {
   readonly id: number
+  readonly kind = OperandKind.Operation
   operands: Operand[]
   operators: Operator[]
-    
+  result: Operand
+  
   private static _id = 0
   
   constructor(operands: Operand[], operators: Operator[]) {
     this.id = Operation._id++
     
     if (operands.length != (operators.length + 1)) {
-      throw new Error()
+      throw new Error('[Operation] Unbalanced elements')
     }
     
-    this.operands = operands
-    this.operators = operators
+    const [rOperands, rOperators] = Operation._retouch(operands, operators)
+    this.operands = rOperands
+    this.operators = rOperators
+    this.result = Operation.calculate(rOperands, rOperators)
   }
   
-  get result(): Operand {
+  get rawValue(): number {
+    return this.result.rawValue
+  }
+  
+  get textRepresentation(): string {
+    let representation = `${this.operands[0].textRepresentation}`
+    for (let i = 0; i < this.operators.length; i++) {
+      representation += ` ${this.operators[i]} ${this._operandTextRepresentation(this.operands[i + 1], this.operators[i])}`
+    }
+    return representation
+  }
+  
+  operated(opr: Operator, rhs: Operand): Operand {
+    return this.result.operated(opr, rhs)
+  }
+  
+  simplified(): Operand {
+    return this
+  }
+  
+  static calculate(operands: Operand[], operators: Operator[]): Operand {
     let squashedOperands: Operand[] = []
     let sweepOperators: Operator[] = []
-    let squash = this.operands[0]
+    let squash = operands[0]
     
-    for (let i = 0; i < this.operators.length; i++) {
-      const operator = this.operators[i]
-      const rhs = this.operands[i + 1]
+    for (let i = 0; i < operators.length; i++) {
+      const operator = operators[i]
+      const rhs = operands[i + 1]
       switch (operator) {
         case Operator.Multiplication:
         case Operator.Division:
@@ -53,11 +77,38 @@ export default class Operation {
     return result.simplified()
   }
   
-  get textRepresentation(): string {
-    let representation = `${this.operands[0].textRepresentation}`
-    for (let i = 0; i < this.operators.length; i++) {
-      representation += ` ${this.operators[i]} ${this.operands[i + 1].textRepresentation}`
+  private static _retouch(operands: Operand[], operators: Operator[]): [Operand[], Operator[]] {
+    let altOperands = operands
+    let altOperators = operators
+    
+    for (let i = 0; i < operators.length; i++) {
+      let operand = operands[i + 1]
+      if (operand.kind === OperandKind.Operation) {
+        continue
+      }
+      let operator = operators[i]
+      if (operand.rawValue < 0 && operator === Operator.Addition) {
+        operand = operand.operated(Operator.Multiplication, new Integer(-1))
+        operator = Operator.Subtraction
+      }
+      
+      altOperands[i + 1] = operand
+      altOperators[i] = operator
     }
-    return representation
+    
+    return [altOperands, altOperators]
+  }
+  
+  private _operandTextRepresentation(operand: Operand, prelude: Operator): string {
+    let shouldEnclose = false
+    switch (operand.kind) {
+      case OperandKind.Operation:
+        shouldEnclose = prelude !== Operator.Addition
+        break
+      default:
+        shouldEnclose = prelude === Operator.Subtraction && operand.rawValue < 0
+        break
+    }
+    return shouldEnclose ? `(${operand.textRepresentation})` : operand.textRepresentation
   }
 }

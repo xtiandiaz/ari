@@ -19,7 +19,7 @@ export function outputFormat(color: OutputColor): string {
 }
 
 export function operandText(operand: Operand, isForSpeech: boolean): string {
-  return `${operand.value < 0 ? (isForSpeech ? 'negative' : '−') : ''}${Math.abs(operand.value)}`
+  return `${operand.rawValue < 0 ? (isForSpeech ? 'negative' : '−') : ''}${Math.abs(operand.rawValue)}`
 }
 
 function operatorSpeechText(operator: Operator): string {
