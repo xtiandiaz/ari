@@ -1,7 +1,19 @@
 import { Operand, OperandKind, Integer } from './operands'
 import Operator from './operator'
 
-export default class Operation implements Operand {
+export class OperationError extends Error {
+  static insufficientOperands = new OperationError('[Operation] Insufficient operands')
+  static unbalancedElements = new OperationError('[Operation] Unbalanced elements')
+  static divisionByZero = new OperationError('[Operation] Division by zero')
+  
+  static notImplemented(lhsOpnd: Operand, opr: Operator, rhsOpnd: Operand): OperationError {
+    return new OperationError(
+      `${lhsOpnd.textRepresentation} not implemented for '${opr}' operation with ${rhsOpnd.textRepresentation}`
+    )
+  }
+}
+
+export class Operation implements Operand {
   readonly id: number
   readonly kind = OperandKind.Operation
   operands: Operand[]
@@ -14,11 +26,11 @@ export default class Operation implements Operand {
     this.id = Operation._id++
 
     if (operands.length < 2) {
-      throw new Error('[Operation] Insufficient operands')
+      throw OperationError.insufficientOperands
     }
 
     if (operands.length != (operators.length + 1)) {
-      throw new Error('[Operation] Unbalanced elements')
+      throw OperationError.unbalancedElements
     }
 
     this.operands = operands

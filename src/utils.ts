@@ -1,5 +1,23 @@
 import Operator from './operator'
 import { Operand, OperandKind, Integer } from './operands'
+import { Operation } from './operation'
+
+const allOperators = Object.values(Operator)
+
+export function randomSign(): number {
+  return Math.random() > 0.5 ? 1 : -1
+}
+
+export function randomOperator(oprSelection?: Operator[]): Operator {
+  const selection = oprSelection ?? allOperators
+  return selection[Math.floor(Math.random() * selection.length)]
+}
+
+export function randomIntNumber(min: number, max: number): number {
+  min = Math.floor(min)
+  max = Math.floor(max)
+  return min + Math.floor(Math.random() * (max - min))
+}
 
 export function gcd(a: number, b: number) {
   if (b === 0) {
@@ -8,24 +26,35 @@ export function gcd(a: number, b: number) {
   return gcd(b, a % b)
 }
 
-export function retouch(opnds: Operand[], oprs: Operator[]): [Operand[], Operator[]] {
-  let rtchdOpnds = opnds
-  let rtchdOperators = oprs
+export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], Operator[]] {
+  let fxdOpnds = opnds
+  let fxdOprs = oprs
 
   for (let i = 0; i < oprs.length; i++) {
+    const lhsOpr = i > 0 ? oprs[i - 1] : undefined
     let opnd = opnds[i + 1]
-    if (opnd.kind === OperandKind.Operation) {
-      continue
+    let rhsOpr = oprs[i]
+    
+    switch (opnd.kind) {
+      case OperandKind.Operation:
+        if (lhsOpr == Operator.Division && opnd.rawValue == 0) {
+          const rndOpr = randomOperator([Operator.Addition, Operator.Subtraction])
+          const rndOpnd = new Integer(randomIntNumber(1, 10))
+          const _opnd = <Operation>opnd
+          opnd = new Operation(_opnd.operands.concat([rndOpnd]), _opnd.operators.concat([rndOpr]))
+        }
+        continue
+      default:
+        if (opnd.rawValue < 0 && rhsOpr == Operator.Addition) {
+          opnd = opnd.operated(Operator.Multiplication, new Integer(-1))
+          rhsOpr = Operator.Subtraction
+        }
+        break
     }
-    let opr = oprs[i]
-    if (opnd.rawValue < 0 && opr === Operator.Addition) {
-      opnd = opnd.operated(Operator.Multiplication, new Integer(-1))
-      opr = Operator.Subtraction
-    }
-
-    rtchdOpnds[i + 1] = opnd
-    rtchdOperators[i] = opr
+    
+    fxdOpnds[i + 1] = opnd
+    fxdOprs[i] = rhsOpr
   }
 
-  return [rtchdOpnds, rtchdOperators]
+  return [fxdOpnds, fxdOprs]
 }

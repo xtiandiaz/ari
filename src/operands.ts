@@ -1,5 +1,6 @@
 import Operator from './operator'
-import * as Utils from './utils'
+import { OperationError } from './operation'
+import * as utils from './utils'
 
 export enum OperandKind {
   Integer = "INTEGER",
@@ -50,7 +51,7 @@ export class Integer implements Operand {
         case OperandKind.Fraction:
           return (new Fraction(this, 1)).operated(opr, rhsOpnd)
         default:
-          throw new Error(`${this.textRepresentation} not implemented for operation with ${rhsOpnd.textRepresentation}`)
+          throw OperationError.notImplemented(this, opr, rhsOpnd)
       }
   }
   
@@ -70,7 +71,7 @@ export class Fraction implements Operand {
     this._divisor = typeof divisor === 'number' ? divisor : divisor.rawValue
     
     if (this._dividend == 0) {
-      throw new Error("Division by zero")
+      throw OperationError.divisionByZero
     } else if (this._divisor < 0) {
       this._divisor *= -1
       this._dividend *= -1
@@ -100,7 +101,7 @@ export class Fraction implements Operand {
       case OperandKind.Fraction:
         return this._operated(opr, <Fraction>rhsOpnd)
       default:
-        throw new Error(`${this.textRepresentation} not implemented for operation with ${rhsOpnd.textRepresentation}`)
+        throw OperationError.notImplemented(this, opr, rhsOpnd)
     }
   }
   
@@ -134,7 +135,7 @@ export class Fraction implements Operand {
   }
   
   private _simplify() {
-    const gcd = Math.abs(Utils.gcd(this._dividend, this._divisor))
+    const gcd = Math.abs(utils.gcd(this._dividend, this._divisor))
     if (gcd == 1) {
       return
     }    
