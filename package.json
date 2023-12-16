@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.ts",
+  "type": "module",
   "scripts": {
-    "test": "tsx src/main.ts"
+    "test": "tsx src/main.mts"
   },
   "author": "Cristian Diaz",
   "license": "ISC",

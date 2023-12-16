@@ -9,6 +9,10 @@ export class State {
   mode: Mode | undefined
   private _log: Log
   
+  constructor(log: Log) {
+    this._log = log
+  }
+  
   get score(): string {
     return `${this._hits}/${this._hits + this._log.misses.length}`
   }
@@ -19,9 +23,5 @@ export class State {
   
   private get _hits(): number {
     return this._log.hits.length
-  }
-  
-  constructor(log: Log) {
-    this._log = log
   }
 }

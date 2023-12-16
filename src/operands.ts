@@ -12,7 +12,9 @@ export interface Operand {
   rawValue: number
   textRepresentation: string
   
-  operated(opr: Operator, rhs: Operand): Operand
+  isNegative: boolean
+  
+  operated(opr: Operator, rhsOpnd: Operand): Operand
   simplified(): Operand
 }
 
@@ -25,26 +27,30 @@ export class Integer implements Operand {
   }
   
   get textRepresentation(): string {
-    return this.rawValue < 0 ? `${this.rawValue}` : `${this.rawValue}`
+    return this.isNegative ? `${this.rawValue}` : `${this.rawValue}`
   }
   
-  operated(opr: Operator, rhs: Operand): Operand {
-      switch (rhs.kind) {
+  get isNegative(): boolean {
+    return this.rawValue < 0
+  }
+  
+  operated(opr: Operator, rhsOpnd: Operand): Operand {
+      switch (rhsOpnd.kind) {
         case OperandKind.Integer:
           switch (opr) {
             case Operator.Addition:
-              return new Integer(this.rawValue + rhs.rawValue)
+              return new Integer(this.rawValue + rhsOpnd.rawValue)
             case Operator.Subtraction:
-              return new Integer(this.rawValue - rhs.rawValue)
+              return new Integer(this.rawValue - rhsOpnd.rawValue)
             case Operator.Multiplication:
-              return new Integer(this.rawValue * rhs.rawValue)
+              return new Integer(this.rawValue * rhsOpnd.rawValue)
             case Operator.Division:
-              return new Fraction(this, <Integer>rhs)
+              return new Fraction(this, <Integer>rhsOpnd)
           }
         case OperandKind.Fraction:
-          return (new Fraction(this, 1)).operated(opr, rhs)
+          return (new Fraction(this, 1)).operated(opr, rhsOpnd)
         default:
-          throw new Error(`${this.textRepresentation} not implemented for operation with ${rhs.textRepresentation}`)
+          throw new Error(`${this.textRepresentation} not implemented for operation with ${rhsOpnd.textRepresentation}`)
       }
   }
   
@@ -83,14 +89,18 @@ export class Fraction implements Operand {
     return `${this._dividend}/${this._divisor}`
   }
   
-  operated(opr: Operator, rhs: Operand): Operand {
-    switch (rhs.kind) {
+  get isNegative(): boolean {
+    return this._dividend < 0
+  }
+  
+  operated(opr: Operator, rhsOpnd: Operand): Operand {
+    switch (rhsOpnd.kind) {
       case OperandKind.Integer:
-        return this._operated(opr, new Fraction(<Integer>rhs, 1))
+        return this._operated(opr, new Fraction(<Integer>rhsOpnd, 1))
       case OperandKind.Fraction:
-        return this._operated(opr, <Fraction>rhs)
+        return this._operated(opr, <Fraction>rhsOpnd)
       default:
-        throw new Error(`${this.textRepresentation} not implemented for operation with ${rhs.textRepresentation}`)
+        throw new Error(`${this.textRepresentation} not implemented for operation with ${rhsOpnd.textRepresentation}`)
     }
   }
   
@@ -104,22 +114,22 @@ export class Fraction implements Operand {
     return this
   }
   
-  private _operated(opr: Operator, rhs: Fraction): Fraction {
+  private _operated(opr: Operator, rhsOpnd: Fraction): Fraction {
     switch (opr) {
       case Operator.Addition:
         return new Fraction(
-          this._dividend * rhs._divisor + this._divisor * rhs._dividend,
-          this._divisor * rhs._divisor
+          this._dividend * rhsOpnd._divisor + this._divisor * rhsOpnd._dividend,
+          this._divisor * rhsOpnd._divisor
         )
       case Operator.Subtraction:
         return new Fraction(
-          this._dividend * rhs._divisor - this._divisor * rhs._dividend,
-          this._divisor * rhs._divisor
+          this._dividend * rhsOpnd._divisor - this._divisor * rhsOpnd._dividend,
+          this._divisor * rhsOpnd._divisor
         )
       case Operator.Multiplication:
-        return new Fraction(this._dividend * rhs._dividend, this._divisor * rhs._divisor)
+        return new Fraction(this._dividend * rhsOpnd._dividend, this._divisor * rhsOpnd._divisor)
       case Operator.Division:
-        return new Fraction(this._dividend * rhs._divisor, this._divisor * rhs._dividend)
+        return new Fraction(this._dividend * rhsOpnd._divisor, this._divisor * rhsOpnd._dividend)
     }
   }
   

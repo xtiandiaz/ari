@@ -1,5 +1,5 @@
 import * as io from './io'
-import Operation from './operation'
+import Operation from './Operation.1'
 
 export class Log {
   readonly hits: Operation[] = []
