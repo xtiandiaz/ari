@@ -18,7 +18,7 @@ async function main() {
   while(true) {
     try {
       const result = await io.askForInput(
-        `${operation.textRepresentation} = `, 
+        `${operation.textRepresentation(false)} = `, 
         (str) => {
           if (str.length == 0) {
             throw new Error()
@@ -27,7 +27,7 @@ async function main() {
         }
       )
       
-      if (result === operation.result.textRepresentation) {
+      if (result === operation.result.textRepresentation(false)) {
         log.correctAnswer(operation, isRetry)
         resume()
       } else {

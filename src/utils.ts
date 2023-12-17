@@ -5,7 +5,7 @@ import { Operation } from './operation'
 const allOperators = Object.values(Operator)
 
 export function randomSign(): number {
-  return Math.random() > 0.5 ? 1 : -1
+  return Math.random() < 0.5 ? -1 : 1
 }
 
 export function randomOperator(oprSelection?: Operator[]): Operator {
@@ -16,7 +16,7 @@ export function randomOperator(oprSelection?: Operator[]): Operator {
 export function randomIntNumber(min: number, max: number): number {
   min = Math.floor(min)
   max = Math.floor(max)
-  return min + Math.floor(Math.random() * (max - min))
+  return min + Math.round(Math.random() * (max - min))
 }
 
 export function gcd(a: number, b: number) {
@@ -57,4 +57,21 @@ export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], O
   }
 
   return [fxdOpnds, fxdOprs]
+}
+
+export function exponentString(power: number): string {
+  return [...Math.floor(power).toString()].map(digit => {
+    switch (digit) {
+      case '0': return '⁰'
+      case '1': return '¹'
+      case '2': return '²'
+      case '3': return '³'
+      case '4': return '⁴'
+      case '5': return '⁵'
+      case '6': return '⁶'
+      case '7': return '⁷'
+      case '8': return '⁸'
+      case '9': return '⁹'
+    }
+  }).join()
 }

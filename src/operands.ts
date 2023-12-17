@@ -8,31 +8,47 @@ export enum OperandKind {
   Operation = "OPERATION"
 }
 
-export interface Operand {
-  kind: OperandKind
-  rawValue: number
-  textRepresentation: string
+export abstract class Operand {
+  readonly kind: OperandKind
+  readonly exponent: number
   
-  isNegative: boolean
+  constructor(kind: OperandKind, exponent: number) {
+    this.kind = kind
+    this.exponent = Math.floor(exponent)
+  }
   
-  operated(opr: Operator, rhsOpnd: Operand): Operand
-  simplified(): Operand
+  abstract get rawValue(): number
+  abstract get isBaseNegative(): boolean
+  
+  abstract textRepresentation(parenthesized: boolean): string
+  abstract operated(opr: Operator, rhsOpnd: Operand): Operand
+  abstract simplified(): Operand
 }
 
-export class Integer implements Operand {
-  readonly kind = OperandKind.Integer
-  rawValue: number
+export class Integer extends Operand {
+  readonly base: number
   
-  constructor(rawValue: number) {
-    this.rawValue = Math.floor(rawValue)
+  constructor(base: number, exponent: number = 1) {
+    super(OperandKind.Integer, exponent)
+    
+    this.base = Math.floor(base)
   }
   
-  get textRepresentation(): string {
-    return this.isNegative ? `${this.rawValue}` : `${this.rawValue}`
+  get rawValue(): number {
+    return Math.pow(Math.floor(this.base), this.exponent)
   }
   
-  get isNegative(): boolean {
-    return this.rawValue < 0
+  get isBaseNegative(): boolean {
+    return this.base < 0
+  }
+  
+  private get _exponentString(): string {
+    return this.exponent != 1 && this.base != 1 ? utils.exponentString(this.exponent) : ''
+  }
+  
+  textRepresentation(parenthesized: boolean): string {
+    parenthesized ||= this.isBaseNegative && this.exponent != 1
+    return `${parenthesized ? `(${this.base})` : `${this.base}`}${this._exponentString}`
   }
   
   operated(opr: Operator, rhsOpnd: Operand): Operand {
@@ -60,13 +76,17 @@ export class Integer implements Operand {
   }
 }
 
-export class Fraction implements Operand {
-  readonly kind = OperandKind.Fraction
-  
+export class Fraction extends Operand {  
   private _dividend: number
   private _divisor: number
   
-  constructor(dividend: number | Integer, divisor: number | Integer, simplified: boolean = true) {
+  constructor(
+    dividend: number | Integer, 
+    divisor: number | Integer, 
+    simplified: boolean = true
+  ) {
+    super(OperandKind.Fraction, 1)
+    
     this._dividend = typeof dividend === 'number' ? dividend : dividend.rawValue
     this._divisor = typeof divisor === 'number' ? divisor : divisor.rawValue
     
@@ -86,11 +106,14 @@ export class Fraction implements Operand {
     return this._dividend / this._divisor
   }
   
-  get textRepresentation(): string {
-    return `${this._dividend}/${this._divisor}`
+  textRepresentation(parenthesized: boolean): string {
+    // parenthesized ||= this.isNegative && this.exponent != 1
+    const rprtn = `${this._dividend}/${this._divisor}`
+    
+    return parenthesized ? `(${rprtn})` : rprtn
   }
   
-  get isNegative(): boolean {
+  get isBaseNegative(): boolean {
     return this._dividend < 0
   }
   

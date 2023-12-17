@@ -1,4 +1,4 @@
-import { Operand, OperandKind, Integer } from './operands'
+import { Operand, OperandKind } from './operands'
 import Operator from './operator'
 
 export class OperationError extends Error {
@@ -13,9 +13,8 @@ export class OperationError extends Error {
   }
 }
 
-export class Operation implements Operand {
+export class Operation extends Operand {
   readonly id: number
-  readonly kind = OperandKind.Operation
   operands: Operand[]
   operators: Operator[]
   result: Operand
@@ -23,6 +22,8 @@ export class Operation implements Operand {
   private static _id = 0
 
   constructor(operands: Operand[], operators: Operator[]) {
+    super(OperandKind.Operation, 1)
+    
     this.id = Operation._id++
 
     if (operands.length < 2) {
@@ -42,11 +43,11 @@ export class Operation implements Operand {
     return this.result.rawValue
   }
 
-  get isNegative(): boolean {
+  get isBaseNegative(): boolean {
     return this.rawValue < 0
   }
 
-  get textRepresentation(): string {
+  textRepresentation(parenthesized: boolean): string {
     let rprtn = this._statementRepresentation(
       this._operandRepresentation(this.operands[0], undefined, this.operators[0]), 
       undefined
@@ -60,7 +61,8 @@ export class Operation implements Operand {
         lhsOpr
       )
     }
-    return rprtn
+    
+    return parenthesized ? `(${rprtn})` : rprtn
   }
 
   operated(opr: Operator, rhsOpnd: Operand): Operand {
@@ -105,17 +107,17 @@ export class Operation implements Operand {
   }
 
   private _operandRepresentation(opnd: Operand, lhsOpr?: Operator, rhsOpr?: Operator): string {
-    let shouldEnclose = false
+    let shouldParenthesize = false
     switch (opnd.kind) {
       case OperandKind.Operation:
-        shouldEnclose = !(lhsOpr === undefined || lhsOpr === Operator.Addition) ||
+        shouldParenthesize = !(lhsOpr === undefined || lhsOpr === Operator.Addition) ||
           (rhsOpr !== undefined && [Operator.Multiplication, Operator.Division].includes(rhsOpr!))
         break
       default:
-        shouldEnclose = lhsOpr === Operator.Subtraction && opnd.isNegative
+        shouldParenthesize = lhsOpr === Operator.Subtraction && opnd.isBaseNegative
         break
     }
-    return shouldEnclose ? `(${opnd.textRepresentation})` : opnd.textRepresentation
+    return opnd.textRepresentation(shouldParenthesize)
   }
   
   private _statementRepresentation(opndRprtn: string, lhsOpr?: Operator): string {
@@ -129,7 +131,7 @@ export class Operation implements Operand {
         }
         break
     }
-    console.log(opndRprtn, '->', simplOpndRprtn)
+    // console.log(opndRprtn, '->', simplOpndRprtn)
     
     const prefix = lhsOpr !== undefined ? ` ${lhsOpr} ` : ''
     return prefix + simplOpndRprtn

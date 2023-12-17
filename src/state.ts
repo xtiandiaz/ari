@@ -18,7 +18,7 @@ export class State {
   }
   
   get difficulty(): number {
-    return 0.1 + this._hits / 20
+    return 0.1 + this._hits / 10
   }
   
   private get _hits(): number {

@@ -3,35 +3,51 @@ import Operator from './operator'
 import { Operand, Integer } from './operands'
 import * as utils from './utils'
 
-function randomElementalOperand(min: number, max: number): Operand {
-  const n = Math.max(1, utils.randomIntNumber(min, max))
-  return new Integer(n * utils.randomSign())
+function _elementalOperand(baseMin: number, baseMax: number, exponentMax?: number): Operand {
+  const base = Math.max(1, utils.randomIntNumber(baseMin, baseMax)) * utils.randomSign()
+  const exponent = (() => {
+    if (exponentMax !== undefined) {
+      return utils.randomIntNumber(1, exponentMax)
+    }
+    return 1
+  })()
+  
+  return new Integer(base, exponent)
 }
 
-function randomOperationalOperand(difficulty: number, oprSelection: Operator[]): Operation {
-  const oprCount = Math.max(1, Math.min(5, Math.floor(difficulty)))
+function elementalOperand(difficulty: number): Operand {
+  const baseMax = Math.round(10 * Math.max(1, difficulty))
+  const exponentMax = Math.random() > (1 - Math.min(0.5, 0.05 * Math.round(difficulty)))
+    ? Math.max(2, Math.min(3, Math.round(difficulty)))
+    : undefined
+  
+  return _elementalOperand(2, baseMax, exponentMax)
+}
+
+function operationalOperand(difficulty: number, oprSelection: Operator[]): Operation {
+  const oprCount = Math.max(1, Math.min(4, Math.floor(difficulty)))
   const oprs = [...Array(oprCount).keys()].map((_) => utils.randomOperator(oprSelection))
-  const opndMax = Math.floor(20 * difficulty)
-  const opnds = [randomElementalOperand(1, opndMax)]
-    .concat(oprs.map((_) => randomElementalOperand(1, opndMax)))
+  const opnds = [elementalOperand(difficulty)]
+    .concat(oprs.map((_) => elementalOperand(difficulty)))
   // console.log(operands.length, operators.length)
   const rtchdOOs = utils.fixAndRetouch(opnds, oprs)
   
   return new Operation(rtchdOOs[0], rtchdOOs[1])
 }
 
-function randomOperand(difficulty: number): Operand {
-  return Math.random() > (1 - Math.min(0.5, 0.1 * Math.ceil(difficulty)))
-    ? randomOperationalOperand(difficulty, [Operator.Addition, Operator.Subtraction])
-    : randomElementalOperand(1, Math.floor(30 * difficulty))
+function operand(difficulty: number): Operand {
+  return Math.random() > (1 - Math.min(0.5, 0.05-2  * Math.round(difficulty)))
+    ? operationalOperand(difficulty, [Operator.Addition, Operator.Subtraction])
+    : elementalOperand(difficulty)
 }
 
 export function operation(difficulty: number): Operation {
-  const opndCount = Math.max(2, Math.ceil(difficulty) + 1)
-  const opnds = [...Array(opndCount).keys()].map((_) => randomOperand(difficulty))
+  const opndCount = Math.max(2, Math.round(difficulty) + 1)
+  const opnds = [...Array(opndCount).keys()].map((_) => operand(difficulty))
   const oprs = [...Array(opndCount - 1)].map(_ => utils.randomOperator())
   const rtchdOOs = utils.fixAndRetouch(opnds, oprs)
   // console.log(rtchdOOs[0], rtchdOOs[1])
+  console.log(difficulty)
   
   return new Operation(rtchdOOs[0], rtchdOOs[1])
 }
