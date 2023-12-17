@@ -1,17 +1,6 @@
 import { Operand, OperandKind } from './operands'
 import Operator from './operator'
-
-export class OperationError extends Error {
-  static insufficientOperands = new OperationError('[Operation] Insufficient operands')
-  static unbalancedElements = new OperationError('[Operation] Unbalanced elements')
-  static divisionByZero = new OperationError('[Operation] Division by zero')
-  
-  static notImplemented(lhsOpnd: Operand, opr: Operator, rhsOpnd: Operand): OperationError {
-    return new OperationError(
-      `${lhsOpnd.textRepresentation} not implemented for '${opr}' operation with ${rhsOpnd.textRepresentation}`
-    )
-  }
-}
+import { OperationError } from './errors'
 
 export class Operation extends Operand {
   readonly id: number
@@ -42,27 +31,9 @@ export class Operation extends Operand {
   get rawValue(): number {
     return this.result.rawValue
   }
-
-  get isBaseNegative(): boolean {
-    return this.rawValue < 0
-  }
-
-  textRepresentation(parenthesized: boolean): string {
-    let rprtn = this._statementRepresentation(
-      this._operandRepresentation(this.operands[0], undefined, this.operators[0]), 
-      undefined
-    )
-    for (let i = 0; i < this.operators.length; i++) {
-      const lhsOpr = this.operators[i]
-      const opnd = this.operands[i + 1]
-      const rhsOpr = i < (this.operators.length - 1) ? this.operators[i + 1] : undefined
-      rprtn += this._statementRepresentation(
-        this._operandRepresentation(opnd, lhsOpr, rhsOpr),
-        lhsOpr
-      )
-    }
-    
-    return parenthesized ? `(${rprtn})` : rprtn
+  
+  get baseRawValue(): number {
+    return this.rawValue
   }
 
   operated(opr: Operator, rhsOpnd: Operand): Operand {
@@ -104,36 +75,5 @@ export class Operation extends Operand {
 
     // console.log(squashedOperands, sweepOperators, result)
     return result.simplified()
-  }
-
-  private _operandRepresentation(opnd: Operand, lhsOpr?: Operator, rhsOpr?: Operator): string {
-    let shouldParenthesize = false
-    switch (opnd.kind) {
-      case OperandKind.Operation:
-        shouldParenthesize = !(lhsOpr === undefined || lhsOpr === Operator.Addition) ||
-          (rhsOpr !== undefined && [Operator.Multiplication, Operator.Division].includes(rhsOpr!))
-        break
-      default:
-        shouldParenthesize = lhsOpr === Operator.Subtraction && opnd.isBaseNegative
-        break
-    }
-    return opnd.textRepresentation(shouldParenthesize)
-  }
-  
-  private _statementRepresentation(opndRprtn: string, lhsOpr?: Operator): string {
-    let simplOpndRprtn = opndRprtn
-    
-    switch (opndRprtn.substring(0, 1)) {
-      case '-':
-        if (lhsOpr === Operator.Addition) {
-          simplOpndRprtn = opndRprtn.substring(1)
-          lhsOpr = Operator.Subtraction
-        }
-        break
-    }
-    // console.log(opndRprtn, '->', simplOpndRprtn)
-    
-    const prefix = lhsOpr !== undefined ? ` ${lhsOpr} ` : ''
-    return prefix + simplOpndRprtn
   }
 }

@@ -2,6 +2,7 @@ import * as io from './io'
 import { Log } from './log'
 import { State } from './state'
 import * as factory from './factory'
+import * as stringify from './stringifier'
 
 const log = new Log()
 const state = new State(log)
@@ -18,7 +19,7 @@ async function main() {
   while(true) {
     try {
       const result = await io.askForInput(
-        `${operation.textRepresentation(false)} = `, 
+        `${stringify.operationString(operation)} = `, 
         (str) => {
           if (str.length == 0) {
             throw new Error()
@@ -27,7 +28,7 @@ async function main() {
         }
       )
       
-      if (result === operation.result.textRepresentation(false)) {
+      if (result === stringify.operandString(operation.result)) {
         log.correctAnswer(operation, isRetry)
         resume()
       } else {

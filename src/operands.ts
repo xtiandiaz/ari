@@ -1,5 +1,5 @@
 import Operator from './operator'
-import { OperationError } from './operation'
+import { OperationError, OperandError } from './errors'
 import * as utils from './utils'
 
 export enum OperandKind {
@@ -13,14 +13,17 @@ export abstract class Operand {
   readonly exponent: number
   
   constructor(kind: OperandKind, exponent: number) {
+    if (exponent < 0) {
+      throw OperandError.unsupportedExponent(exponent)
+    }
+    
     this.kind = kind
     this.exponent = Math.floor(exponent)
   }
   
   abstract get rawValue(): number
-  abstract get isBaseNegative(): boolean
+  abstract get baseRawValue(): number
   
-  abstract textRepresentation(parenthesized: boolean): string
   abstract operated(opr: Operator, rhsOpnd: Operand): Operand
   abstract simplified(): Operand
 }
@@ -38,17 +41,8 @@ export class Integer extends Operand {
     return Math.pow(Math.floor(this.base), this.exponent)
   }
   
-  get isBaseNegative(): boolean {
-    return this.base < 0
-  }
-  
-  private get _exponentString(): string {
-    return this.exponent != 1 && this.base != 1 ? utils.exponentString(this.exponent) : ''
-  }
-  
-  textRepresentation(parenthesized: boolean): string {
-    parenthesized ||= this.isBaseNegative && this.exponent != 1
-    return `${parenthesized ? `(${this.base})` : `${this.base}`}${this._exponentString}`
+  get baseRawValue(): number {
+    return this.base
   }
   
   operated(opr: Operator, rhsOpnd: Operand): Operand {
@@ -62,10 +56,10 @@ export class Integer extends Operand {
             case Operator.Multiplication:
               return new Integer(this.rawValue * rhsOpnd.rawValue)
             case Operator.Division:
-              return new Fraction(this, <Integer>rhsOpnd)
+              return new Fraction(this.rawValue, rhsOpnd.rawValue)
           }
         case OperandKind.Fraction:
-          return (new Fraction(this, 1)).operated(opr, rhsOpnd)
+          return (new Fraction(this.rawValue, 1)).operated(opr, rhsOpnd)
         default:
           throw OperationError.notImplemented(this, opr, rhsOpnd)
       }
@@ -77,50 +71,53 @@ export class Integer extends Operand {
 }
 
 export class Fraction extends Operand {  
-  private _dividend: number
-  private _divisor: number
+  private _baseDividend: number
+  private _baseDivisor: number
   
-  constructor(
-    dividend: number | Integer, 
-    divisor: number | Integer, 
-    simplified: boolean = true
-  ) {
-    super(OperandKind.Fraction, 1)
+  constructor(dividend: number, divisor: number, exponent: number = 1) {
+    super(OperandKind.Fraction, exponent)
     
-    this._dividend = typeof dividend === 'number' ? dividend : dividend.rawValue
-    this._divisor = typeof divisor === 'number' ? divisor : divisor.rawValue
-    
-    if (this._dividend == 0) {
+    if (divisor == 0) {
       throw OperationError.divisionByZero
-    } else if (this._divisor < 0) {
-      this._divisor *= -1
-      this._dividend *= -1
+    } else if (divisor < 0) {
+      divisor *= -1
+      dividend *= -1
     }
     
-    if (simplified) {
-      this._simplify()
-    }
+    this._baseDividend = dividend
+    this._baseDivisor = divisor
+    
+    this._simplify()
   }
   
   get rawValue(): number {
-    return this._dividend / this._divisor
+    return this._poweredDividend / this._poweredDivisor
   }
   
-  textRepresentation(parenthesized: boolean): string {
-    // parenthesized ||= this.isNegative && this.exponent != 1
-    const rprtn = `${this._dividend}/${this._divisor}`
-    
-    return parenthesized ? `(${rprtn})` : rprtn
+  get baseRawValue(): number {
+    return this.baseDividend / this.baseDivisor
   }
   
-  get isBaseNegative(): boolean {
-    return this._dividend < 0
+  get baseDividend(): number {
+    return this._baseDividend
+  }
+  
+  get baseDivisor(): number {
+    return this._baseDivisor
+  }
+  
+  private get _poweredDividend(): number {
+    return Math.pow(this.baseDividend, this.exponent)
+  }
+  
+  private get _poweredDivisor(): number {
+    return Math.pow(this.baseDivisor, this.exponent)
   }
   
   operated(opr: Operator, rhsOpnd: Operand): Operand {
     switch (rhsOpnd.kind) {
       case OperandKind.Integer:
-        return this._operated(opr, new Fraction(<Integer>rhsOpnd, 1))
+        return this._operated(opr, new Fraction(rhsOpnd.rawValue, 1))
       case OperandKind.Fraction:
         return this._operated(opr, <Fraction>rhsOpnd)
       default:
@@ -131,8 +128,8 @@ export class Fraction extends Operand {
   simplified(): Operand {
     this._simplify()
     
-    if (this._divisor == 1) {
-      return new Integer(this._dividend)
+    if (this.baseDivisor == 1) {
+      return new Integer(this.baseDividend)
     }
     
     return this
@@ -142,29 +139,35 @@ export class Fraction extends Operand {
     switch (opr) {
       case Operator.Addition:
         return new Fraction(
-          this._dividend * rhsOpnd._divisor + this._divisor * rhsOpnd._dividend,
-          this._divisor * rhsOpnd._divisor
+          this._poweredDividend * rhsOpnd._poweredDivisor + this._poweredDivisor * rhsOpnd._poweredDividend,
+          this._poweredDivisor * rhsOpnd._poweredDivisor
         )
       case Operator.Subtraction:
         return new Fraction(
-          this._dividend * rhsOpnd._divisor - this._divisor * rhsOpnd._dividend,
-          this._divisor * rhsOpnd._divisor
+          this._poweredDividend * rhsOpnd._poweredDivisor - this._poweredDivisor * rhsOpnd._poweredDividend,
+          this._poweredDivisor * rhsOpnd._poweredDivisor
         )
       case Operator.Multiplication:
-        return new Fraction(this._dividend * rhsOpnd._dividend, this._divisor * rhsOpnd._divisor)
+        return new Fraction(
+          this._poweredDividend * rhsOpnd._poweredDividend, 
+          this._poweredDivisor * rhsOpnd._poweredDivisor
+        )
       case Operator.Division:
-        return new Fraction(this._dividend * rhsOpnd._divisor, this._divisor * rhsOpnd._dividend)
+        return new Fraction(
+          this._poweredDividend * rhsOpnd._poweredDivisor, 
+          this._poweredDivisor * rhsOpnd._poweredDividend
+        )
     }
   }
   
   private _simplify() {
-    const gcd = Math.abs(utils.gcd(this._dividend, this._divisor))
+    const gcd = Math.abs(utils.gcd(this._baseDividend, this._baseDivisor))
     if (gcd == 1) {
       return
     }    
     // console.log(this.textRepresentation, `gcd: ${gcd}`)
-    this._dividend /= gcd
-    this._divisor /= gcd
+    this._baseDividend /= gcd
+    this._baseDivisor /= gcd
     // console.log(this.textRepresentation)
   }
 }
