@@ -73,7 +73,6 @@ export class Operation extends Operand {
       result = result.operated(sweepOprs[i], squashedOpnds[i + 1].simplified())
     }
 
-    // console.log(squashedOperands, sweepOperators, result)
     return result.simplified()
   }
 }

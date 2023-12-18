@@ -71,47 +71,47 @@ export class Integer extends Operand {
 }
 
 export class Fraction extends Operand {  
-  private _baseDividend: number
-  private _baseDivisor: number
+  private _baseNumerator: number
+  private _baseDenominator: number
   
-  constructor(dividend: number, divisor: number, exponent: number = 1) {
+  constructor(numerator: number, denominator: number, exponent: number = 1) {
     super(OperandKind.Fraction, exponent)
     
-    if (divisor == 0) {
+    if (denominator == 0) {
       throw OperationError.divisionByZero
-    } else if (divisor < 0) {
-      divisor *= -1
-      dividend *= -1
+    } else if (denominator < 0) {
+      denominator *= -1
+      numerator *= -1
     }
     
-    this._baseDividend = dividend
-    this._baseDivisor = divisor
+    this._baseNumerator = numerator
+    this._baseDenominator = denominator
     
     this._simplify()
   }
   
   get rawValue(): number {
-    return this._poweredDividend / this._poweredDivisor
+    return this._poweredNumerator / this._poweredDenominator
   }
   
   get baseRawValue(): number {
-    return this.baseDividend / this.baseDivisor
+    return this.baseNumerator / this.baseDenominator
   }
   
-  get baseDividend(): number {
-    return this._baseDividend
+  get baseNumerator(): number {
+    return this._baseNumerator
   }
   
-  get baseDivisor(): number {
-    return this._baseDivisor
+  get baseDenominator(): number {
+    return this._baseDenominator
   }
   
-  private get _poweredDividend(): number {
-    return Math.pow(this.baseDividend, this.exponent)
+  private get _poweredNumerator(): number {
+    return Math.pow(this.baseNumerator, this.exponent)
   }
   
-  private get _poweredDivisor(): number {
-    return Math.pow(this.baseDivisor, this.exponent)
+  private get _poweredDenominator(): number {
+    return Math.pow(this.baseDenominator, this.exponent)
   }
   
   operated(opr: Operator, rhsOpnd: Operand): Operand {
@@ -128,8 +128,8 @@ export class Fraction extends Operand {
   simplified(): Operand {
     this._simplify()
     
-    if (this.baseDivisor == 1) {
-      return new Integer(this.baseDividend)
+    if (this.baseDenominator == 1) {
+      return new Integer(this.baseNumerator)
     }
     
     return this
@@ -139,35 +139,33 @@ export class Fraction extends Operand {
     switch (opr) {
       case Operator.Addition:
         return new Fraction(
-          this._poweredDividend * rhsOpnd._poweredDivisor + this._poweredDivisor * rhsOpnd._poweredDividend,
-          this._poweredDivisor * rhsOpnd._poweredDivisor
+          this._poweredNumerator * rhsOpnd._poweredDenominator + this._poweredDenominator * rhsOpnd._poweredNumerator,
+          this._poweredDenominator * rhsOpnd._poweredDenominator
         )
       case Operator.Subtraction:
         return new Fraction(
-          this._poweredDividend * rhsOpnd._poweredDivisor - this._poweredDivisor * rhsOpnd._poweredDividend,
-          this._poweredDivisor * rhsOpnd._poweredDivisor
+          this._poweredNumerator * rhsOpnd._poweredDenominator - this._poweredDenominator * rhsOpnd._poweredNumerator,
+          this._poweredDenominator * rhsOpnd._poweredDenominator
         )
       case Operator.Multiplication:
         return new Fraction(
-          this._poweredDividend * rhsOpnd._poweredDividend, 
-          this._poweredDivisor * rhsOpnd._poweredDivisor
+          this._poweredNumerator * rhsOpnd._poweredNumerator, 
+          this._poweredDenominator * rhsOpnd._poweredDenominator
         )
       case Operator.Division:
         return new Fraction(
-          this._poweredDividend * rhsOpnd._poweredDivisor, 
-          this._poweredDivisor * rhsOpnd._poweredDividend
+          this._poweredNumerator * rhsOpnd._poweredDenominator, 
+          this._poweredDenominator * rhsOpnd._poweredNumerator
         )
     }
   }
   
   private _simplify() {
-    const gcd = Math.abs(utils.gcd(this._baseDividend, this._baseDivisor))
+    const gcd = Math.abs(utils.gcd(this._baseNumerator, this._baseDenominator))
     if (gcd == 1) {
       return
-    }    
-    // console.log(this.textRepresentation, `gcd: ${gcd}`)
-    this._baseDividend /= gcd
-    this._baseDivisor /= gcd
-    // console.log(this.textRepresentation)
+    }
+    this._baseNumerator /= gcd
+    this._baseDenominator /= gcd
   }
 }

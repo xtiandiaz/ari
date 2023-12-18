@@ -1,9 +1,11 @@
 import * as io from './io'
-import Operation from './Operation.1'
+import { Operation } from './operation'
 
-export class Log {
+class Log {
   readonly hits: Operation[] = []
   readonly misses: Operation[] = []
+  
+  debugMode = false
   
   private get _balance(): string {
     return `${this.hits.length}/${this.hits.length + this.misses.length}`
@@ -13,15 +15,25 @@ export class Log {
     if (!isRetry) {
       this._recordHit(operation)
     }
-    console.log(
-      io.outputFormat(isRetry ? io.OutputColor.Yellow : io.OutputColor.Green), 
-      `Correct! (${this._balance})`
-    )
+    console.log(io.colorize(
+      `Correct! (${this._balance})`,
+      isRetry ? io.OutputColor.Yellow : io.OutputColor.Green
+    ))
   }
   
   mistake(operation: Operation): void {
     this._recordMiss(operation)
-    console.log(io.outputFormat(io.OutputColor.Red), 'Not correct yet... Try again!')
+    console.log(io.colorize('Not correct yet... Try again!', io.OutputColor.Red))
+  }
+  
+  debug(...args: any[]): void {
+    if (this.debugMode) {
+      console.log(args)
+    }
+  }
+  
+  error(err: Error): void {
+    console.log(io.colorize(err.message, io.OutputColor.Red))
   }
   
   private _recordHit(operation: Operation): void {
@@ -41,3 +53,5 @@ export class Log {
     return this.hits.findIndex(predicate) >= 0 || this.misses.findIndex(predicate) >= 0
   }
 }
+
+export default new Log()

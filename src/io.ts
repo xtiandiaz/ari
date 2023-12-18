@@ -14,8 +14,8 @@ export enum OutputColor {
   Yellow = '33m',
 }
 
-export function outputFormat(color: OutputColor): string {
-  return `\x1b[${color}%s\x1b[0m`
+export function colorize(output: string, color: OutputColor): string {
+  return `\x1b[${color}${output}\x1b[0m`
 }
 
 export function operandText(operand: Operand, isForSpeech: boolean): string {

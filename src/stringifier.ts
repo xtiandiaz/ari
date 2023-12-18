@@ -31,7 +31,7 @@ function integerString(int: Integer, parenthesized: boolean): string {
 
 function fractionString(frac: Fraction, parenthesized: boolean): string {
   parenthesized ||= frac.baseRawValue < 0 && frac.exponent > 1
-  const fracStr = `${frac.baseDividend}/${frac.baseDivisor}`
+  const fracStr = `${frac.baseNumerator}/${frac.baseDenominator}`
   
   return `${parenthesized ? `(${fracStr})` : `${fracStr}`}${exponentString(frac.exponent)}`
 }
@@ -59,7 +59,8 @@ function operationSegmentString(opnd: Operand, lhsOpr?: Operator, rhsOpr?: Opera
       break
   }
   
-  // console.log(opndRprtn, '->', simplOpndRprtn)
+  console.log(str)
+  
   return `${lhsOpr !== undefined ? ` ${lhsOpr} ` : ''}${str}`
 }
 

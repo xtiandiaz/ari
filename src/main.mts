@@ -1,13 +1,15 @@
 import * as io from './io'
-import { Log } from './log'
+import log from './log'
 import { State } from './state'
 import * as factory from './factory'
 import * as stringify from './stringifier'
 
-const log = new Log()
-const state = new State(log)
 
 async function main() {
+  log.debugMode = process.env.npm_config_debug !== undefined
+  
+  const state = new State(log)
+  
   let operation = factory.operation(state.difficulty)
   let isRetry = false
   
@@ -36,7 +38,7 @@ async function main() {
         isRetry = true
       }
     } catch(error) {
-      console.log(error)
+      log.error(error)
       continue
     }
   }

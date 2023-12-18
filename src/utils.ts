@@ -2,6 +2,17 @@ import Operator from './operator'
 import { Operand, OperandKind, Integer } from './operands'
 import { Operation } from './operation'
 
+export function round(num: number, fracDigits: number): number {
+  return Number(num.toFixed(fracDigits))
+}
+
+export function gcd(a: number, b: number) {
+  if (b === 0) {
+    return a
+  }
+  return gcd(b, a % b)
+}
+
 const allOperators = Object.values(Operator)
 
 export function randomSign(): number {
@@ -17,13 +28,6 @@ export function randomIntNumber(min: number, max: number): number {
   min = Math.floor(min)
   max = Math.floor(max)
   return min + Math.round(Math.random() * (max - min))
-}
-
-export function gcd(a: number, b: number) {
-  if (b === 0) {
-    return a
-  }
-  return gcd(b, a % b)
 }
 
 export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], Operator[]] {
