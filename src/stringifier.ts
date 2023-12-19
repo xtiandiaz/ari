@@ -1,6 +1,7 @@
-import { Operand, OperandKind, Integer, Fraction } from './operands'
-import { Operation } from './operation'
-import Operator from './operator'
+import { OperandKind } from './aritmethic/operands'
+import Operator from './aritmethic/operator'
+import type { Operand, Integer, Fraction } from './aritmethic/operands'
+import type { Operation } from './aritmethic/operation'
 
 function exponentString(exponent: number): string {
   if (exponent == 1) {
@@ -58,8 +59,6 @@ function operationSegmentString(opnd: Operand, lhsOpr?: Operator, rhsOpr?: Opera
       }
       break
   }
-  
-  console.log(str)
   
   return `${lhsOpr !== undefined ? ` ${lhsOpr} ` : ''}${str}`
 }

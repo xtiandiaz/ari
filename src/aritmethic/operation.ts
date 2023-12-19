@@ -1,6 +1,6 @@
 import { Operand, OperandKind } from './operands'
 import Operator from './operator'
-import { OperationError } from './errors'
+import { OperationError } from '../errors'
 
 export class Operation extends Operand {
   readonly id: number
@@ -18,7 +18,6 @@ export class Operation extends Operand {
     if (operands.length < 2) {
       throw OperationError.insufficientOperands
     }
-
     if (operands.length != (operators.length + 1)) {
       throw OperationError.unbalancedElements
     }

@@ -1,6 +1,6 @@
 import Operator from './operator'
-import { OperationError, OperandError } from './errors'
-import * as utils from './utils'
+import { OperationError, OperandError } from '../errors'
+import * as utils from '../utils'
 
 export enum OperandKind {
   Integer = "INTEGER",

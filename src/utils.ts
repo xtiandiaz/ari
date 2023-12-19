@@ -1,6 +1,6 @@
-import Operator from './operator'
-import { Operand, OperandKind, Integer } from './operands'
-import { Operation } from './operation'
+import Operator from './aritmethic/operator'
+import { Operand, OperandKind, Integer } from './aritmethic/operands'
+import { Operation } from './aritmethic/operation'
 
 export function round(num: number, fracDigits: number): number {
   return Number(num.toFixed(fracDigits))

@@ -1,8 +1,8 @@
-import { Operation } from './operation'
-import Operator from './operator'
-import { Operand, Integer } from './operands'
-import * as utils from './utils'
-import log from './log'
+import { Operation } from '../aritmethic/operation'
+import Operator from '../aritmethic/operator'
+import { Operand, Integer } from '../aritmethic/operands'
+import * as utils from '../utils'
+import log from '../console/log'
 
 function _elementalOperand(baseMin: number, baseMax: number, exponentMax?: number): Operand {
   const base = Math.max(1, utils.randomIntNumber(baseMin, baseMax)) * utils.randomSign()

@@ -1,5 +1,5 @@
-import type { Operand } from './operands'
-import type Operator from './operator'
+import type { Operand } from './aritmethic/operands'
+import type Operator from './aritmethic/operator'
 import * as stringify from './stringifier'
 
 export class OperandError extends Error {

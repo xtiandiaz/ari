@@ -1,27 +1,19 @@
-import * as io from './io'
-import log from './log'
-import { State } from './state'
-import * as factory from './factory'
+import * as io from './console/io'
+import log from './console/log'
+import GameReducer from './game/reducer'
 import * as stringify from './stringifier'
-
 
 async function main() {
   log.debugMode = process.env.npm_config_debug !== undefined
   
-  const state = new State(log)
+  const reducer = new GameReducer()
   
-  let operation = factory.operation(state.difficulty)
-  let isRetry = false
+  log.health(reducer.state.health)
   
-  function resume() {
-    operation = factory.operation(state.difficulty)
-    isRetry = false
-  }
-  
-  while(true) {
+  while(!reducer.state.isOver) {
     try {
-      const result = await io.askForInput(
-        `${stringify.operationString(operation)} = `, 
+      const inputResult = await io.askForInput(
+        `${stringify.operationString(reducer.state.stage)} = `, 
         (str) => {
           if (str.length == 0) {
             throw new Error()
@@ -30,18 +22,19 @@ async function main() {
         }
       )
       
-      if (result === stringify.operandString(operation.result)) {
-        log.correctAnswer(operation, isRetry)
-        resume()
+      if (reducer.evaluate(inputResult)) {
+        log.correctAnswer(reducer.state.score, reducer.state.isRetry)
       } else {
-        log.mistake(operation)
-        isRetry = true
+        log.mistake(reducer.state.score, reducer.state.isOver)
+        log.health(reducer.state.health)
       }
     } catch(error) {
       log.error(error)
       continue
     }
   }
+  
+  io.close()
 }
 
 await main()
