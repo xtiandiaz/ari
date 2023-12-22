@@ -1,35 +1,25 @@
 import { Operation } from '../aritmethic/operation'
 import Operator from '../aritmethic/operator'
-import { Operand, Integer } from '../aritmethic/operands'
+import { Operand, SimpleOperand } from '../aritmethic/operand'
 import * as utils from '../utils'
 import log from '../console/log'
 
-function _elementalOperand(baseMin: number, baseMax: number, exponentMax?: number): Operand {
-  const base = Math.max(1, utils.randomIntNumber(baseMin, baseMax)) * utils.randomSign()
-  const exponent = (() => {
-    if (exponentMax !== undefined) {
-      return utils.randomIntNumber(1, exponentMax)
-    }
-    return 1
-  })()
+function simpleOperand(difficulty: number): Operand {
+  const numMax = Math.round(10 * Math.max(1, difficulty))
+  const num = utils.randomIntNumber(2, numMax) * utils.randomSign()
+  const denom = 1
+  const exp = Math.random() > (1 - Math.min(0.5, 0.05 * Math.round(difficulty)))
+    ? utils.randomIntNumber(1, Math.min(5, Math.max(1, Math.floor(numMax / num))))
+    : 1
   
-  return new Integer(base, exponent)
-}
-
-function elementalOperand(difficulty: number): Operand {
-  const baseMax = Math.round(10 * Math.max(1, difficulty))
-  const exponentMax = Math.random() > (1 - Math.min(0.5, 0.05 * Math.round(difficulty)))
-    ? Math.max(2, Math.min(3, Math.round(difficulty)))
-    : undefined
-  
-  return _elementalOperand(2, baseMax, exponentMax)
+  return new SimpleOperand(num, denom, exp)
 }
 
 function operationalOperand(difficulty: number, oprSelection: Operator[]): Operation {
   const oprCount = utils.randomIntNumber(1, Math.max(1, Math.min(4, Math.floor(difficulty))))
   const oprs = [...Array(oprCount).keys()].map((_) => utils.randomOperator(oprSelection))
-  const opnds = [elementalOperand(difficulty)]
-    .concat(oprs.map((_) => elementalOperand(difficulty)))
+  const opnds = [simpleOperand(difficulty)]
+    .concat(oprs.map((_) => simpleOperand(difficulty)))
   const rtchdOOs = utils.fixAndRetouch(opnds, oprs)
   
   return new Operation(rtchdOOs[0], rtchdOOs[1])
@@ -38,7 +28,7 @@ function operationalOperand(difficulty: number, oprSelection: Operator[]): Opera
 function operand(difficulty: number): Operand {
   return Math.random() > (1 - Math.min(0.5, 0.05 * Math.round(difficulty)))
     ? operationalOperand(difficulty, [Operator.Addition, Operator.Subtraction])
-    : elementalOperand(difficulty)
+    : simpleOperand(difficulty)
 }
 
 export function operation(difficulty: number): Operation {

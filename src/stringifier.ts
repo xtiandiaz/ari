@@ -1,6 +1,6 @@
-import { OperandKind } from './aritmethic/operands'
+import { OperandKind } from './aritmethic/operand'
 import Operator from './aritmethic/operator'
-import type { Operand, Integer, Fraction } from './aritmethic/operands'
+import type { Operand, SimpleOperand } from './aritmethic/operand'
 import type { Operation } from './aritmethic/operation'
 
 function exponentString(exponent: number): string {
@@ -21,18 +21,15 @@ function exponentString(exponent: number): string {
       case '8': return '⁸'
       case '9': return '⁹'
     }
-  }).join()
+  }).join('')
 }
 
-function integerString(int: Integer, parenthesized: boolean): string {
-  parenthesized ||= int.baseRawValue < 0 && int.exponent > 1
+function simpleOperandString(frac: SimpleOperand, parenthesized: boolean): string {
+  parenthesized ||= frac.numerator < 0 && frac.exponent > 1
   
-  return `${parenthesized ? `(${int.base})` : `${int.base}`}${exponentString(int.exponent)}`
-}
-
-function fractionString(frac: Fraction, parenthesized: boolean): string {
-  parenthesized ||= frac.baseRawValue < 0 && frac.exponent > 1
-  const fracStr = `${frac.baseNumerator}/${frac.baseDenominator}`
+  const fracStr = frac.denominator !== 1 
+    ? `${frac.numerator}/${frac.denominator}`
+    : `${frac.numerator}`
   
   return `${parenthesized ? `(${fracStr})` : `${fracStr}`}${exponentString(frac.exponent)}`
 }
@@ -40,12 +37,12 @@ function fractionString(frac: Fraction, parenthesized: boolean): string {
 function operationSegmentString(opnd: Operand, lhsOpr?: Operator, rhsOpr?: Operator): string {
   let shouldParenthesize = false
   switch (opnd.kind) {
-    case OperandKind.Operation:
+    case OperandKind.Compound:
       shouldParenthesize = !(lhsOpr === undefined || lhsOpr === Operator.Addition) ||
         (rhsOpr !== undefined && [Operator.Multiplication, Operator.Division].includes(rhsOpr!))
       break
-    default:
-      shouldParenthesize = lhsOpr === Operator.Subtraction && opnd.baseRawValue < 0
+    case OperandKind.Simple:
+      shouldParenthesize = lhsOpr === Operator.Subtraction && (<SimpleOperand>opnd).numerator < 0
       break
   }
   
@@ -65,11 +62,9 @@ function operationSegmentString(opnd: Operand, lhsOpr?: Operator, rhsOpr?: Opera
 
 export function operandString(opnd: Operand, parenthesized: boolean = false): string {
   switch (opnd.kind) {
-    case OperandKind.Integer:
-      return integerString(<Integer>opnd, parenthesized)
-    case OperandKind.Fraction:
-      return fractionString(<Fraction>opnd, parenthesized)
-    case OperandKind.Operation:
+    case OperandKind.Simple:
+      return simpleOperandString(<SimpleOperand>opnd, parenthesized)
+    case OperandKind.Compound:
       return operationString(<Operation>opnd, parenthesized)
   }
 }

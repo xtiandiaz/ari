@@ -1,5 +1,5 @@
 import Operator from './aritmethic/operator'
-import { Operand, OperandKind, Integer } from './aritmethic/operands'
+import { Operand, OperandKind, SimpleOperand } from './aritmethic/operand'
 import { Operation } from './aritmethic/operation'
 
 export function round(num: number, fracDigits: number): number {
@@ -40,17 +40,18 @@ export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], O
     let rhsOpr = oprs[i]
     
     switch (opnd.kind) {
-      case OperandKind.Operation:
+      case OperandKind.Compound:
         if (lhsOpr == Operator.Division && opnd.rawValue == 0) {
           const rndOpr = randomOperator([Operator.Addition, Operator.Subtraction])
-          const rndOpnd = new Integer(randomIntNumber(1, 10))
+          const rndOpnd = new SimpleOperand(randomIntNumber(1, 10))
           const _opnd = <Operation>opnd
           opnd = new Operation(_opnd.operands.concat([rndOpnd]), _opnd.operators.concat([rndOpr]))
         }
         continue
-      default:
+      case OperandKind.Simple:
         if (opnd.rawValue < 0 && rhsOpr == Operator.Addition) {
-          opnd = opnd.operated(Operator.Multiplication, new Integer(-1))
+          const sOpnd = <SimpleOperand>opnd
+          opnd = new SimpleOperand(sOpnd.numerator * -1, sOpnd.denominator, sOpnd.exponent)
           rhsOpr = Operator.Subtraction
         }
         break

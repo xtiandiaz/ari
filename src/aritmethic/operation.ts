@@ -1,4 +1,4 @@
-import { Operand, OperandKind } from './operands'
+import { Operand, OperandKind } from './operand'
 import Operator from './operator'
 import { OperationError } from '../errors'
 
@@ -11,7 +11,7 @@ export class Operation extends Operand {
   private static _id = 0
 
   constructor(operands: Operand[], operators: Operator[]) {
-    super(OperandKind.Operation, 1)
+    super(OperandKind.Compound, 1)
     
     this.id = Operation._id++
 
@@ -30,17 +30,9 @@ export class Operation extends Operand {
   get rawValue(): number {
     return this.result.rawValue
   }
-  
-  get baseRawValue(): number {
-    return this.rawValue
-  }
 
   operated(opr: Operator, rhsOpnd: Operand): Operand {
     return this.result.operated(opr, rhsOpnd)
-  }
-
-  simplified(): Operand {
-    return this.result
   }
 
   static calculate(opnds: Operand[], oprs: Operator[]): Operand {
@@ -54,13 +46,13 @@ export class Operation extends Operand {
       switch (opr) {
         case Operator.Multiplication:
         case Operator.Division:
-          squash = squash.operated(opr, rhsOpnd.simplified())
+          squash = squash.operated(opr, rhsOpnd)
           continue
         case Operator.Addition:
         case Operator.Subtraction:
           squashedOpnds.push(squash)
           sweepOprs.push(opr)
-          squash = rhsOpnd.simplified()
+          squash = rhsOpnd
           continue
       }
     }
@@ -69,9 +61,9 @@ export class Operation extends Operand {
 
     let result = squashedOpnds[0]
     for (let i = 0; i < sweepOprs.length; i++) {
-      result = result.operated(sweepOprs[i], squashedOpnds[i + 1].simplified())
+      result = result.operated(sweepOprs[i], squashedOpnds[i + 1])
     }
 
-    return result.simplified()
+    return result
   }
 }

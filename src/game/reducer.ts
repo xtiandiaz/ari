@@ -5,7 +5,7 @@ import * as stringify from '../stringifier'
 export default class GameReducer {
   readonly state: GameState
   
-  constructor(startDifficulty: number = 0.1) {
+  constructor(startDifficulty: number = 5) {
     this.state = new GameState(factory.operation(startDifficulty), startDifficulty)
   }
   
