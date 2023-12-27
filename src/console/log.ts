@@ -21,9 +21,14 @@ class Log {
     ))
   }
   
-  mistake(score: string, isOver: boolean): void {
-    const str = isOver ? `GAME OVER (${score})` : 'Not correct yet... Try again!'
-    console.log(this._colorize(str, OutputColor.Magenta))
+  mistake(hint?: string): void {
+    console.log(this._colorize('Not correct yet... Try again!', OutputColor.Magenta))
+  }
+  
+  gameOver(score: string, correctResult: string): void {
+    console.log(this._colorize(`= ${correctResult}`, OutputColor.Yellow))
+    console.log(this._colorize('GAME OVER', OutputColor.Magenta))
+    console.log(this._colorize(`✔️ ${score}`, OutputColor.Green))
   }
   
   error(err: Error): void {

@@ -25,8 +25,12 @@ async function main() {
       if (reducer.evaluate(inputResult)) {
         log.correctAnswer(reducer.state.score, reducer.state.isRetry)
       } else {
-        log.mistake(reducer.state.score, reducer.state.isOver)
-        log.health(reducer.state.health)
+        if (reducer.state.isOver) {
+          log.gameOver(reducer.state.score, stringify.operandString(reducer.state.stage.result))
+        } else {
+          log.mistake()
+          log.health(reducer.state.health)
+        }
       }
     } catch(error) {
       log.error(error)
