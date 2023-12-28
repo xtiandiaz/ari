@@ -1,9 +1,5 @@
-enum OutputColor {
-  Red = '31m',
-  Green = '32m',
-  Yellow = '33m',
-  Magenta = '35m'
-}
+import { OutputColor } from './io'
+import { Score } from '../game/state'
 
 class Log {
   debugMode = false
@@ -14,21 +10,34 @@ class Log {
     )
   }
   
-  correctAnswer(score: string, isRetry: boolean): void {
-    console.log(this._colorize(
-      `Correct! (${score})`,
-      isRetry ? OutputColor.Yellow : OutputColor.Green
-    ))
+  score(val: Score, prefix?: string): void {
+    console.log(this._colorize(`${prefix ?? ''}${val.hits}/${val.hits + val.misses} ✔️`, OutputColor.Green))
   }
   
-  mistake(hint?: string): void {
-    console.log(this._colorize('Not correct yet... Try again!', OutputColor.Magenta))
+  correctAnswer(score: Score, isRetry: boolean): void {
+    if (isRetry) {
+      console.log(this._colorize(`Good!`, OutputColor.Yellow))
+    } else {
+      this.score(score, 'Perfect! ')
+    }
   }
   
-  gameOver(score: string, correctResult: string): void {
+  mistake(clue?: string): void {
+    console.log(this._colorize('Not there yet... Try again!', OutputColor.Magenta))
+    
+    if (clue) {
+      console.log(this._colorize(`Psst! ${clue}`, OutputColor.Gray))
+    }
+  }
+  
+  gameOver(score: Score, correctResult: string): void {
     console.log(this._colorize(`= ${correctResult}`, OutputColor.Yellow))
     console.log(this._colorize('GAME OVER', OutputColor.Magenta))
-    console.log(this._colorize(`✔️ ${score}`, OutputColor.Green))
+    this.score(score)
+  }
+  
+  info(msg: string, color?: OutputColor): void {
+    console.log(color ? this._colorize(msg, color) : msg)
   }
   
   error(err: Error): void {

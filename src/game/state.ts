@@ -1,17 +1,28 @@
 import type { Operation } from '../aritmethic/operation'
 
+export enum SolutionClue {
+  checkSign,
+  simplify
+}
+
+export interface Score {
+  hits: number
+  misses: number
+}
+
 export default class GameState {
   stage: Operation
-  hits = 0
-  misses = 0
+  score: Score
   health: number
   startDifficulty: number
   isRetry = false
+  clue?: SolutionClue
   
   constructor(firstStage: Operation, startDifficulty: number, startHealth: number = 3) {
     this.stage = firstStage
     this.health = startHealth
     this.startDifficulty = startDifficulty
+    this.score = { hits: 0, misses: 0 }
   }
   
   get isOver(): boolean {
@@ -19,10 +30,6 @@ export default class GameState {
   }
   
   get difficulty(): number {
-    return this.startDifficulty + this.hits / 10
-  }
-  
-  get score(): string {
-    return `${this.hits}/${this.hits + this.misses}`
+    return this.startDifficulty + this.score.hits / 10
   }
 }

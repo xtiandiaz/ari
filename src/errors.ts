@@ -1,8 +1,10 @@
 import type { Operand } from './aritmethic/operand'
 import type Operator from './aritmethic/operator'
-import * as stringify from './stringifier'
+import { operandString } from './stringifier'
 
 export class OperandError extends Error {
+  static malformedStringRepresentation = new OperandError('[Operand] Malformed string representation')
+  
   static unsupportedExponent(exponent: number): OperandError {
     return new OperandError(`[Operand] Invalid exponent ${exponent}`)
   }
@@ -15,7 +17,7 @@ export class OperationError extends Error {
   
   static notImplemented(lhsOpnd: Operand, opr: Operator, rhsOpnd: Operand): OperationError {
     return new OperationError(
-      `${stringify.operandString(lhsOpnd)} not implemented for '${opr}' operation with ${stringify.operandString(rhsOpnd)}`
+      `${operandString(lhsOpnd)} not implemented for '${opr}' operation with ${operandString(rhsOpnd)}`
     )
   }
 }

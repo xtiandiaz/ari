@@ -1,6 +1,7 @@
 import Operator from './aritmethic/operator'
 import { Operand, OperandKind, SimpleOperand } from './aritmethic/operand'
 import { Operation } from './aritmethic/operation'
+import { OperandError } from './errors'
 
 export function round(num: number, fracDigits: number): number {
   return Number(num.toFixed(fracDigits))
@@ -62,4 +63,22 @@ export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], O
   }
 
   return [fxdOpnds, fxdOprs]
+}
+
+export function simpleOperandFromString(str: string): SimpleOperand {
+  if (!/^-?[0-9]+(\/[0-9]+)?$/.test(str)) {
+    throw OperandError.malformedStringRepresentation
+  }
+  
+  const parts = str.split('/').map((sn) => Number(sn))
+  return new SimpleOperand(parts[0], parts.length > 1 ? parts[1] : undefined)
+}
+
+export function altErrorMessage(err: Error): string | undefined {
+  switch (err) {
+    case OperandError.malformedStringRepresentation:
+      return 'Hmm?'
+    default:
+      return undefined
+  }
 }

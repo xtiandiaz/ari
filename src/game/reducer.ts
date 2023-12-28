@@ -1,6 +1,6 @@
+import type { SimpleOperand } from '../aritmethic/operand'
 import GameState from './state'
 import * as factory from './factory'
-import * as stringify from '../stringifier'
 
 export default class GameReducer {
   readonly state: GameState
@@ -9,22 +9,26 @@ export default class GameReducer {
     this.state = new GameState(factory.operation(startDifficulty), startDifficulty)
   }
   
-  evaluate(inputResult: string): boolean {
-    if (inputResult === stringify.operandString(this.state.stage.result)) {
+  evaluate(inputResult: SimpleOperand): boolean {
+    if (this.state.stage.result.isEqualTo(inputResult)) {
       if (!this.state.isRetry) {
-        this.state.hits++
+        this.state.score.hits++
       }
-      this.state.stage = factory.operation(this.state.difficulty)
-      this.state.isRetry = false
       return true
     }
     
     if (!this.state.isRetry) {
-      this.state.misses++
+      this.state.score.misses++
       this.state.health--
       this.state.isRetry = true
+      // this.state.clue = ...
     }
-    
     return false
+  }
+  
+  resume(): void {
+    this.state.stage = factory.operation(this.state.difficulty)
+    this.state.isRetry = false
+    this.state.clue = undefined
   }
 }

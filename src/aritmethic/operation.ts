@@ -1,4 +1,4 @@
-import { Operand, OperandKind } from './operand'
+import { Operand, SimpleOperand, OperandKind } from './operand'
 import Operator from './operator'
 import { OperationError } from '../errors'
 
@@ -6,7 +6,7 @@ export class Operation extends Operand {
   readonly id: number
   operands: Operand[]
   operators: Operator[]
-  result: Operand
+  result: SimpleOperand
 
   private static _id = 0
 
@@ -31,11 +31,11 @@ export class Operation extends Operand {
     return this.result.rawValue
   }
 
-  operated(opr: Operator, rhsOpnd: Operand): Operand {
+  operated(opr: Operator, rhsOpnd: Operand): SimpleOperand {
     return this.result.operated(opr, rhsOpnd)
   }
 
-  static calculate(opnds: Operand[], oprs: Operator[]): Operand {
+  static calculate(opnds: Operand[], oprs: Operator[]): SimpleOperand {
     let squashedOpnds: Operand[] = []
     let sweepOprs: Operator[] = []
     let squash = opnds[0]
@@ -64,6 +64,6 @@ export class Operation extends Operand {
       result = result.operated(sweepOprs[i], squashedOpnds[i + 1])
     }
 
-    return result
+    return <SimpleOperand>result
   }
 }

@@ -1,7 +1,8 @@
-import { OperandKind } from './aritmethic/operand'
-import Operator from './aritmethic/operator'
 import type { Operand, SimpleOperand } from './aritmethic/operand'
 import type { Operation } from './aritmethic/operation'
+import Operator from './aritmethic/operator'
+import { OperandKind } from './aritmethic/operand'
+import { SolutionClue } from './game/state'
 
 function exponentString(exponent: number): string {
   if (exponent == 1) {
@@ -81,4 +82,15 @@ export function operationString(optn: Operation, parenthesized: boolean = false)
   }
   
   return parenthesized ? `(${str})` : str
+}
+
+export function clueString(clue?: SolutionClue): string | undefined {
+  switch (clue) {
+    case SolutionClue.checkSign:
+      return 'Check the sign...'
+    case SolutionClue.simplify:
+      return 'Simplify to the simplest fractional...'
+    default:
+      return undefined
+  }
 }

@@ -22,14 +22,14 @@ export abstract class Operand {
   
   abstract get rawValue(): number
   
-  abstract operated(opr: Operator, rhsOpnd: Operand): Operand
+  abstract operated(opr: Operator, rhsOpnd: Operand): SimpleOperand
 }
 
 export class SimpleOperand extends Operand {  
   readonly numerator: number
   readonly denominator: number
   
-  constructor(numerator: number, denominator: number = 1, exponent: number = 1) {
+  constructor(numerator: number, denominator: number = 1, exponent: number = 1, simplified: boolean = true) {
     super(OperandKind.Simple, exponent)
     
     if (denominator == 0) {
@@ -39,7 +39,7 @@ export class SimpleOperand extends Operand {
       numerator *= -1
     }
     
-    const gcd = Math.abs(utils.gcd(numerator, denominator))
+    const gcd = simplified ? Math.abs(utils.gcd(numerator, denominator)) : 1
     this.numerator = numerator / gcd
     this.denominator = denominator / gcd
   }
@@ -60,13 +60,19 @@ export class SimpleOperand extends Operand {
     return Math.pow(this.denominator, this.exponent)
   }
   
-  operated(opr: Operator, rhsOpnd: Operand): Operand {
+  operated(opr: Operator, rhsOpnd: Operand): SimpleOperand {
     switch (rhsOpnd.kind) {
       case OperandKind.Simple:
         return this._operated(opr, <SimpleOperand>rhsOpnd)
       case OperandKind.Compound:
         return this._operated(opr, new SimpleOperand(rhsOpnd.rawValue))
     }
+  }
+  
+  isEqualTo(othr: SimpleOperand): boolean {
+    return this.numerator == othr.numerator && 
+      this.denominator == othr.denominator && 
+      this.exponent == othr.exponent
   }
   
   private _operated(opr: Operator, rhsOpnd: SimpleOperand): SimpleOperand {
