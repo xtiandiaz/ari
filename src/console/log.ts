@@ -26,13 +26,13 @@ class Log {
     console.log(this._colorize('Not there yet... Try again!', OutputColor.Magenta))
     
     if (clue) {
-      console.log(this._colorize(`Psst! ${clue}`, OutputColor.Gray))
+      console.log(this._colorize(`(Psst! ${clue})`, OutputColor.Gray))
     }
   }
   
   gameOver(score: Score, correctResult: string): void {
     console.log(this._colorize(`= ${correctResult}`, OutputColor.Yellow))
-    console.log(this._colorize('GAME OVER', OutputColor.Magenta))
+    console.log(this._colorize('\nGAME OVER', OutputColor.Magenta))
     this.score(score)
   }
   

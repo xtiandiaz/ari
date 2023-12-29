@@ -10,7 +10,7 @@ export interface Score {
   misses: number
 }
 
-export default class GameState {
+export class GameState {
   stage: Operation
   score: Score
   health: number

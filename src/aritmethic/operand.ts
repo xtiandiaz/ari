@@ -29,7 +29,7 @@ export class SimpleOperand extends Operand {
   readonly numerator: number
   readonly denominator: number
   
-  constructor(numerator: number, denominator: number = 1, exponent: number = 1, simplified: boolean = true) {
+  constructor(numerator: number, denominator: number = 1, exponent: number = 1) {
     super(OperandKind.Simple, exponent)
     
     if (denominator == 0) {
@@ -39,9 +39,8 @@ export class SimpleOperand extends Operand {
       numerator *= -1
     }
     
-    const gcd = simplified ? Math.abs(utils.gcd(numerator, denominator)) : 1
-    this.numerator = numerator / gcd
-    this.denominator = denominator / gcd
+    this.numerator = numerator
+    this.denominator = denominator
   }
   
   get baseRawValue(): number {
@@ -69,10 +68,24 @@ export class SimpleOperand extends Operand {
     }
   }
   
-  isEqualTo(othr: SimpleOperand): boolean {
-    return this.numerator == othr.numerator && 
-      this.denominator == othr.denominator && 
-      this.exponent == othr.exponent
+  simplified(): SimpleOperand {
+    let num = this.rawNumerator
+    let den = this.rawDenominator
+    const gcd = Math.abs(utils.gcd(num, den))
+    
+    return new SimpleOperand(num / gcd, den / gcd, 1)
+  }
+  
+  isEqualTo(other: SimpleOperand): boolean {
+    return this.numerator == other.numerator && 
+      this.denominator == other.denominator && 
+      this.exponent == other.exponent
+  }
+  
+  isAbsEqualTo(other: SimpleOperand): boolean {
+    return Math.abs(this.numerator) == Math.abs(other.numerator) &&
+      Math.abs(this.denominator) == Math.abs(other.denominator) &&
+      this.exponent == other.exponent      
   }
   
   private _operated(opr: Operator, rhsOpnd: SimpleOperand): SimpleOperand {

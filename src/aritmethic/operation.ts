@@ -64,6 +64,6 @@ export class Operation extends Operand {
       result = result.operated(sweepOprs[i], squashedOpnds[i + 1])
     }
 
-    return <SimpleOperand>result
+    return (<SimpleOperand>result).simplified()
   }
 }

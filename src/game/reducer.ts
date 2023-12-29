@@ -1,5 +1,5 @@
 import type { SimpleOperand } from '../aritmethic/operand'
-import GameState from './state'
+import { GameState, SolutionClue } from './state'
 import * as factory from './factory'
 
 export default class GameReducer {
@@ -9,8 +9,10 @@ export default class GameReducer {
     this.state = new GameState(factory.operation(startDifficulty), startDifficulty)
   }
   
-  evaluate(inputResult: SimpleOperand): boolean {
-    if (this.state.stage.result.isEqualTo(inputResult)) {
+  evaluate(ans: SimpleOperand): boolean {
+    const correctAns = this.state.stage.result
+    
+    if (ans.isEqualTo(correctAns)) {
       if (!this.state.isRetry) {
         this.state.score.hits++
       }
@@ -20,9 +22,19 @@ export default class GameReducer {
     if (!this.state.isRetry) {
       this.state.score.misses++
       this.state.health--
-      this.state.isRetry = true
-      // this.state.clue = ...
+      this.state.isRetry = true  
     }
+    
+    this.state.clue = (() => {
+      const simpAns = ans.simplified()
+      if (simpAns.isEqualTo(correctAns)) {
+        return SolutionClue.simplify  
+      } else if (ans.isAbsEqualTo(correctAns) || simpAns.isAbsEqualTo(correctAns)) {
+        return SolutionClue.checkSign
+      }
+      return undefined
+    })()
+    
     return false
   }
   
