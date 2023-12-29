@@ -7,14 +7,11 @@
   "scripts": {
     "play": "tsx src/main.mts"
   },
-  "author": "Cristian Diaz",
+  "author": "Cristian Díaz",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.10.1",
     "tsx": "^4.6.1",
     "typescript": "^5.3.2"
-  },
-  "dependencies": {
-    "say": "^0.16.0"
   }
 }
