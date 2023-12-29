@@ -1,8 +1,8 @@
-import { Operation } from '../aritmethic/operation'
+import type { Operand } from '../aritmethic/operand'
 import Operator from '../aritmethic/operator'
-import { Operand, SimpleOperand } from '../aritmethic/operand'
+import SimpleOperand from '../aritmethic/simple-operand'
+import Operation from '../aritmethic/operation'
 import * as utils from '../utils'
-import log from '../console/log'
 
 function simpleOperand(difficulty: number): Operand {
   const numMax = Math.round(10 * Math.max(1, difficulty))
@@ -36,7 +36,6 @@ export function operation(difficulty: number): Operation {
   const opnds = [...Array(opndCount).keys()].map((_) => operand(difficulty))
   const oprs = [...Array(opndCount - 1)].map(_ => utils.randomOperator())
   const fxdOOs = utils.fixAndRetouch(opnds, oprs)
-  log.debug(`difficulty: ${utils.round(difficulty, 1)}`, fxdOOs)
   
   return new Operation(fxdOOs[0], fxdOOs[1])
 }

@@ -1,5 +1,6 @@
-import type { Operand, SimpleOperand } from './aritmethic/operand'
-import type { Operation } from './aritmethic/operation'
+import type { Operand } from './aritmethic/operand'
+import type SimpleOperand from './aritmethic/simple-operand'
+import type Operation from './aritmethic/operation'
 import Operator from './aritmethic/operator'
 import { OperandKind } from './aritmethic/operand'
 import { SolutionClue } from './game/state'

@@ -1,4 +1,4 @@
-import type { Operand } from './aritmethic/operand'
+import type { Operand } from './aritmethic/simple-operand'
 import type Operator from './aritmethic/operator'
 import { operandString } from './stringifier'
 

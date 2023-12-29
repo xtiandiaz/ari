@@ -1,13 +1,5 @@
 import * as readline from 'readline'
 
-export enum OutputColor {
-  Red = '31m',
-  Green = '32m',
-  Yellow = '33m',
-  Magenta = '35m',
-  Gray = '90m'
-}
-
 const rli = readline.createInterface({
   input: process.stdin,
   output: process.stdout

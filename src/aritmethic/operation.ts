@@ -1,18 +1,19 @@
-import { Operand, SimpleOperand, OperandKind } from './operand'
 import Operator from './operator'
+import { Operand, OperandKind } from './operand'
+import SimpleOperand from './simple-operand'
 import { OperationError } from '../errors'
 
-export class Operation extends Operand {
+export default class Operation implements Operand {
   readonly id: number
+  readonly kind = OperandKind.Compound
+  
   operands: Operand[]
   operators: Operator[]
   result: SimpleOperand
 
   private static _id = 0
 
-  constructor(operands: Operand[], operators: Operator[]) {
-    super(OperandKind.Compound, 1)
-    
+  constructor(operands: Operand[], operators: Operator[]) {    
     this.id = Operation._id++
 
     if (operands.length < 2) {
@@ -31,7 +32,7 @@ export class Operation extends Operand {
     return this.result.rawValue
   }
 
-  operated(opr: Operator, rhsOpnd: Operand): SimpleOperand {
+  operated(opr: Operator, rhsOpnd: Operand): Operand {
     return this.result.operated(opr, rhsOpnd)
   }
 

@@ -1,4 +1,4 @@
-import type { SimpleOperand } from '../aritmethic/operand'
+import type SimpleOperand from '../aritmethic/simple-operand'
 import { GameState, SolutionClue } from './state'
 import * as factory from './factory'
 
