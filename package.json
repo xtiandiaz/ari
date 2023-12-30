@@ -8,7 +8,7 @@
     "play": "tsx src/main.mts"
   },
   "author": "Cristian Díaz",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.1",
     "tsx": "^4.6.1",
