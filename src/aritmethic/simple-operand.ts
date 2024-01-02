@@ -1,6 +1,6 @@
 import Operator from './operator'
 import { Operand, OperandKind } from './operand'
-import { OperationError, OperandError } from '../errors'
+import { OperandError, OperationError } from '../errors'
 import * as utils from '../utils'
 
 export default class SimpleOperand implements Operand {
@@ -11,7 +11,7 @@ export default class SimpleOperand implements Operand {
   
   constructor(numerator: number, denominator: number = 1, exponent: number = 1) {
     if (denominator == 0) {
-      throw OperationError.divisionByZero
+      throw OperandError.divisionByZero
     } else if (denominator < 0) {
       denominator *= -1
       numerator *= -1
@@ -92,6 +92,8 @@ export default class SimpleOperand implements Operand {
           this.rawNumerator * rhsOpnd.rawDenominator, 
           this.rawDenominator * rhsOpnd.rawNumerator
         )
+      default:
+        throw OperationError.notImplemented(this, opr, rhsOpnd)
     }
   }
 }

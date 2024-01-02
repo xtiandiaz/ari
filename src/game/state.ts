@@ -8,6 +8,7 @@ export enum SolutionClue {
 export interface Score {
   hits: number
   misses: number
+  points: number
 }
 
 export class GameState {
@@ -22,7 +23,7 @@ export class GameState {
     this.stage = firstStage
     this.health = startHealth
     this.startDifficulty = startDifficulty
-    this.score = { hits: 0, misses: 0 }
+    this.score = { hits: 0, misses: 0, points: 0 }
   }
   
   get isOver(): boolean {

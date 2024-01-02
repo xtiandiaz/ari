@@ -8,15 +8,15 @@ function simpleOperand(difficulty: number): Operand {
   const numMax = Math.round(10 * Math.max(1, difficulty))
   const num = utils.randomIntNumber(2, numMax) * utils.randomSign()
   const denom = 1
-  const exp = Math.random() > (1 - Math.min(0.5, 0.05 * Math.round(difficulty)))
-    ? utils.randomIntNumber(1, Math.min(5, Math.max(1, Math.floor(numMax / num))))
-    : 1
-  
+  const exp = utils.randomChoice(
+    [utils.randomIntNumber(1, utils.clamp(Math.floor(numMax / num), 1, 5)), 1],
+    [utils.clamp(0.05 * difficulty, 0.05, 0.5)]
+  )
   return new SimpleOperand(num, denom, exp)
 }
 
-function operationalOperand(difficulty: number, oprSelection: Operator[]): Operation {
-  const oprCount = utils.randomIntNumber(1, Math.max(1, Math.min(4, Math.floor(difficulty))))
+function compoundOperand(difficulty: number, oprSelection: Operator[]): Operation {
+  const oprCount = utils.randomIntNumber(1, utils.clamp(Math.floor(difficulty), 1, 4))
   const oprs = [...Array(oprCount).keys()].map((_) => utils.randomOperator(oprSelection))
   const opnds = [simpleOperand(difficulty)]
     .concat(oprs.map((_) => simpleOperand(difficulty)))
@@ -26,9 +26,13 @@ function operationalOperand(difficulty: number, oprSelection: Operator[]): Opera
 }
 
 function operand(difficulty: number): Operand {
-  return Math.random() > (1 - Math.min(0.5, 0.05 * Math.round(difficulty)))
-    ? operationalOperand(difficulty, [Operator.addition, Operator.subtraction])
-    : simpleOperand(difficulty)
+  return utils.randomChoice(
+    [
+      compoundOperand(difficulty, [Operator.addition, Operator.subtraction]), 
+      simpleOperand(difficulty)
+    ],
+    [utils.clamp(0.05 * difficulty, 0.05, 0.5)]
+  )
 }
 
 export function operation(difficulty: number): Operation {

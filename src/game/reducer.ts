@@ -15,6 +15,7 @@ export default class GameReducer {
     if (ans.isEqualTo(correctAns)) {
       if (!this.state.isRetry) {
         this.state.score.hits++
+        this.state.score.points += Math.round(this.state.difficulty * 10)
       }
       return true
     }

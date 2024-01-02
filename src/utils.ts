@@ -2,10 +2,14 @@ import Operator from './aritmethic/operator'
 import { Operand, OperandKind } from './aritmethic/operand'
 import SimpleOperand from './aritmethic/simple-operand'
 import Operation from './aritmethic/operation'
-import { OperandError } from './errors'
+import { OperandError, ProbabilityError } from './errors'
 
-export function round(num: number, fracDigits: number): number {
-  return Number(num.toFixed(fracDigits))
+export function round(num: number, fractionDigits: number): number {
+  return Number(num.toFixed(fractionDigits))
+}
+
+export function clamp(num: number, min: number, max: number): number {
+  return Math.max(min, Math.min(num, max))
 }
 
 export function gcd(a: number, b: number) {
@@ -13,6 +17,57 @@ export function gcd(a: number, b: number) {
     return a
   }
   return gcd(b, a % b)
+}
+
+export function randomChoice<T>(selection: T[], probs: number[] = []): T {
+  const totalProb = probs.reduce((acc, curVal) => acc + curVal, 0)
+  if (totalProb > 1) {
+    throw ProbabilityError.overflow
+  }
+  if (probs.length < selection.length) {
+    const diff = selection.length - probs.length
+    const probShare = (1 - totalProb) / diff
+    probs = probs.concat([...Array(diff).keys()].map((_) => probShare))
+  }
+  const choices = selection.map((c, i) => {
+    return {
+      choice: c,
+      prob: probs[i]
+    }})
+    .sort((a, b) => a.prob - b.prob)
+  const randProb = Math.random()
+  // console.log(choices, randProb)
+  
+  let accProb = 0
+  let choice: T | undefined
+  for (const c of choices) {
+    accProb += c.prob
+    if (randProb <= accProb) {
+      choice = c.choice
+      break
+    }
+  }
+  return choice ?? choices[choices.length - 1].choice
+}
+
+export function probability(weight: number, totalWeight: number, min: number = 0, max: number = 1): number {
+  min = clamp(min, 0, 1)
+  max = clamp(max, min, 1)
+  weight = Math.max(0, weight)
+  totalWeight = clamp(totalWeight, 1, Math.max(weight, totalWeight))
+  
+  return clamp((max - min) * weight / totalWeight, 0, 1)
+}
+
+export function randomWeightedChoice<T>(selection: T[], weights: number[]): T {
+  if (selection.length < 2 || weights.length != selection.length) {
+    throw ProbabilityError.unbalance(selection, weights)
+  }
+  const totalWeight = weights.reduce((acc, curVal) => acc + curVal, 0)
+  if (totalWeight <= 0) {
+    throw ProbabilityError.nullTotalWeight
+  }
+  return randomChoice(selection, weights.map((w) => probability(w, totalWeight)))
 }
 
 const allOperators = Object.values(Operator)
@@ -49,7 +104,7 @@ export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], O
           const _opnd = <Operation>opnd
           opnd = new Operation(_opnd.operands.concat([rndOpnd]), _opnd.operators.concat([rndOpr]))
         }
-        continue
+        break
       case OperandKind.Simple:
         if (opnd.rawValue < 0 && rhsOpr == Operator.addition) {
           const sOpnd = <SimpleOperand>opnd

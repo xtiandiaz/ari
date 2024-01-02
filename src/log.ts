@@ -14,8 +14,11 @@ export default class Log {
     )
   }
   
-  score(val: Score, prefix?: string): void {
-    console.log(colorOutput(`${prefix ?? ''}${val.hits}/${val.hits + val.misses} ✔️`, OutputColor.Green))
+  score(val: Score, prefix?: string, includePoints: boolean = false): void {
+    console.log(
+      colorOutput(`${prefix ?? ''}${val.hits}/${val.hits + val.misses} ✔️`, OutputColor.Green),
+      includePoints ? colorOutput(`  ${val.points} pts`, OutputColor.White) : ''
+    )
   }
   
   correctAnswer(score: Score, isRetry: boolean): void {
@@ -37,7 +40,7 @@ export default class Log {
   gameOver(score: Score, correctResult: string): void {
     console.log(colorOutput(`= ${correctResult}`, OutputColor.Yellow))
     console.log(colorOutput('\nGAME OVER', OutputColor.Magenta))
-    this.score(score)
+    this.score(score, undefined, true)
   }
   
   info(msg: string, color?: OutputColor): void {
