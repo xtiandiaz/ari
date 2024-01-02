@@ -1,14 +1,14 @@
 export enum OperatorColor {
   LightBlue,
   Pink,
-  DarkBlue,
+  Blue,
   Purple
 }
 
 class Operator {
   static readonly addition = new Operator('+', OperatorColor.LightBlue)
   static readonly subtraction = new Operator('-', OperatorColor.Pink)
-  static readonly multiplication = new Operator('×', OperatorColor.DarkBlue)
+  static readonly multiplication = new Operator('×', OperatorColor.Blue)
   static readonly division = new Operator('÷', OperatorColor.Purple)
   
   readonly symbol: string

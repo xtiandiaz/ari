@@ -25,11 +25,16 @@ export function closeInput(): void {
 
 export enum OutputColor {
   Red = '31m',
+  LightRed = '1;31m',
   Green = '32m',
   Yellow = '33m',
   Blue = '34m',
+  LightBlue = '1;34m',
   Magenta = '35m',
+  LightMagenta = '1;35m',
   Cyan = '36m',
+  LightCyan = '1;36m',
+  White = '37m',
   Gray = '90m'
 }
 
@@ -41,15 +46,22 @@ export function colorOperationOutput(str: string): string {
   const outputOprColor = (oprColor: OperatorColor) => {
     switch (oprColor) {
       case OperatorColor.LightBlue:
-        return OutputColor.Cyan
+        return OutputColor.LightCyan
       case OperatorColor.Pink:
+        return OutputColor.LightRed
       case OperatorColor.Purple:
-        return OutputColor.Magenta
-      case OperatorColor.DarkBlue:
-        return OutputColor.Blue
+        return OutputColor.LightMagenta
+      case OperatorColor.Blue:
+        return OutputColor.LightBlue
     }
   }
-  return utils.colorOperators(str, (opr) => {
-    return colorOutput(opr.symbol, outputOprColor(opr.color))
-  })
+  return utils.colorOperators(
+    str, 
+    (opr) => {
+      return colorOutput(opr.symbol, outputOprColor(opr.color))
+    },
+    (othStr) => {
+      return colorOutput(othStr, OutputColor.White)
+    }
+  )
 }

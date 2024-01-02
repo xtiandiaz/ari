@@ -84,26 +84,33 @@ export function simpleOperandFromString(str: string): SimpleOperand {
   return new SimpleOperand(parts[0], parts.length > 1 ? parts[1] : undefined)
 }
 
-export function colorOperators(optnStr: string, coloring: (opr: Operator) => string): string {
+export function colorOperators(
+  optnStr: string, 
+  colorOpr: (opr: Operator) => string,
+  colorOthr: (othrStr: string) => string
+): string {
   const parts = optnStr.split(' ')
   let coloredParts: string[] = []
   
   for (let p of parts) {
     switch (p) {
       case Operator.addition.symbol:
-        p = coloring(Operator.addition)
+        p = colorOpr(Operator.addition)
         break
       case Operator.subtraction.symbol:
-        p = coloring(Operator.subtraction)
+        p = colorOpr(Operator.subtraction)
         break
       case Operator.multiplication.symbol:
-        p = coloring(Operator.multiplication)
+        p = colorOpr(Operator.multiplication)
         break
       case Operator.division.symbol:
-        p = coloring(Operator.division)
+        p = colorOpr(Operator.division)
         break
+      default:
+        p = colorOthr(p)
     }
     coloredParts.push(p)
   }
+  
   return coloredParts.join(' ')
 }
