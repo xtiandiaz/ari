@@ -45,12 +45,12 @@ export default class Operation implements Operand {
       const opr = oprs[i]
       const rhsOpnd = opnds[i + 1]
       switch (opr) {
-        case Operator.Multiplication:
-        case Operator.Division:
+        case Operator.multiplication:
+        case Operator.division:
           squash = squash.operated(opr, rhsOpnd)
           continue
-        case Operator.Addition:
-        case Operator.Subtraction:
+        case Operator.addition:
+        case Operator.subtraction:
           squashedOpnds.push(squash)
           sweepOprs.push(opr)
           squash = rhsOpnd

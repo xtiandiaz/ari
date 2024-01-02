@@ -40,26 +40,26 @@ function operationSegmentString(opnd: Operand, lhsOpr?: Operator, rhsOpr?: Opera
   let shouldParenthesize = false
   switch (opnd.kind) {
     case OperandKind.Compound:
-      shouldParenthesize = !(lhsOpr === undefined || lhsOpr === Operator.Addition) ||
-        (rhsOpr !== undefined && [Operator.Multiplication, Operator.Division].includes(rhsOpr!))
+      shouldParenthesize = !(lhsOpr === undefined || lhsOpr === Operator.addition) ||
+        (rhsOpr !== undefined && [Operator.multiplication, Operator.division].includes(rhsOpr!))
       break
     case OperandKind.Simple:
-      shouldParenthesize = lhsOpr === Operator.Subtraction && (<SimpleOperand>opnd).numerator < 0
+      shouldParenthesize = lhsOpr === Operator.subtraction && (<SimpleOperand>opnd).numerator < 0
       break
   }
   
   let str = operandString(opnd, shouldParenthesize)
   
   switch (str.substring(0, 1)) {
-    case Operator.Subtraction:
-      if (lhsOpr === Operator.Addition) {
+    case Operator.subtraction.symbol:
+      if (lhsOpr === Operator.addition) {
         str = str.substring(1)
-        lhsOpr = Operator.Subtraction
+        lhsOpr = Operator.subtraction
       }
       break
   }
   
-  return `${lhsOpr !== undefined ? ` ${lhsOpr} ` : ''}${str}`
+  return `${lhsOpr !== undefined ? ` ${lhsOpr.symbol} ` : ''}${str}`
 }
 
 export function operandString(opnd: Operand, parenthesized: boolean = false): string {

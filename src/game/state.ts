@@ -1,4 +1,4 @@
-import type { Operation } from '../aritmethic/operation'
+import type Operation from '../aritmethic/operation'
 
 export enum SolutionClue {
   checkSign,

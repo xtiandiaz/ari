@@ -27,7 +27,7 @@ function operationalOperand(difficulty: number, oprSelection: Operator[]): Opera
 
 function operand(difficulty: number): Operand {
   return Math.random() > (1 - Math.min(0.5, 0.05 * Math.round(difficulty)))
-    ? operationalOperand(difficulty, [Operator.Addition, Operator.Subtraction])
+    ? operationalOperand(difficulty, [Operator.addition, Operator.subtraction])
     : simpleOperand(difficulty)
 }
 

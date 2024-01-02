@@ -72,22 +72,22 @@ export default class SimpleOperand implements Operand {
   
   private _operated(opr: Operator, rhsOpnd: SimpleOperand): SimpleOperand {
     switch (opr) {
-      case Operator.Addition:
+      case Operator.addition:
         return new SimpleOperand(
           this.rawNumerator * rhsOpnd.rawDenominator + this.rawDenominator * rhsOpnd.rawNumerator,
           this.rawDenominator * rhsOpnd.rawDenominator
         )
-      case Operator.Subtraction:
+      case Operator.subtraction:
         return new SimpleOperand(
           this.rawNumerator * rhsOpnd.rawDenominator - this.rawDenominator * rhsOpnd.rawNumerator,
           this.rawDenominator * rhsOpnd.rawDenominator
         )
-      case Operator.Multiplication:
+      case Operator.multiplication:
         return new SimpleOperand(
           this.rawNumerator * rhsOpnd.rawNumerator, 
           this.rawDenominator * rhsOpnd.rawDenominator
         )
-      case Operator.Division:
+      case Operator.division:
         return new SimpleOperand(
           this.rawNumerator * rhsOpnd.rawDenominator, 
           this.rawDenominator * rhsOpnd.rawNumerator

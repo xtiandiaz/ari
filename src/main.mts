@@ -1,7 +1,7 @@
-import * as input from "./console/input"
+import * as console from "./console"
 import * as stringify from "./stringifier"
 import * as utils from "./utils"
-import { Log, LogColor } from "./console/log"
+import Log from "./log"
 import GameReducer from "./game/reducer"
 
 async function main() {
@@ -14,8 +14,8 @@ async function main() {
     try {
       log.debug(reducer.state.stage)
       
-      const inputResult = await input.askForInput(
-        `${stringify.operationString(reducer.state.stage)} = `,
+      const inputResult = await console.askForInput(
+        `${console.colorOperationOutput(stringify.operationString(reducer.state.stage))} = `,
         (str) => {
           if (str.length == 0) {
             throw new Error() // Maybe ask for skipping...
@@ -41,7 +41,7 @@ async function main() {
     } catch (error) {
       const msg = utils.altErrorMessage(error)
       if (msg) {
-        log.info(msg, LogColor.Red)
+        log.info(msg, console.OutputColor.Red)
       } else {
         log.error(error)
       }
@@ -49,7 +49,7 @@ async function main() {
     }
   }
 
-  input.close()
+  console.closeInput()
 }
 
 await main()

@@ -24,7 +24,7 @@ export function randomSign(): number {
 export function randomOperator(oprSelection?: Operator[]): Operator {
   const selection = oprSelection ?? allOperators
   return selection[Math.floor(Math.random() * selection.length)]
-}
+} 
 
 export function randomIntNumber(min: number, max: number): number {
   min = Math.floor(min)
@@ -43,18 +43,18 @@ export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], O
     
     switch (opnd.kind) {
       case OperandKind.Compound:
-        if (lhsOpr == Operator.Division && opnd.rawValue == 0) {
-          const rndOpr = randomOperator([Operator.Addition, Operator.Subtraction])
+        if (lhsOpr == Operator.division && opnd.rawValue == 0) {
+          const rndOpr = randomOperator([Operator.addition, Operator.subtraction])
           const rndOpnd = new SimpleOperand(randomIntNumber(1, 10))
           const _opnd = <Operation>opnd
           opnd = new Operation(_opnd.operands.concat([rndOpnd]), _opnd.operators.concat([rndOpr]))
         }
         continue
       case OperandKind.Simple:
-        if (opnd.rawValue < 0 && rhsOpr == Operator.Addition) {
+        if (opnd.rawValue < 0 && rhsOpr == Operator.addition) {
           const sOpnd = <SimpleOperand>opnd
           opnd = new SimpleOperand(sOpnd.numerator * -1, sOpnd.denominator, sOpnd.exponent)
-          rhsOpr = Operator.Subtraction
+          rhsOpr = Operator.subtraction
         }
         break
     }
@@ -66,6 +66,15 @@ export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], O
   return [fxdOpnds, fxdOprs]
 }
 
+export function altErrorMessage(err: Error): string | undefined {
+  switch (err) {
+    case OperandError.malformedStringRepresentation:
+      return 'Hmm?'
+    default:
+      return undefined
+  }
+}
+
 export function simpleOperandFromString(str: string): SimpleOperand {
   if (!/^-?[0-9]+(\/[0-9]+)?$/.test(str)) {
     throw OperandError.malformedStringRepresentation
@@ -75,11 +84,26 @@ export function simpleOperandFromString(str: string): SimpleOperand {
   return new SimpleOperand(parts[0], parts.length > 1 ? parts[1] : undefined)
 }
 
-export function altErrorMessage(err: Error): string | undefined {
-  switch (err) {
-    case OperandError.malformedStringRepresentation:
-      return 'Hmm?'
-    default:
-      return undefined
+export function colorOperators(optnStr: string, coloring: (opr: Operator) => string): string {
+  const parts = optnStr.split(' ')
+  let coloredParts: string[] = []
+  
+  for (let p of parts) {
+    switch (p) {
+      case Operator.addition.symbol:
+        p = coloring(Operator.addition)
+        break
+      case Operator.subtraction.symbol:
+        p = coloring(Operator.subtraction)
+        break
+      case Operator.multiplication.symbol:
+        p = coloring(Operator.multiplication)
+        break
+      case Operator.division.symbol:
+        p = coloring(Operator.division)
+        break
+    }
+    coloredParts.push(p)
   }
+  return coloredParts.join(' ')
 }
