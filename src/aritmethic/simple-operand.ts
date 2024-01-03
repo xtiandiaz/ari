@@ -1,6 +1,6 @@
 import Operator from './operator'
 import { Operand, OperandKind } from './operand'
-import { OperandError, OperationError } from '../errors'
+import { AriErrorCode, AriError } from '../errors'
 import * as utils from '../utils'
 
 export default class SimpleOperand implements Operand {
@@ -11,13 +11,13 @@ export default class SimpleOperand implements Operand {
   
   constructor(numerator: number, denominator: number = 1, exponent: number = 1) {
     if (denominator == 0) {
-      throw OperandError.divisionByZero
+      throw new AriError(AriErrorCode.DivisionByZero)
     } else if (denominator < 0) {
       denominator *= -1
       numerator *= -1
     }
     if (exponent < 0) {
-      throw OperandError.unsupportedExponent(exponent)
+      throw new AriError(AriErrorCode.NotImplementedOrSupported, `unsupported exponent ${exponent}`)
     }
     
     this.numerator = numerator
@@ -93,7 +93,7 @@ export default class SimpleOperand implements Operand {
           this.rawDenominator * rhsOpnd.rawNumerator
         )
       default:
-        throw OperationError.notImplemented(this, opr, rhsOpnd)
+        throw new AriError(AriErrorCode.NotImplementedOrSupported, `operator ${opr}`)
     }
   }
 }

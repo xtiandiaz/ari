@@ -2,7 +2,7 @@ import Operator from './aritmethic/operator'
 import { Operand, OperandKind } from './aritmethic/operand'
 import SimpleOperand from './aritmethic/simple-operand'
 import Operation from './aritmethic/operation'
-import { OperandError, ProbabilityError } from './errors'
+import { AriErrorCode, AriError } from './errors'
 
 export function round(num: number, fractionDigits: number): number {
   return Number(num.toFixed(fractionDigits))
@@ -13,7 +13,7 @@ export function clamp(num: number, min: number, max: number): number {
 }
 
 export function gcd(a: number, b: number) {
-  if (b === 0) {
+  if (b == 0) {
     return a
   }
   return gcd(b, a % b)
@@ -22,18 +22,15 @@ export function gcd(a: number, b: number) {
 export function randomChoice<T>(selection: T[], probs: number[] = []): T {
   const totalProb = probs.reduce((acc, curVal) => acc + curVal, 0)
   if (totalProb > 1) {
-    throw ProbabilityError.overflow
+    throw new AriError(AriErrorCode.MeasureOutOfRange, 'probability > 1')
   }
   if (probs.length < selection.length) {
     const diff = selection.length - probs.length
     const probShare = (1 - totalProb) / diff
     probs = probs.concat([...Array(diff).keys()].map((_) => probShare))
   }
-  const choices = selection.map((c, i) => {
-    return {
-      choice: c,
-      prob: probs[i]
-    }})
+  const choices = selection
+    .map((c, i) => { return { choice: c, prob: probs[i] } })
     .sort((a, b) => a.prob - b.prob)
   const randProb = Math.random()
   // console.log(choices, randProb)
@@ -61,11 +58,11 @@ export function probability(weight: number, totalWeight: number, min: number = 0
 
 export function randomWeightedChoice<T>(selection: T[], weights: number[]): T {
   if (selection.length < 2 || weights.length != selection.length) {
-    throw ProbabilityError.unbalance(selection, weights)
+    throw new AriError(AriErrorCode.ElementUnbalance, `selection: ${selection}, weights: ${weights}`)
   }
   const totalWeight = weights.reduce((acc, curVal) => acc + curVal, 0)
   if (totalWeight <= 0) {
-    throw ProbabilityError.nullTotalWeight
+    throw new AriError(AriErrorCode.MeasureOutOfRange, `total weight ${totalWeight} <= 0`)
   }
   return randomChoice(selection, weights.map((w) => probability(w, totalWeight)))
 }
@@ -121,9 +118,9 @@ export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], O
   return [fxdOpnds, fxdOprs]
 }
 
-export function altErrorMessage(err: Error): string | undefined {
-  switch (err) {
-    case OperandError.malformedStringRepresentation:
+export function altErrorMessage(err: AriError): string | undefined {
+  switch (err.code) {
+    case AriErrorCode.MalformedStringRepresentation:
       return 'Hmm?'
     default:
       return undefined
@@ -132,40 +129,35 @@ export function altErrorMessage(err: Error): string | undefined {
 
 export function simpleOperandFromString(str: string): SimpleOperand {
   if (!/^-?[0-9]+(\/[0-9]+)?$/.test(str)) {
-    throw OperandError.malformedStringRepresentation
+    throw new AriError(AriErrorCode.MalformedStringRepresentation, str)
   }
   
   const parts = str.split('/').map((sn) => Number(sn))
   return new SimpleOperand(parts[0], parts.length > 1 ? parts[1] : undefined)
 }
 
-export function colorOperators(
+export function colorOperation(
   optnStr: string, 
   colorOpr: (opr: Operator) => string,
-  colorOthr: (othrStr: string) => string
+  colorOthrEl: (othrStr: string) => string
 ): string {
-  const parts = optnStr.split(' ')
-  let coloredParts: string[] = []
-  
-  for (let p of parts) {
-    switch (p) {
-      case Operator.addition.symbol:
-        p = colorOpr(Operator.addition)
-        break
-      case Operator.subtraction.symbol:
-        p = colorOpr(Operator.subtraction)
-        break
-      case Operator.multiplication.symbol:
-        p = colorOpr(Operator.multiplication)
-        break
-      case Operator.division.symbol:
-        p = colorOpr(Operator.division)
-        break
-      default:
-        p = colorOthr(p)
-    }
-    coloredParts.push(p)
-  }
-  
-  return coloredParts.join(' ')
+  return optnStr.split(' ').map((p) => {
+    const opr = (() => {
+      switch (p) {
+        case Operator.addition.symbol:
+          return Operator.addition
+        case Operator.subtraction.symbol:
+          return Operator.subtraction
+        case Operator.multiplication.symbol:
+          return Operator.multiplication
+        case Operator.division.symbol:
+          return Operator.division
+        default:
+          return undefined
+      }
+    })()
+    return { p: p, opr: opr }
+  })
+  .map((ip) => ip.opr ? colorOpr(ip.opr) : colorOthrEl(ip.p))
+  .join(' ')
 }

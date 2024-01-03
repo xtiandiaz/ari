@@ -55,7 +55,7 @@ export function colorOperationOutput(str: string): string {
         return OutputColor.BlueBold
     }
   }
-  return utils.colorOperators(
+  return utils.colorOperation(
     str, 
     (opr) => {
       return colorOutput(opr.symbol, outputOprColor(opr.color))

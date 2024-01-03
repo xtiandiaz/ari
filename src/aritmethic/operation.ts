@@ -1,7 +1,7 @@
 import Operator from './operator'
 import { Operand, OperandKind } from './operand'
 import SimpleOperand from './simple-operand'
-import { OperationError } from '../errors'
+import { AriErrorCode, AriError } from '../errors'
 
 export default class Operation implements Operand {
   readonly id: number
@@ -17,10 +17,10 @@ export default class Operation implements Operand {
     this.id = Operation._id++
 
     if (operands.length < 2) {
-      throw OperationError.insufficientOperands
+      throw new AriError(AriErrorCode.ElementShortfall, `insufficient operands ${operands}`)
     }
     if (operands.length != (operators.length + 1)) {
-      throw OperationError.unbalancedElements
+      throw new AriError(AriErrorCode.ElementUnbalance, `operands: ${operands}, operators: ${operators}`)
     }
 
     this.operands = operands

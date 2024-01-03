@@ -6,13 +6,13 @@ import * as utils from '../utils'
 
 function simpleOperand(difficulty: number): Operand {
   const numMax = Math.round(10 * Math.max(1, difficulty))
-  const num = utils.randomIntNumber(2, numMax) * utils.randomSign()
+  const num = utils.randomIntNumber(2, numMax)
   const denom = 1
   const exp = utils.randomChoice(
     [utils.randomIntNumber(1, utils.clamp(Math.floor(numMax / num), 1, 5)), 1],
-    [utils.clamp(0.05 * difficulty, 0.05, 0.5)]
+    [utils.clamp(0.05 * (difficulty), 0.05, 0.5)]
   )
-  return new SimpleOperand(num, denom, exp)
+  return new SimpleOperand(num * utils.randomSign(), denom, exp)
 }
 
 function compoundOperand(difficulty: number, oprSelection: Operator[]): Operation {
