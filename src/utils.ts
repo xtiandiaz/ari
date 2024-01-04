@@ -128,7 +128,7 @@ export function simpleOperandFromString(str: string): SimpleOperand {
   return new SimpleOperand(parts[0], parts.length > 1 ? parts[1] : undefined)
 }
 
-export function colorOperation(
+export function colorOperationString(
   optnStr: string, 
   colorOpr: (opr: Operator) => string,
   colorOthrEl: (othrStr: string) => string

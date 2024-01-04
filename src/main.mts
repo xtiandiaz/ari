@@ -1,21 +1,19 @@
-import * as _console from "./console"
-import * as stringify from "./stringifier"
-import * as utils from "./utils"
-import Log from "./log"
-import GameReducer from "./game/reducer"
+import * as io from './console/io'
+import * as stringify from './stringifier'
+import * as utils from './utils'
+import GameReducer from './game/reducer'
 
 async function main() {
-  const log = new Log(process.env.npm_config_debug !== undefined)
   const reducer = new GameReducer()
 
-  log.health(reducer.state.health)
+  io.writeHealth(reducer.state.health)
 
   while (!reducer.state.isOver) {
     try {
-      log.debug(reducer.state.stage)
+      // console.debug(reducer.state.stage)
       
-      const inputResult = await _console.askForInput(
-        `${_console.colorOperationOutput(stringify.operationString(reducer.state.stage))} = `,
+      const inputResult = await io.ask(
+        `${io.colorOperationString(stringify.operationString(reducer.state.stage))} = `,
         (str) => {
           if (str.length == 0) {
             throw new Error() // Maybe ask for skipping...
@@ -25,31 +23,31 @@ async function main() {
       )
 
       if (reducer.evaluate(inputResult)) {
-        log.correctAnswer(reducer.state.score, reducer.state.isRetry)
+        io.writeOfCorrectAnswer(reducer.state.score, reducer.state.isRetry)
         reducer.resume()
       } else {
         if (reducer.state.isOver) {
-          log.gameOver(
+          io.writeOfGameOver(
             reducer.state.score,
             stringify.operandString(reducer.state.stage.result)
           )
         } else {
-          log.mistake(stringify.clueString(reducer.state.clue))
-          log.health(reducer.state.health)
+          io.writeOfMistake(stringify.clueString(reducer.state.clue))
+          io.writeHealth(reducer.state.health)
         }
       }
     } catch (error) {
       const msg = utils.altErrorMessage(error)
       if (msg) {
-        log.info(msg, _console.OutputColor.Red)
+        io.writeInfo(msg, io.Color.Red)
       } else {
-        log.error(error)
+        io.writeOfError(error)
       }
       continue
     }
   }
 
-  _console.closeInput()
+  io.close()
 }
 
 await main()
