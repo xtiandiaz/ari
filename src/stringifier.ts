@@ -26,14 +26,14 @@ function exponentString(exponent: number): string {
   }).join('')
 }
 
-function simpleOperandString(frac: SimpleOperand, parenthesized: boolean): string {
-  parenthesized ||= frac.numerator < 0 && frac.exponent > 1
+function simpleOperandString(opnd: SimpleOperand, parenthesized: boolean): string {
+  parenthesized ||= (opnd.numerator < 0 || opnd.denominator > 1) && opnd.exponent > 1
   
-  const fracStr = frac.denominator !== 1 
-    ? `${frac.numerator}/${frac.denominator}`
-    : `${frac.numerator}`
+  const fracStr = opnd.denominator !== 1 
+    ? `${opnd.numerator}/${opnd.denominator}`
+    : `${opnd.numerator}`
   
-  return `${parenthesized ? `(${fracStr})` : `${fracStr}`}${exponentString(frac.exponent)}`
+  return `${parenthesized ? `(${fracStr})` : `${fracStr}`}${exponentString(opnd.exponent)}`
 }
 
 function operationSegmentString(opnd: Operand, lhsOpr?: Operator, rhsOpr?: Operator): string {

@@ -30,21 +30,13 @@ export function randomChoice<T>(selection: T[], probs: number[] = []): T {
     probs = probs.concat([...Array(diff).keys()].map((_) => probShare))
   }
   const choices = selection
-    .map((c, i) => { return { choice: c, prob: probs[i] } })
+    .map((c, i) => { return { el: c, prob: probs[i] } })
     .sort((a, b) => a.prob - b.prob)
   const randProb = Math.random()
-  // console.log(choices, randProb)
+  const choiceIdx = choices.findIndex((c) => randProb <= c.prob)
+  // console.log(choices, randProb, choiceIdx)
   
-  let accProb = 0
-  let choice: T | undefined
-  for (const c of choices) {
-    accProb += c.prob
-    if (randProb <= accProb) {
-      choice = c.choice
-      break
-    }
-  }
-  return choice ?? choices[choices.length - 1].choice
+  return choices[choiceIdx >= 0 ? choiceIdx : choices.length - 1].el
 }
 
 export function probability(weight: number, totalWeight: number, min: number = 0, max: number = 1): number {
