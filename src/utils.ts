@@ -20,6 +20,9 @@ export function gcd(a: number, b: number) {
 }
 
 export function randomChoice<T>(selection: T[], probs: number[] = []): T {
+  if (selection.length < 1) {
+    throw new AriError(AriErrorCode.ElementShortfall)
+  }
   const totalProb = probs.reduce((acc, curVal) => acc + curVal, 0)
   if (totalProb > 1) {
     throw new AriError(AriErrorCode.MeasureOutOfRange, 'probability > 1')
@@ -31,12 +34,22 @@ export function randomChoice<T>(selection: T[], probs: number[] = []): T {
   }
   const choices = selection
     .map((c, i) => { return { el: c, prob: probs[i] } })
-    .sort((a, b) => a.prob - b.prob)
+    .sort((a, b) => b.prob - a.prob)
   const randProb = Math.random()
-  const choiceIdx = choices.findIndex((c) => randProb <= c.prob)
-  // console.log(choices, randProb, choiceIdx)
+  const choice: T | undefined = (() => {
+    let accProb = 0
+    for (const choice of choices) {
+      accProb += choice.prob
+      if (randProb <= accProb) {
+        return choice.el
+      }
+    }
+    return undefined
+  })()
   
-  return choices[choiceIdx >= 0 ? choiceIdx : choices.length - 1].el
+  // console.log(choices, randProb, choice)
+  
+  return choice ?? choices[0].el
 }
 
 export function probability(weight: number, totalWeight: number, min: number = 0, max: number = 1): number {
@@ -59,20 +72,20 @@ export function randomWeightedChoice<T>(selection: T[], weights: number[]): T {
   return randomChoice(selection, weights.map((w) => probability(w, totalWeight)))
 }
 
-const allOperators = Object.values(Operator)
+export const allOperators = Object.values(Operator)
 
 export function randomSign(): number {
-  return Math.random() < 0.5 ? -1 : 1
+  return randomChoice([1, -1], [0.7])
 }
 
-export function randomOperator(oprSelection?: Operator[]): Operator {
-  const selection = oprSelection ?? allOperators
-  return selection[Math.floor(Math.random() * selection.length)]
+export function randomOperator(selection: Operator[] = allOperators, probabilities: number[] = []): Operator {
+  return randomChoice(selection, probabilities)
 } 
 
 export function randomIntNumber(min: number, max: number): number {
   min = Math.floor(min)
   max = Math.floor(max)
+  
   return min + Math.round(Math.random() * (max - min))
 }
 
@@ -88,7 +101,7 @@ export function fixAndRetouch(opnds: Operand[], oprs: Operator[]): [Operand[], O
     switch (opnd.kind) {
       case OperandKind.Compound:
         if (lhsOpr == Operator.division && opnd.rawValue == 0) {
-          const rndOpr = randomOperator([Operator.addition, Operator.subtraction])
+          const rndOpr = randomOperator([Operator.addition, Operator.subtraction], [0.7])
           const rndOpnd = new SimpleOperand(randomIntNumber(1, 10))
           const _opnd = <Operation>opnd
           opnd = new Operation(_opnd.operands.concat([rndOpnd]), _opnd.operators.concat([rndOpr]))
