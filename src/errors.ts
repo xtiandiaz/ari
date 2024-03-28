@@ -2,6 +2,7 @@ export enum AriErrorCode {
   DivisionByZero,
   ElementShortfall,
   ElementUnbalance,
+  EncodedInput,
   MalformedStringRepresentation,
   MeasureOutOfRange,
   NotImplementedOrSupported,
@@ -13,7 +14,7 @@ export class AriError extends Error {
   readonly code: AriErrorCode
   
   constructor(code: AriErrorCode, message?: string) {
-    super(`[Error #${code}] ${message ?? ''}`)
+    super(message)
     
     this.code = code
   }

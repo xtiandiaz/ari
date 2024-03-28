@@ -2,6 +2,7 @@ import * as io from './console/io'
 import * as stringify from './stringifier'
 import * as utils from './utils'
 import GameReducer from './game/reducer'
+import { AriErrorCode, AriError } from './errors'
 
 async function main() {
   const reducer = new GameReducer()
@@ -9,16 +10,19 @@ async function main() {
   io.writeHealth(reducer.state.health)
 
   while (!reducer.state.isOver) {
-    try {
-      // console.debug(reducer.state.stage)
-      
+    try {      
       const inputResult = await io.ask(
         `${io.colorOperationString(stringify.operationString(reducer.state.stage))} = `,
         (str) => {
-          if (str.length == 0) {
-            throw new Error() // Maybe ask for skipping...
+          switch (str) {
+            case "answer":
+            case "debug":
+            case "exit":
+            case "skip":
+              throw new AriError(AriErrorCode.EncodedInput, str)
+            default:
+              return utils.simpleOperandFromString(str)
           }
-          return utils.simpleOperandFromString(str)
         }
       )
 
@@ -37,11 +41,36 @@ async function main() {
         }
       }
     } catch (error) {
-      const msg = utils.altErrorMessage(error)
-      if (msg) {
-        io.writeInfo(msg, io.Color.Red)
-      } else {
-        io.writeOfError(error)
+      let ariError: (AriError | undefined) = error as AriError
+      
+      switch (ariError.code) {
+        case AriErrorCode.EncodedInput:
+          switch (ariError.message) {
+            case "answer":
+              io.writeInfo(
+                stringify.operandString(reducer.state.stage.result), 
+                io.Color.Gray
+              )
+              break
+            case "debug":
+              console.debug(reducer.state.stage)
+              break
+            case "exit":
+              reducer.state.health = 0
+              break
+            case "skip":
+              reducer.resume()
+              break
+          }
+          break
+        default:
+          const msg = utils.altErrorMessage(error)
+          if (msg) {
+            io.writeInfo(msg, io.Color.Red)
+          } else {
+            io.writeOfError(error)
+          }
+          break
       }
       continue
     }

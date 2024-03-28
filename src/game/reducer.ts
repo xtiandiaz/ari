@@ -1,4 +1,6 @@
-import type SimpleOperand from '../aritmethic/simple-operand'
+import SimpleOperand from '../aritmethic/simple-operand'
+import Operation from '../aritmethic/operation'
+import Operator from '../aritmethic/operator'
 import { GameState, SolutionClue } from './state'
 import * as factory from './factory'
 
@@ -6,7 +8,17 @@ export default class GameReducer {
   readonly state: GameState
   
   constructor(startDifficulty: number = 1) {
-    this.state = new GameState(factory.operation(startDifficulty), startDifficulty)
+    let operation = factory.operation(startDifficulty)
+    // let operation = new Operation(
+    //   [
+    //     new Operation([new SimpleOperand(15), new SimpleOperand(-4)], [Operator.addition]),
+    //     new SimpleOperand(-16, 9),
+    //     new SimpleOperand(-12, 5),
+    //     new SimpleOperand(9, 1),
+    //   ],
+    //   [Operator.division, Operator.subtraction, Operator.subtraction]
+    // )
+    this.state = new GameState(operation, startDifficulty)
   }
   
   evaluate(ans: SimpleOperand): boolean {
