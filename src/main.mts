@@ -17,9 +17,8 @@ async function main() {
           switch (str) {
             case "answer":
             case "debug":
-            case "exit":
             case "skip":
-              throw new AriError(AriErrorCode.EncodedInput, str)
+              throw new AriError(AriErrorCode.Cheating, str)
             default:
               return utils.simpleOperandFromString(str)
           }
@@ -44,7 +43,7 @@ async function main() {
       let ariError: (AriError | undefined) = error as AriError
       
       switch (ariError.code) {
-        case AriErrorCode.EncodedInput:
+        case AriErrorCode.Cheating:
           switch (ariError.message) {
             case "answer":
               io.writeInfo(
@@ -53,10 +52,7 @@ async function main() {
               )
               break
             case "debug":
-              console.debug(reducer.state.stage)
-              break
-            case "exit":
-              reducer.state.health = 0
+              console.debug(JSON.stringify(reducer.state.stage, null, 2))
               break
             case "skip":
               reducer.resume()

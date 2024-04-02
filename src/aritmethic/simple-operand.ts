@@ -1,3 +1,4 @@
+import type Operation from './operation'
 import Operator from './operator'
 import { Operand, OperandKind } from './operand'
 import { AriErrorCode, AriError } from '../errors'
@@ -46,7 +47,7 @@ export default class SimpleOperand implements Operand {
       case OperandKind.Simple:
         return this._operated(opr, <SimpleOperand>rhsOpnd)
       case OperandKind.Compound:
-        return this._operated(opr, new SimpleOperand(rhsOpnd.rawValue))
+        return this._operated(opr, (<Operation>rhsOpnd).result)
     }
   }
   

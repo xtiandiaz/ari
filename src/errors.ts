@@ -1,8 +1,8 @@
 export enum AriErrorCode {
+  Cheating,
   DivisionByZero,
   ElementShortfall,
   ElementUnbalance,
-  EncodedInput,
   MalformedStringRepresentation,
   MeasureOutOfRange,
   NotImplementedOrSupported,

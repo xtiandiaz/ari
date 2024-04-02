@@ -11,12 +11,16 @@ export default class GameReducer {
     let operation = factory.operation(startDifficulty)
     // let operation = new Operation(
     //   [
-    //     new Operation([new SimpleOperand(15), new SimpleOperand(-4)], [Operator.addition]),
-    //     new SimpleOperand(-16, 9),
-    //     new SimpleOperand(-12, 5),
-    //     new SimpleOperand(9, 1),
+    //     new SimpleOperand(34, 1),
+    //     new Operation(
+    //       [new SimpleOperand(18, 5), new SimpleOperand(13), new SimpleOperand(29)],
+    //       [Operator.addition, Operator.subtraction]
+    //     ),
+    //     new SimpleOperand(29, 1),
+    //     new SimpleOperand(8, 1),
+    //     new SimpleOperand(-8, 1),
     //   ],
-    //   [Operator.division, Operator.subtraction, Operator.subtraction]
+    //   [Operator.addition, Operator.subtraction, Operator.addition, Operator.division]
     // )
     this.state = new GameState(operation, startDifficulty)
   }
