@@ -7,10 +7,11 @@ import * as utils from '../utils'
 function simpleOperand(difficulty: number): Operand {
   const numMax = Math.round(10 * Math.max(1, difficulty))
   const num = utils.randomIntNumber(2, numMax)
-  const denom = utils.randomChoice(
-    [utils.randomIntNumber(1, 10), 1],
-    [utils.clamp(0.025 * difficulty, 0.025, 0.25)]
-  )
+  // const denom = utils.randomChoice(
+  //   [utils.randomIntNumber(1, 10), 1],
+  //   [utils.clamp(0.025 * difficulty, 0.025, 0.25)]
+  // )
+  const denom = 1
   const exp = utils.randomChoice(
     [utils.randomIntNumber(1, utils.clamp(Math.floor(numMax / num), 1, 5)), 1],
     [utils.clamp(0.05 * difficulty, 0.05, 0.5)]
