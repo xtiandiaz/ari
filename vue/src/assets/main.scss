@@ -1,0 +1,18 @@
+@use '@design-tokens/palette';
+@use '@design-tokens/typography';
+@use '@vueties/styles/utils';
+
+* {
+  @extend .inhibit-contextual-touch-action;
+}
+
+html {
+  @include palette.color-attributes((
+    'color': 'body',
+    'background-color': 'purple'
+  ));
+}
+
+#app {
+  @include utils.safe-area(false, true);
+}

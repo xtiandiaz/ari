@@ -4,3 +4,9 @@
 [submodule "submodules/tungsten"]
 	path = submodules/tungsten
 	url = git@github.com:xtiandiaz/tungsten.git
+[submodule "submodules/vueties"]
+	path = submodules/vueties
+	url = git@github.com:xtiandiaz/vueties.git
+[submodule "submodules/design-tokens"]
+	path = submodules/design-tokens
+	url = git@github.com:xtiandiaz/design-tokens.git
