@@ -17,3 +17,6 @@ function onInput(value: number) {
     </section>
   </main>
 </template>
+
+<style scoped lang="scss">
+</style>
