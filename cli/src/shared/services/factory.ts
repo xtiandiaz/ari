@@ -1,8 +1,8 @@
-import type { Operand } from '../aritmethic/operand'
-import Operator from '../aritmethic/operator'
-import SimpleOperand from '../aritmethic/simple-operand'
-import Operation from '../aritmethic/operation'
-import * as utils from '../utils'
+import type { Operand } from '../models/operand'
+import Operator from '../models/operator'
+import SimpleOperand from '../models/simple-operand'
+import Operation from '../models/operation'
+import * as utils from './utilities'
 
 function simpleOperand(difficulty: number): Operand {
   const numMax = Math.round(10 * Math.max(1, difficulty))
@@ -16,7 +16,7 @@ function simpleOperand(difficulty: number): Operand {
     [utils.randomIntNumber(1, utils.clamp(Math.floor(numMax / num), 1, 5)), 1],
     [utils.clamp(0.05 * difficulty, 0.05, 0.5)]
   )
-  return new SimpleOperand(num * utils.randomSign(), denom, exp)
+  return new SimpleOperand(num, denom, exp)
 }
 
 function compoundOperand(difficulty: number, operators: Operator[]): Operation {
@@ -39,10 +39,13 @@ function operand(difficulty: number): Operand {
   )
 }
 
-export function operation(difficulty: number): Operation {
+export function operation(
+  difficulty: number, 
+  operators: Operator[] = [Operator.addition, Operator.subtraction, Operator.multiplication, Operator.division]
+): Operation {
   const opndCount = Math.max(2, Math.round(difficulty) + 1)
   const opnds = [...Array(opndCount).keys()].map((_) => operand(difficulty))
-  const oprs = [...Array(opndCount - 1)].map(_ => utils.randomOperator(utils.allOperators, [0.4]))
+  const oprs = [...Array(opndCount - 1)].map(_ => utils.randomOperator(operators, [0.4]))
   const fxdOOs = utils.fixAndRetouch(opnds, oprs)
   
   return new Operation(fxdOOs[0], fxdOOs[1])

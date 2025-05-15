@@ -1,7 +1,7 @@
 import * as readline from 'readline'
-import { OperatorColor } from '../aritmethic/operator'
-import * as utils from '../utils'
-import { Score } from '../game/state'
+import { OperatorColor } from '../models/operator'
+import { type Score } from '../models/state'
+import * as utils from '../services/utilities'
 
 export enum Color {
   Red = '31m',

@@ -1,7 +1,7 @@
 import * as io from './console/io'
-import * as stringify from './stringifier'
-import * as utils from './utils'
-import GameReducer from './game/reducer'
+import * as stringify from './services/stringifier'
+import * as utils from './services/utilities'
+import GameReducer from './services/reducer'
 import { AriErrorCode, AriError } from './errors'
 
 async function main() {

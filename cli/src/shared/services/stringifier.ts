@@ -1,9 +1,9 @@
-import type { Operand } from './aritmethic/operand'
-import type SimpleOperand from './aritmethic/simple-operand'
-import type Operation from './aritmethic/operation'
-import Operator from './aritmethic/operator'
-import { OperandKind } from './aritmethic/operand'
-import { SolutionClue } from './game/state'
+import type { Operand } from '../models/operand'
+import type SimpleOperand from '../models/simple-operand'
+import type Operation from '../models/operation'
+import Operator from '../models/operator'
+import { OperandKind } from '../models/operand'
+import { SolutionClue } from '../models/state'
 
 function exponentString(exponent: number): string {
   if (exponent == 1) {

@@ -1,7 +1,7 @@
-import SimpleOperand from '../aritmethic/simple-operand'
-import Operation from '../aritmethic/operation'
-import Operator from '../aritmethic/operator'
-import { GameState, SolutionClue } from './state'
+import SimpleOperand from '../models/simple-operand'
+import Operation from '../models/operation'
+import Operator from '../models/operator'
+import { GameState, SolutionClue } from '../models/state'
 import * as factory from './factory'
 
 export default class GameReducer {

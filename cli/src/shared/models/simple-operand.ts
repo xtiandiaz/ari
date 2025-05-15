@@ -1,8 +1,8 @@
 import type Operation from './operation'
 import Operator from './operator'
-import { Operand, OperandKind } from './operand'
+import { type Operand, OperandKind } from './operand'
 import { AriErrorCode, AriError } from '../errors'
-import * as utils from '../utils'
+import * as utils from '../services/utilities'
 
 export default class SimpleOperand implements Operand {
   readonly kind = OperandKind.Simple

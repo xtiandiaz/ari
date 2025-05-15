@@ -1,8 +1,8 @@
-import Operator from './aritmethic/operator'
-import { Operand, OperandKind } from './aritmethic/operand'
-import SimpleOperand from './aritmethic/simple-operand'
-import Operation from './aritmethic/operation'
-import { AriErrorCode, AriError } from './errors'
+import Operator from '../models/operator'
+import { type Operand, OperandKind } from '../models/operand'
+import SimpleOperand from '../models/simple-operand'
+import Operation from '../models/operation'
+import { AriErrorCode, AriError } from '../errors'
 
 export function round(num: number, fractionDigits: number): number {
   return Number(num.toFixed(fractionDigits))

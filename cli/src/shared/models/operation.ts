@@ -1,5 +1,5 @@
 import Operator from './operator'
-import { Operand, OperandKind } from './operand'
+import { type Operand, OperandKind } from './operand'
 import SimpleOperand from './simple-operand'
 import { AriErrorCode, AriError } from '../errors'
 
