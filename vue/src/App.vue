@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import * as Randomness from '@/assets/tungsten/randomness'
-
-const randomInt = ref(Randomness.integer(0, 1000))
+import DemoView from './views/DemoView.vue'
 </script>
 
 <template>
-  <main>
-    <h1>{{ randomInt }}</h1>
-  </main>
+  <DemoView />
 </template>
 
 <style scoped lang="scss">

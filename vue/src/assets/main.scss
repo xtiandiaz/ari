@@ -9,10 +9,30 @@
 html {
   @include palette.color-attributes((
     'color': 'body',
-    'background-color': 'purple'
+    'background-color': 'secondary-background'
   ));
+}
+
+html, body, main {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  width: 100%;
 }
 
 #app {
   @include utils.safe-area(false, true);
+}
+
+main.demo section {
+  $h-padding: 0.5em;
+  $v-padding: 1.5em;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $v-padding $h-padding;
+  width: calc(100% - $h-padding * 2);
+  height: calc(50% - $v-padding * 2);
 }
