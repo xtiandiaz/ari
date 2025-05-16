@@ -27,6 +27,3 @@ function onRouteSelected(key: string) {
     </template>
   </NavigationalView>
 </template>
-
-<style scoped lang="scss">
-</style>
