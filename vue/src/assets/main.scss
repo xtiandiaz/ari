@@ -23,16 +23,3 @@ html, body, main {
 #app {
   @include utils.safe-area(false, true);
 }
-
-main.demo section {
-  $h-padding: 1em;
-  $v-padding: 1em;
-  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: $v-padding $h-padding;
-  width: calc(100% - $h-padding * 2);
-  height: calc(50% - $v-padding * 2);
-}
