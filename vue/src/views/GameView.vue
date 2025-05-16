@@ -87,69 +87,72 @@ onMounted(() => {
 <style scoped lang="scss">
 @use '@vueties/styles/utils';
 @use '@vueties/styles/pads';
+@use '@vueties/styles/bars';
 @use '@design-tokens/palette';
 @use '@design-tokens/typography';
 
-section {
-  $h-padding: 1em;
-  $v-padding: 1em;
-  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: $v-padding $h-padding;
-  width: calc(100% - $h-padding * 2);
-  height: calc(50% - $v-padding * 2);
-  
-  &.input {
-    div#screen {
-      max-width: pads.$pad-max-width;
-      
-      h1, h2 {
-        margin: 0;
-        text-align: right;
-      }
-      
-      div.line {
-        align-items: center;
-        display: flex;
-        flex-direction: row;
-        gap: 0.5em;
-        justify-content: right;
+main {  
+  section {
+    $h-padding: 1em;
+    $v-padding: 1em;
+    
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: calc(50% - $v-padding * 2);
+    padding: $v-padding $h-padding;
+    text-align: center;
+    width: calc(100% - $h-padding * 2);
+    
+    &.input {
+      div#screen {
+        max-width: pads.$pad-max-width;
         
-        .svg-icon {
-          @extend h1;
-          height: 100%;
-          aspect-ratio: 1;
+        h1, h2 {
+          margin: 0;
+          text-align: right;
         }
         
-        &#problem {
+        div.line {
+          align-items: center;
+          display: flex;
+          flex-direction: row;
+          gap: 0.5em;
+          justify-content: right;
+          
           .svg-icon {
-            &.addition {
-              @include palette.color-attribute('color', 'sky-blue');  
-            }
-            &.division {
-              @include palette.color-attribute('color', 'purple');
-            }
-            &.multiplication {
-              @include palette.color-attribute('color', 'blue');
-            }
-            &.subtraction {
-              @include palette.color-attribute('color', 'pink');
-            }
+            @extend h1;
+            height: 100%;
+            aspect-ratio: 1;
           }
-        }
-        
-        &#solution {
-          &.correct {
-            * {
-              @include palette.color-attribute('color', 'green');
+          
+          &#problem {
+            .svg-icon {
+              &.addition {
+                @include palette.color-attribute('color', 'sky-blue');  
+              }
+              &.division {
+                @include palette.color-attribute('color', 'purple');
+              }
+              &.multiplication {
+                @include palette.color-attribute('color', 'blue');
+              }
+              &.subtraction {
+                @include palette.color-attribute('color', 'pink');
+              }
             }
           }
           
-          h1 {
-            @include palette.color-attribute('color', 'tertiary-body');
+          &#solution {
+            &.correct {
+              * {
+                @include palette.color-attribute('color', 'green');
+              }
+            }
+            
+            h1 {
+              @include palette.color-attribute('color', 'tertiary-body');
+            }
           }
         }
       }
