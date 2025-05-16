@@ -10,3 +10,6 @@
 [submodule "submodules/design-tokens"]
 	path = submodules/design-tokens
 	url = git@github.com:xtiandiaz/design-tokens.git
+[submodule "submodules/vue-hash-router"]
+	path = submodules/vue-hash-router
+	url = git@github.com:xtiandiaz/vue-hash-router
