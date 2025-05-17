@@ -7,13 +7,20 @@
 }
 
 html {
+  $padding-top: env(safe-area-inset-top);
+  $padding-bottom: env(safe-area-inset-bottom);
+  
+  height: calc(100vh - $padding-top - $padding-bottom);
+  margin: 0;
+  overflow: hidden;
+  padding: $padding-top 0 $padding-bottom 0;
   @include palette.color-attributes((
     'color': 'body',
     'background-color': 'secondary-background'
   ));
 }
 
-html, body, main, #app {
+body, main, #app {
   height: 100%;
   margin: 0;
   overflow: hidden;
