@@ -2,32 +2,29 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
+// import vueDevTools from 'vite-plugin-vue-devtools'
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/ari/vue/dist/' : '/',
-  plugins: [
-    vue(),
-    vueDevTools(),
-  ],
+  base: process.env.NODE_ENV === 'production' ? '/ari/dist/' : '/',
+  plugins: [vue() /*, vueDevTools()*/],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@design-tokens': fileURLToPath(new URL('./src/assets/design-tokens', import.meta.url)),
-      '@vueties': fileURLToPath(new URL('./src/vueties', import.meta.url))
+      '@vueties': fileURLToPath(new URL('./src/vueties', import.meta.url)),
     },
-    preserveSymlinks: true
+    preserveSymlinks: true,
   },
   build: {
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
-          if (assetInfo.names && assetInfo.names.find(name => /\.woff2$/.test(name))) {
+          if (assetInfo.names && assetInfo.names.find((name) => /\.woff2$/.test(name))) {
             return 'assets/fonts/[name].[ext]'
           }
           return 'assets/[name]-[hash].[ext]'
-        }
-      }
-    }  
-  }
+        },
+      },
+    },
+  },
 })
