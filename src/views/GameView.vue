@@ -5,6 +5,7 @@ import { operationResult, randomOperation } from '@/utils/math.utils';
 import { operatorIcon } from '@/view-models/vm-math';
 import NumberPad from '@vueties/pads/NumberPad.vue';
 import SvgIcon from '@vueties/misc/SvgIcon.vue';
+import { isMobile } from '@/assets/tungsten/navigator';
 
 const problem = ref<Operation>()
 const resetInterval = ref<number>()
@@ -17,7 +18,6 @@ function reset() {
   clearInterval(resetInterval.value)
   
   problem.value = randomOperation()
-  
   input.value = ''
   
   resetInterval.value = undefined
@@ -53,6 +53,18 @@ function onInput(value: number) {
 
 onMounted(() => {
   reset()
+  
+  if (isMobile()) {
+    return
+  }
+  
+  window.addEventListener("keydown", (e: KeyboardEvent) => {
+    // console.log(e.key, e.code)
+    
+    if (/^Digit\d|Backspace$/.test(e.code)) {
+      onInput(e.code === 'Backspace' ? -1 : Number(e.key))
+    }
+  })
 })
 </script>
 
