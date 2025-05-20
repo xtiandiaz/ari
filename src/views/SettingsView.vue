@@ -4,6 +4,7 @@ import { onBeforeMount } from 'vue';
 import statsStore from '@/stores/stats'
 import { clearDailyStats, clearRecords } from '@/services/stats-management'
 import ButtonRow from '@vueties/form/ButtonRow.vue'
+import { version } from '@/../package.json'
 
 const emits = defineEmits<{
   viewTitle: [string?]
@@ -17,33 +18,47 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <section class="form">
-    <!-- <ChoiceSection  -->
-    <div class="section">
-      <div class="rows">
-        <ButtonRow 
-          :label="`Clear today's progress and stats`" 
-          :isDestructive="true"
-          :class="{ disabled: stats.dailySolutionsTotal === 0 }"
-          @click="clearDailyStats()"
-        />
+  <main>
+    <section class="form">
+      <!-- <ChoiceSection  -->
+      <div class="section">
+        <div class="rows">
+          <ButtonRow 
+            :label="`Clear today's progress and stats`" 
+            :isDestructive="true"
+            :class="{ disabled: stats.dailySolutionsTotal === 0 }"
+            @click="clearDailyStats()"
+          />
+        </div>
+        <!-- <div class="footer">Note</div> -->
       </div>
-      <!-- <div class="footer">Note</div> -->
-    </div>
-    <div class="section">
-      <div class="rows">
-        <ButtonRow 
-          :label="`Clear all records`" 
-          :isDestructive="true"
-          :disabled="true"
-          @click="clearRecords()"
-        />
+      <div class="section">
+        <div class="rows">
+          <ButtonRow 
+            :label="`Clear all records`" 
+            :isDestructive="true"
+            :disabled="true"
+            @click="clearRecords()"
+          />
+        </div>
+        <!-- <div class="footer">Note</div> -->
       </div>
-      <!-- <div class="footer">Note</div> -->
-    </div>
-  </section>
+    </section>
+    <span class='version'>v{{ version }}</span>
+  </main>
 </template>
 
 <style scoped lang="scss">
 @use '@vueties/styles/form';
+@use '@design-tokens/palette';
+@use '@design-tokens/typography';
+
+main {
+  text-align: center;
+  
+  .version {
+    @extend .caption;
+    @include palette.color-attribute('color', 'tertiary-body');
+  }
+}
 </style>
