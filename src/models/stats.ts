@@ -2,7 +2,8 @@ import type { Operator } from './math'
 
 export interface OperatorStats {
   operator: Operator
-  solutionCount: number
+  score: number
+  record: number
 }
 
 export interface OperatorRecords {

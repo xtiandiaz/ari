@@ -21,12 +21,12 @@ const operatorsStats = computed(() => [
     Operator.Division
   ].map(o => stats.getOperatorDailyStats(o) ?? {
     operator: o,
-    solutionCount: 0
+    score: 0
   })
 )
 
 onBeforeMount(() => {
-  emits('viewTitle', `Today's Stats`)
+  emits('viewTitle', `Today's Scores`)
 })
 </script>
 
@@ -46,7 +46,7 @@ onBeforeMount(() => {
             v-for="(operatorStats) of operatorsStats" 
             :key="operatorStats.operator"
             :title="capitalize(operatorStats.operator)"
-            :subtitle="`Solutions: ${operatorStats.solutionCount}`"
+            :subtitle="`Solutions: ${operatorStats.score}`"
             :value="String(calculateLevelForOperator(operatorStats.operator))"
             :icon="operatorIcon(operatorStats.operator)"
             :class="`operator-${operatorStats.operator.toLowerCase()}`"

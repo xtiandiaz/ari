@@ -6,7 +6,7 @@ export const levelWeight = 3
 export function calculateLevelForOperator(operator: Operator): number {
   const stats = statsStore()
   
-  return Math.floor((stats.getOperatorDailyStats(operator)?.solutionCount ?? 0) / levelWeight)
+  return Math.floor((stats.getOperatorDailyStats(operator)?.score ?? 0) / levelWeight)
 }
 
 export function calculateOverallLevel(): number {

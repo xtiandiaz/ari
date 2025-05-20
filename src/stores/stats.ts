@@ -10,7 +10,7 @@ export default defineStore('stats', () => {
     date: Date.today(),
     operatorsStats: []
   })
-  const dailySolutionsTotal = computed(() => dailyStats.value.operatorsStats.reduce((acc, os) => acc + os.solutionCount, 0))
+  const dailyTotalScore = computed(() => dailyStats.value.operatorsStats.reduce((acc, os) => acc + os.score, 0))
   
   const records = ref(retrieveSavedRecords() ?? {
     operatorsRecords: []
@@ -24,24 +24,26 @@ export default defineStore('stats', () => {
     return records.value.operatorsRecords.find(or => or.operator === operator)
   }
   
-  function recordSolvedOperationUnit(operator: Operator) {
+  function addScore(operator: Operator) {
     const operatorStats = getOperatorDailyStats(operator)
     if (operatorStats) {
-      operatorStats.solutionCount++
+      operatorStats.score++
+      operatorStats.record = Math.max(operatorStats.score, operatorStats.record)
     } else {
       dailyStats.value.operatorsStats.push({
         operator: operator,
-        solutionCount: 1,
+        score: 1,
+        record: 1
       })
     }
     
     const operatorRecords = getOperatorRecords(operator)
     const updatedOperatorStats = getOperatorDailyStats(operator)!
     if (operatorRecords) {
-      operatorRecords.maxSolutionCount = Math.max(updatedOperatorStats.solutionCount, operatorRecords.maxSolutionCount)
+      operatorRecords.maxSolutionCount = Math.max(updatedOperatorStats.score, operatorRecords.maxSolutionCount)
     } else {
       records.value.operatorsRecords.push({
-        maxSolutionCount: updatedOperatorStats.solutionCount,
+        maxSolutionCount: updatedOperatorStats.score,
         operator: operator
       })
     }
@@ -49,10 +51,10 @@ export default defineStore('stats', () => {
   
   return {
     dailyStats,
-    dailySolutionsTotal,
+    dailyTotalScore,
     records,
     
     getOperatorDailyStats,
-    recordSolvedOperationUnit,
+    addScore,
   }
 })

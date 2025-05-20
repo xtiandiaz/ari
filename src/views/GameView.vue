@@ -31,7 +31,7 @@ function reset() {
 function storeOperatorStatsAndReset(operator: Operator) {
   reset()
   
-  stats.recordSolvedOperationUnit(operator)
+  stats.addScore(operator)
   
   saveDailyStats()
   saveRecords()
@@ -71,7 +71,7 @@ function onPageUnfocusedOrUnmounted() {
   clearDailyStatsIfNeeded()
 }
 
-watch(() => stats.dailySolutionsTotal, (newTotal) => {
+watch(() => stats.dailyTotalScore, (newTotal) => {
   if (newTotal === 0) {
     reset()
   }
