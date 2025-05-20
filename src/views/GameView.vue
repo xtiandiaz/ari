@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch, ref, computed } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import type { Operation, Operator } from '@/models/math';
 import statsStore from '@/stores/stats'
 import { generateRandomOperation } from '@/services/operation-generator';
@@ -65,8 +65,8 @@ function onInput(value: number) {
   }
 }
 
-function onPageUnfocusedOrUnmounted() {
-  console.log("Game View unfocused or unmounted...")
+function onPageFocusedOrUnmounted() {
+  console.log("Game View focused or unmounted...")
   
   clearDailyStatsIfNeeded()
 }
@@ -93,9 +93,13 @@ onMounted(() => {
   })
 })
 
-onWindowEvent('blur', onPageUnfocusedOrUnmounted)
-onWindowEvent('beforeunload', onPageUnfocusedOrUnmounted)
-onWindowEvent('pagehide', onPageUnfocusedOrUnmounted) // for iOS
+onBeforeUnmount(() => {
+  onPageFocusedOrUnmounted()
+})
+
+onWindowEvent('focus', onPageFocusedOrUnmounted)
+// onWindowEvent('beforeunload', onPageUnfocusedOrUnmounted)
+// onWindowEvent('pagehide', onPageUnfocusedOrUnmounted) // for iOS
 </script>
 
 <template>  

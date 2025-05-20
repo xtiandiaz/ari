@@ -1,7 +1,6 @@
 import { Operator, type Operation } from "@/models/math";
 import settingsStore from '@/stores/settings'
 import statsStore from '@/stores/stats'
-import { calculateLevelForOperator } from "@/utils/stats.utils";
 import { getRandomInteger, getRandomWeightedChoice } from "@/assets/tungsten/randomness";
 
 function getRandomWeightedOperator(): Operator {
