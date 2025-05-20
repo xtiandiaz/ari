@@ -24,15 +24,14 @@ onBeforeMount(() => {
       <div class="section">
         <div class="rows">
           <ButtonRow 
-            :label="`Clear today's progress and stats`" 
+            :label="`Clear today's score`" 
             :isDestructive="true"
-            :class="{ disabled: stats.dailySolutionsTotal === 0 }"
+            :class="{ disabled: stats.dailyTotalScore === 0 }"
             @click="clearDailyStats()"
           />
         </div>
-        <!-- <div class="footer">Note</div> -->
       </div>
-      <div class="section">
+      <!-- <div class="section">
         <div class="rows">
           <ButtonRow 
             :label="`Clear all records`" 
@@ -41,8 +40,7 @@ onBeforeMount(() => {
             @click="clearRecords()"
           />
         </div>
-        <!-- <div class="footer">Note</div> -->
-      </div>
+      </div> -->
     </section>
     <span class='version'>v{{ version }}</span>
   </main>
