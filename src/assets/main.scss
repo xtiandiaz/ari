@@ -26,13 +26,10 @@ html {
 body, main, #app {
   height: 100%;
   margin: 0;
-  overflow: hidden;
   position: relative;
   width: 100%;
 }
 
-span.caption-all-caps {
-  @extend .caption;
-  letter-spacing: 0.125em;
-  text-transform: uppercase;
+body, #app {
+  overflow: hidden;
 }

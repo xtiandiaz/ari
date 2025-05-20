@@ -38,15 +38,12 @@ onBeforeMount(() => {
     <section id="summary">
       <div v-for="(operatorStats) of operatorsStats" 
         :key="operatorStats.operator"
-        class="operator-stats" :class="operatorStats.operator.toLowerCase()"
+        class="operator-stats-box" :class="operatorStats.operator.toLowerCase()"
       >
-        <div>
-          <SvgIcon :icon="operatorIcon(operatorStats.operator)" />
-        </div>
-        <div class="spacer"></div>
-        <div class="stats operator-colored-item">
-          <span class="caption-all-caps">Level</span>
-          <h3 class="">{{ calculateLevelForOperator(operatorStats.operator) }}</h3>
+        <SvgIcon class="operator-icon operator-colored-item" :icon="operatorIcon(operatorStats.operator)" />
+        
+        <div class="stats">
+          <h3 class="operator-colored-item">{{ calculateLevelForOperator(operatorStats.operator) }}</h3>
           
           <div class="marks">
             <span class="mark">
@@ -70,6 +67,12 @@ onBeforeMount(() => {
 @use '@design-tokens/palette';
 @use '@/assets/math';
 
+span.caption-all-caps {
+  @extend .caption;
+  letter-spacing: 0.125em;
+  text-transform: uppercase;
+}
+
 main {  
   section {
     margin: 0 1em;
@@ -91,40 +94,45 @@ main {
       gap: $gap;
       @extend .operator-icons;
       
-      div.operator-stats {
-        $h-padding: 2em;
+      div.operator-stats-box {
+        $h-padding: 1em;
         $v-padding: 1em;
         
-        align-items: center;
         border-radius: 1em;
-        display: flex;
-        flex: 1 1 calc(50% - $h-padding * 2 - $gap);
+        flex: 1 1 calc(25% - 2 * $h-padding - 3 * $gap);
         padding: $v-padding $h-padding;
+        position: relative;
         @include palette.color-attribute('background-color', 'background');
         
-        @media screen and (max-width: 480px) {  
-          flex-basis: 100%;
+        @media screen and (max-width: 560px) {  
+          flex-basis: calc(50% - 2 * $h-padding - $gap);
         }
         
         .svg-icon {
-          $icon-size: 2.5em;
+          $icon-size: 2em;
           
           height: $icon-size;
           width:  $icon-size;
-        }
-        
-        h3 {
-          margin: 0;
+          
+          &.operator-icon {
+            position: absolute;
+            top: $v-padding;
+            right: $h-padding;
+          }
         }
         
         .stats {
-          text-align: right;
+          margin-top: 0.5em;
+          padding: 2em 0 0 0.25em;
+          
+          h3 {
+            margin: 0;
+          }
           
           .marks {
             display: flex;
             gap: 1em;
-            justify-content: right;
-            margin-top: 0.5em;
+            margin-top: 0.25em;
             
             span.mark {              
               @extend strong;

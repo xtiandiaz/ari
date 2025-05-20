@@ -17,8 +17,8 @@ function generateRandomOperandsForOperator(operator: Operator, level: number = 0
       })()
     case Operator.Division:
       return (() => {
-        const rangeMin = Math.max(2, 2 * level)
-        const rangeMax = Math.max(10, 5 * level)
+        const rangeMin = Math.max(2, 3 * level)
+        const rangeMax = Math.max(10, 6 * level)
         
         const divisor = getRandomInteger(rangeMin, rangeMax)
         const dividend = getRandomInteger(rangeMin, rangeMax)
@@ -27,8 +27,8 @@ function generateRandomOperandsForOperator(operator: Operator, level: number = 0
       })()
     case Operator.Multiplication:
       return (() => {
-        const rangeMin = Math.max(1, 2 * level)
-        const rangeMax = Math.max(10, 5 * level)
+        const rangeMin = Math.max(1, 3 * level)
+        const rangeMax = Math.max(10, 6 * level)
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
