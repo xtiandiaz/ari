@@ -30,3 +30,9 @@ body, main, #app {
   position: relative;
   width: 100%;
 }
+
+span.caption-all-caps {
+  @extend .caption;
+  letter-spacing: 0.125em;
+  text-transform: uppercase;
+}

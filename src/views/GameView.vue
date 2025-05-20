@@ -1,26 +1,40 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
-import { type Operation } from '@/models/math';
-import { operationResult, randomOperation } from '@/utils/math.utils';
+import { onMounted, watch, ref, computed } from 'vue'
+import type { Operation, Operator } from '@/models/math';
+import statsStore from '@/stores/stats'
+import { generateRandomOperation } from '@/services/operation-generator';
 import { operatorIcon } from '@/view-models/vm-math';
 import NumberPad from '@vueties/pads/NumberPad.vue';
 import SvgIcon from '@vueties/misc/SvgIcon.vue';
 import { isMobile } from '@/assets/tungsten/navigator';
+import { clearDailyStatsIfNeeded, saveDailyStats, saveRecords } from '@/services/stats-management'
+import { onWindowEvent } from '@vueties/composables/window-event'
 
 const problem = ref<Operation>()
 const resetInterval = ref<number>()
-const isSolved = computed(() => problem.value && Number(input.value) === operationResult(problem.value))
+const isSolved = computed(() => problem.value && Number(input.value) === problem.value.result)
 const isLocked = computed(() => resetInterval.value !== undefined)
 
 const input = ref('')
 
+const stats = statsStore()
+
 function reset() {
   clearInterval(resetInterval.value)
   
-  problem.value = randomOperation()
+  problem.value = generateRandomOperation()
   input.value = ''
   
   resetInterval.value = undefined
+}
+
+function storeOperatorStatsAndReset(operator: Operator) {
+  reset()
+  
+  stats.recordSolvedOperationUnit(operator)
+  
+  saveDailyStats()
+  saveRecords()
 }
 
 function onInput(value: number) {
@@ -28,7 +42,7 @@ function onInput(value: number) {
     return
   }
   
-  if (input.value.length === 0 && value === 0) {
+  if (input.value.length === 0 && value === 0 && String(problem.value!.result).length > 1) {
     return
   }
   
@@ -46,12 +60,24 @@ function onInput(value: number) {
   
   if (isSolved.value) {    
     resetInterval.value = Number(setInterval(() => {
-      reset()
+      storeOperatorStatsAndReset(problem.value!.operator)
     }, 250))
   }
 }
 
-onMounted(() => {
+function onPageUnfocusedOrUnmounted() {
+  console.log("Game View unfocused or unmounted...")
+  
+  clearDailyStatsIfNeeded()
+}
+
+watch(() => stats.dailySolutionsTotal, (newTotal) => {
+  if (newTotal === 0) {
+    reset()
+  }
+})
+
+onMounted(() => {  
   reset()
   
   if (isMobile()) {
@@ -66,6 +92,10 @@ onMounted(() => {
     }
   })
 })
+
+onWindowEvent('blur', onPageUnfocusedOrUnmounted)
+onWindowEvent('beforeunload', onPageUnfocusedOrUnmounted)
+onWindowEvent('pagehide', onPageUnfocusedOrUnmounted) // for iOS
 </script>
 
 <template>  
@@ -73,12 +103,9 @@ onMounted(() => {
     <section class="input">
       <div class="spacer"></div>
       <div id="screen" v-if="problem">
-        <div id="problem" class="line">
+        <div id="problem" class="line" :class="problem.operator.toLowerCase()">
           <h1>{{ problem.operands[0] }}</h1>
-          <SvgIcon 
-            :icon="operatorIcon(problem.operator)"
-            :class="problem.operator.toLowerCase()"
-          />
+          <SvgIcon :icon="operatorIcon(problem.operator)" />
           <h1>{{ problem.operands[1] }}</h1>
         </div>
         <div 
@@ -102,6 +129,7 @@ onMounted(() => {
 @use '@vueties/styles/bars';
 @use '@design-tokens/palette';
 @use '@design-tokens/typography';
+@use '@/assets/math';
 
 main {  
   section {
@@ -118,6 +146,8 @@ main {
     
     &.input {
       div#screen {
+        @extend .operator-icons;
+        
         max-width: pads.$pad-max-width;
         
         h1, h2 {
@@ -136,23 +166,6 @@ main {
             @extend h1;
             height: 100%;
             aspect-ratio: 1;
-          }
-          
-          &#problem {
-            .svg-icon {
-              &.addition {
-                @include palette.color-attribute('color', 'sky-blue');  
-              }
-              &.division {
-                @include palette.color-attribute('color', 'purple');
-              }
-              &.multiplication {
-                @include palette.color-attribute('color', 'blue');
-              }
-              &.subtraction {
-                @include palette.color-attribute('color', 'pink');
-              }
-            }
           }
           
           &#solution {

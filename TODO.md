@@ -1,0 +1,4 @@
+- Show package version in Settings
+- Iterate difficulty formulae
+- Add difficulty-baseline setting slider
+- Add playable Operator selection setting
