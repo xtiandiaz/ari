@@ -25,8 +25,8 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
   switch (operator) {
     case Operator.Addition:
       return (() => {
-        const rangeMin = Math.max(1, Math.pow(score / 2, 2))
-        const rangeMax = Math.max(11, Math.pow(score / 2, 3))
+        const rangeMin = Math.max(1, Math.pow(score, 2))
+        const rangeMax = Math.max(51, Math.pow(score, 3))
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
@@ -49,8 +49,8 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
       })()
     case Operator.Subtraction:
       return (() => {
-        const rangeMin = Math.max(2, Math.pow(score / 2, 2))
-        const rangeMax = Math.max(11, Math.pow(score / 2, 3))
+        const rangeMin = Math.max(2, Math.pow(score, 2))
+        const rangeMax = Math.max(52, Math.pow(score, 3))
         
         const minuend = getRandomInteger(rangeMin, rangeMax)
         const subtrahend = getRandomInteger(1, minuend - 1)
