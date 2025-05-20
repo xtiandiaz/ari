@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount } from 'vue';
+import { capitalize, computed, onBeforeMount } from 'vue';
 import { Operator } from '@/models/math'
 import statsStore from '@/stores/stats'
 import { calculateLevelForOperator, calculateOverallLevel } from '@/utils/stats.utils'
@@ -7,6 +7,7 @@ import '@/assets/tungsten/extensions/array.extensions'
 import { Icon } from '@design-tokens/iconography'
 import SvgIcon from '@/vueties/misc/SvgIcon.vue';
 import { operatorIcon } from '@/view-models/vm-math';
+import InfoRow from '@/vueties/form/InfoRow.vue';
 
 const emits = defineEmits<{
   viewTitle: [string],
@@ -35,28 +36,38 @@ onBeforeMount(() => {
       <span class="caption-all-caps">Level</span>
       <h1>{{ calculateOverallLevel() }}</h1>
     </section>
-    <section id="summary">
-      <div v-for="(operatorStats) of operatorsStats" 
-        :key="operatorStats.operator"
-        class="operator-stats-box" :class="operatorStats.operator.toLowerCase()"
-      >
-        <SvgIcon class="operator-icon operator-colored-item" :icon="operatorIcon(operatorStats.operator)" />
+    <section id="summary" class="form">
+      <div class="section">
+        <div class="header">
+          <span class="title">Levels</span>
+        </div>
+        <div class="rows">
+          <InfoRow 
+            v-for="(operatorStats) of operatorsStats" 
+            :key="operatorStats.operator"
+            :title="capitalize(operatorStats.operator)"
+            :subtitle="`Solutions: ${operatorStats.solutionCount}`"
+            :value="String(calculateLevelForOperator(operatorStats.operator))"
+            :icon="operatorIcon(operatorStats.operator)"
+            :class="`operator-${operatorStats.operator.toLowerCase()}`"
+          />
+        </div>
+      </div>
         
-        <div class="stats">
-          <h3 class="operator-colored-item">{{ calculateLevelForOperator(operatorStats.operator) }}</h3>
+        <!-- <div class="stats">
+          <h3 class="operator-colored-item">{{  }}</h3>
           
           <div class="marks">
             <span class="mark">
               <SvgIcon :icon="Icon.Right" />
               <span>{{ operatorStats.solutionCount }}</span>
-            </span>
+            </span> -->
             <!-- <span class="mark operator-colored-item">
               <SvgIcon :icon="Icon.Lighning" />
               <span>{{ operatorStats.solutionCount }}</span>
             </span> -->
-          </div>
-        </div>
-      </div>
+          <!-- </div>
+        </div> -->
     </section>
   </main>
 </template>
@@ -65,12 +76,19 @@ onBeforeMount(() => {
 @use '@vueties/styles/form';
 @use '@vueties/styles/utils';
 @use '@design-tokens/palette';
+@use '@design-tokens/typography';
 @use '@/assets/math';
 
 span.caption-all-caps {
   @extend .caption;
   letter-spacing: 0.125em;
   text-transform: uppercase;
+}
+
+:deep(.row.info) {
+  .value {
+    @extend .h6;
+  }
 }
 
 main {  

@@ -18,6 +18,7 @@ onBeforeMount(() => {
 
 <template>
   <section class="form">
+    <!-- <ChoiceSection  -->
     <div class="section">
       <div class="rows">
         <ButtonRow 

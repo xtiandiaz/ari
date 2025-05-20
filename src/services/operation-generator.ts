@@ -1,9 +1,22 @@
 import { Operator, allOperators, type Operation } from "@/models/math";
+import statsStore from '@/stores/stats'
 import { calculateLevelForOperator } from "@/utils/stats.utils";
-import { getRandomChoice, getRandomInteger } from "@/assets/tungsten/randomness";
+import { getRandomChoice, getRandomInteger, getRandomWeightedChoice } from "@/assets/tungsten/randomness";
 
 function getRandomOperator(): Operator {
   return getRandomChoice(allOperators)
+}
+
+function getRandomWeightedOperator(): Operator {
+  const stats = statsStore()
+  const weights = (() => {
+    const accPoints = allOperators.map(o => stats.getOperatorDailyStats(o)?.solutionCount ?? 1)
+    const maxPoints = accPoints.reduce((max, cur) => cur > max ? cur : max, accPoints[0])
+    
+    return accPoints.map(p => maxPoints / p)
+  })()
+  
+  return getRandomWeightedChoice(allOperators, weights)
 }
 
 function generateRandomOperandsForOperator(operator: Operator, level: number = 0): number[] {
@@ -27,7 +40,7 @@ function generateRandomOperandsForOperator(operator: Operator, level: number = 0
       })()
     case Operator.Multiplication:
       return (() => {
-        const rangeMin = Math.max(1, 3 * level)
+        const rangeMin = Math.max(2, 3 * level)
         const rangeMax = Math.max(10, 6 * level)
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
@@ -60,7 +73,7 @@ function getResult(operator: Operator, operands: number[]): number {
 
 
 export function generateRandomOperation(): Operation {
-  const operator = getRandomOperator()
+  const operator = getRandomWeightedOperator() //getRandomOperator()
   const operatorLevel = calculateLevelForOperator(operator)
   const operands = generateRandomOperandsForOperator(operator, operatorLevel)
   
