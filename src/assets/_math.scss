@@ -1,36 +1,22 @@
 @use '@design-tokens/palette';
 
-.operator-addition {
-  &.svg-icon, :deep(.representative-icon), &.row :deep(.value) {
+.addition {
+  .svg-icon, .operator-colored-item {
     @include palette.color-attribute('color', 'sky-blue');
   }
 }
-
-.operator-subtraction {
-  &.svg-icon, :deep(.representative-icon), &.row :deep(.value) {
-    @include palette.color-attribute('color', 'pink');
+.division {
+  .svg-icon, .operator-colored-item {
+    @include palette.color-attribute('color', 'purple');
   }
 }
-
-.operator-icons {
-  .addition {
-    .svg-icon, .operator-colored-item {
-      @include palette.color-attribute('color', 'sky-blue');
-    }
+.multiplication {
+  .svg-icon, .operator-colored-item {
+    @include palette.color-attribute('color', 'blue');
   }
-  .division {
-    .svg-icon, .operator-colored-item {
-      @include palette.color-attribute('color', 'purple');
-    }
-  }
-  .multiplication {
-    .svg-icon, .operator-colored-item {
-      @include palette.color-attribute('color', 'blue');
-    }
-  }
-  .subtraction {
-    .svg-icon, .operator-colored-item {
-      @include palette.color-attribute('color', 'pink');
-    }
+}
+.subtraction {
+  .svg-icon, .operator-colored-item {
+    @include palette.color-attribute('color', 'pink');
   }
 }

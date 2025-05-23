@@ -110,7 +110,6 @@ main {
       display: flex;
       flex-wrap: wrap;
       gap: $gap;
-      @extend .operator-icons;
       
       div.operator-stats-box {
         $h-padding: 1em;

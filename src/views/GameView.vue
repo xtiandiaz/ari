@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, useTemplateRef, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import type { Operation, Operator } from '@/models/math';
 import statsStore from '@/stores/stats'
 import { generateRandomOperation } from '@/services/operation-generator';
@@ -12,7 +12,7 @@ import { onWindowEvent } from '@vueties/composables/window-event'
 
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
-const isSolved = computed(() => operation.value && Number(input.value) === operation.value.result)
+const isInputCorrect = computed(() => operation.value && Number(input.value) === operation.value.result)
 const isLocked = computed(() => resetInterval.value !== undefined)
 
 const input = ref('')
@@ -41,6 +41,21 @@ function resetAndSaveScoreForOperatorIfNeeded(operator: Operator) {
   saveRecords()
 }
 
+function centerOperation() {
+  const operationWrapperDiv = document.getElementById('operation-wrapper') as HTMLDivElement
+  const operationDiv = document.getElementById('operation') as HTMLDivElement
+  
+  if (operationDiv.clientWidth < operationWrapperDiv.clientWidth) {
+    return
+  }
+  
+  const firstOperandDiv = document.getElementById('first-operand')!
+  const secondOperandDiv = document.getElementById('second-operand')!
+  const maxOperandWidth = Math.max(firstOperandDiv.clientWidth, secondOperandDiv.clientWidth)
+  
+  operationDiv.style.transform = `translateX(${-(operationDiv.clientWidth - maxOperandWidth) / 2}px)`
+}
+
 function onInput(value: number) {
   if (isLocked.value) {
     return
@@ -62,7 +77,7 @@ function onInput(value: number) {
       break
   }
   
-  if (isSolved.value) {    
+  if (isInputCorrect.value) {    
     resetInterval.value = Number(setInterval(() => {
       resetAndSaveScoreForOperatorIfNeeded(operation.value!.operator)
     }, 250))
@@ -81,16 +96,22 @@ watch(() => stats.dailyTotalScore, (newTotal) => {
   }
 })
 
-onMounted(() => {  
+watch(async () => operation, async () => {
+  await nextTick()
+  centerOperation()
+})
+
+onMounted(async () => {  
   reset()
+  
+  await nextTick()
+  centerOperation()
   
   if (isMobile()) {
     return
   }
   
-  window.addEventListener("keydown", (e: KeyboardEvent) => {
-    // console.log(e.key, e.code)
-    
+  window.addEventListener("keydown", (e: KeyboardEvent) => {    
     if (/^Digit\d|Backspace$/.test(e.code)) {
       onInput(e.code === 'Backspace' ? -1 : Number(e.key))
     }
@@ -106,19 +127,19 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
 
 <template>  
   <main>
-    <section class="input">
+    <section>
       <div class="spacer"></div>
-      <div id="screen" v-if="operation">
-        <div id="problem" class="line" :class="operation.operator.toLowerCase()">
-          <h1>{{ operation.operands[0] }}</h1>
-          <SvgIcon :icon="operatorIcon(operation.operator)" />
-          <h1>{{ operation.operands[1] }}</h1>
-        </div>
-        <div 
-          id="solution" 
-          class="line" :class="{ correct: isSolved }"
-        >
-          <h1>{{ input.length > 0 ? input : '?' }}</h1>
+      <div id="operation-wrapper">
+        <div id="operation" ref="operation-template" v-if="operation">
+          <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
+            <h1 id="first-operand">{{ operation.operands[0] }}</h1>
+            <div id="operator-and-second-operand">
+              <SvgIcon id="operator" :icon="operatorIcon(operation.operator)" />
+              <h1 id="second-operand">{{ operation.operands[1] }}</h1>
+            </div>
+          </div>
+          <h1 id="result" :class=" { isCorrect: isInputCorrect }">{{ input.length > 0 ? input : '?' }}
+          </h1>
         </div>
       </div>
       <div class="spacer"></div>
@@ -146,45 +167,51 @@ main {
     display: flex;
     flex-direction: column;
     height: calc(50% - $v-padding * 2);
+    max-width: calc(100% - $h-padding * 2);
     padding: $v-padding $h-padding;
     text-align: center;
-    width: calc(100% - $h-padding * 2);
     
-    &.input {
-      div#screen {
-        @extend .operator-icons;
+    div#operation-wrapper {
+      $h-margin: 1em;
+      
+      display: flex;
+      justify-content: center;
+      margin: 0 $h-margin;
+      max-width: calc(pads.$pad-max-width - 2 * $h-margin);
+      width: 100%;
+    }
+    
+    div#operation {
+      h1 {
+        margin: 0;
+      }
+      
+      #operands-and-operator {
+        $gap: 0.5em;
         
-        max-width: pads.$pad-max-width;
+        column-gap: $gap;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: right;
         
-        h1, h2 {
-          margin: 0;
-          text-align: right;
+        #operator {
+          @extend h1;
+          aspect-ratio: 1;
         }
         
-        div.line {
+        #operator-and-second-operand {
           align-items: center;
+          column-gap: $gap;
           display: flex;
-          flex-direction: row;
-          gap: 0.5em;
-          justify-content: right;
-          
-          .svg-icon {
-            @extend h1;
-            height: 100%;
-            aspect-ratio: 1;
-          }
-          
-          &#solution {
-            &.correct {
-              * {
-                @include palette.color-attribute('color', 'green');
-              }
-            }
-            
-            h1 {
-              @include palette.color-attribute('color', 'tertiary-body');
-            }
-          }
+        }
+      }
+      
+      h1#result {
+        float: right;
+        @include palette.color-attribute('color', 'tertiary-body');
+        
+        &.isCorrect {
+          @include palette.color-attribute('color', 'green');
         }
       }
     }
