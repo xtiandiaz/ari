@@ -1,3 +1,4 @@
 - Reform "summary" view
+- ClearDailyStatsIfNeeded prior to saving latest score
 - Add difficulty-baseline setting slider
 - Add playable Operator selection setting
