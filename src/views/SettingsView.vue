@@ -2,7 +2,7 @@
 // import settingsStore from '@/stores/settings'
 import { onBeforeMount } from 'vue';
 import statsStore from '@/stores/stats'
-import { clearDailyStats, clearRecords } from '@/services/stats-management'
+import { clearScore, clearRecords } from '@/services/stats-management'
 import ButtonRow from '@vueties/form/ButtonRow.vue'
 import { version } from '@/../package.json'
 
@@ -24,10 +24,10 @@ onBeforeMount(() => {
       <div class="section">
         <div class="rows">
           <ButtonRow 
-            :label="`Clear today's score`" 
+            :label="`Clear today's scores`" 
             :isDestructive="true"
             :class="{ disabled: stats.dailyTotalScore === 0 }"
-            @click="clearDailyStats()"
+            @click="clearScore()"
           />
         </div>
       </div>

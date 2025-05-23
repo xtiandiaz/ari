@@ -7,12 +7,12 @@ import { operatorIcon } from '@/view-models/vm-math';
 import NumberPad from '@vueties/pads/NumberPad.vue';
 import SvgIcon from '@vueties/misc/SvgIcon.vue';
 import { isMobile } from '@/assets/tungsten/navigator';
-import { clearDailyStatsIfNeeded, saveDailyStats, saveRecords } from '@/services/stats-management'
+import { clearScoreIfNeeded, saveScore, saveRecords } from '@/services/stats-management'
 import { onWindowEvent } from '@vueties/composables/window-event'
 
-const problem = ref<Operation>()
+const operation = ref<Operation>()
 const resetInterval = ref<number>()
-const isSolved = computed(() => problem.value && Number(input.value) === problem.value.result)
+const isSolved = computed(() => operation.value && Number(input.value) === operation.value.result)
 const isLocked = computed(() => resetInterval.value !== undefined)
 
 const input = ref('')
@@ -22,18 +22,22 @@ const stats = statsStore()
 function reset() {
   clearInterval(resetInterval.value)
   
-  problem.value = generateRandomOperation()
+  operation.value = generateRandomOperation()
   input.value = ''
   
   resetInterval.value = undefined
 }
 
-function storeOperatorStatsAndReset(operator: Operator) {
+function resetAndSaveScoreForOperatorIfNeeded(operator: Operator) {
   reset()
+  
+  if (clearScoreIfNeeded()) {
+    return
+  }
   
   stats.addScore(operator)
   
-  saveDailyStats()
+  saveScore()
   saveRecords()
 }
 
@@ -42,7 +46,7 @@ function onInput(value: number) {
     return
   }
   
-  if (input.value.length === 0 && value === 0 && String(problem.value!.result).length > 1) {
+  if (input.value.length === 0 && value === 0 && String(operation.value!.result).length > 1) {
     return
   }
   
@@ -60,7 +64,7 @@ function onInput(value: number) {
   
   if (isSolved.value) {    
     resetInterval.value = Number(setInterval(() => {
-      storeOperatorStatsAndReset(problem.value!.operator)
+      resetAndSaveScoreForOperatorIfNeeded(operation.value!.operator)
     }, 250))
   }
 }
@@ -68,7 +72,7 @@ function onInput(value: number) {
 function onPageFocusedOrUnmounted() {
   console.log("Game View focused or unmounted...")
   
-  clearDailyStatsIfNeeded()
+  clearScoreIfNeeded()
 }
 
 watch(() => stats.dailyTotalScore, (newTotal) => {
@@ -98,19 +102,17 @@ onBeforeUnmount(() => {
 })
 
 onWindowEvent('focus', onPageFocusedOrUnmounted)
-// onWindowEvent('beforeunload', onPageUnfocusedOrUnmounted)
-// onWindowEvent('pagehide', onPageUnfocusedOrUnmounted) // for iOS
 </script>
 
 <template>  
   <main>
     <section class="input">
       <div class="spacer"></div>
-      <div id="screen" v-if="problem">
-        <div id="problem" class="line" :class="problem.operator.toLowerCase()">
-          <h1>{{ problem.operands[0] }}</h1>
-          <SvgIcon :icon="operatorIcon(problem.operator)" />
-          <h1>{{ problem.operands[1] }}</h1>
+      <div id="screen" v-if="operation">
+        <div id="problem" class="line" :class="operation.operator.toLowerCase()">
+          <h1>{{ operation.operands[0] }}</h1>
+          <SvgIcon :icon="operatorIcon(operation.operator)" />
+          <h1>{{ operation.operands[1] }}</h1>
         </div>
         <div 
           id="solution" 

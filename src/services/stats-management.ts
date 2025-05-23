@@ -30,7 +30,7 @@ export function retrieveSavedRecords(): Records | undefined {
   return retrieve(LocalStorageItemKey.Records) as Records
 }
 
-export function saveDailyStats() {
+export function saveScore() {
   const stats = statsStore()
   
   save(LocalStorageItemKey.DailyStats, stats.dailyStats)
@@ -42,7 +42,7 @@ export function saveRecords() {
   save(LocalStorageItemKey.Records, stats.records)
 }
 
-export function clearDailyStats() {
+export function clearScore() {
   const stats = statsStore()
   
   stats.dailyStats = {
@@ -50,18 +50,20 @@ export function clearDailyStats() {
     operatorsStats: []
   }
   
-  saveDailyStats()
+  saveScore()
 }
 
-export function clearDailyStatsIfNeeded() {
+export function clearScoreIfNeeded(): boolean {
   const stats = statsStore()
   
   const dateDifference = (new Date()).getDaysFrom(stats.dailyStats.date)
   if (dateDifference < 1) {
-    return
+    return false
   }
   
-  clearDailyStats()
+  clearScore()
+  
+  return true
 }
 
 export function clearRecords() {
