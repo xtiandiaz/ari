@@ -12,6 +12,7 @@ import { onWindowEvent } from '@vueties/composables/window-event'
 
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
+const operandDigitTotal = computed(() => operation.value?.operands.reduce((count, o) => count + String(o).length, 0) ?? 0)
 const isInputCorrect = computed(() => operation.value && Number(input.value) === operation.value.result)
 const isLocked = computed(() => resetInterval.value !== undefined)
 
@@ -41,19 +42,20 @@ function resetAndSaveScoreForOperatorIfNeeded(operator: Operator) {
   saveRecords()
 }
 
-function centerOperation() {
-  const operationWrapperDiv = document.getElementById('operation-wrapper') as HTMLDivElement
+async function centerOperation() {
+  await nextTick()
+  
   const operationDiv = document.getElementById('operation') as HTMLDivElement
   
-  if (operationDiv.clientWidth < operationWrapperDiv.clientWidth) {
-    return
+  if (operandDigitTotal.value <= 12) {
+    operationDiv.style.removeProperty('width')
+  } else {
+    const firstOperandDiv = document.getElementById('first-operand')!
+    const secondOperandDiv = document.getElementById('second-operand')!
+    
+    operationDiv.style.width = `${Math.max(firstOperandDiv.clientWidth, secondOperandDiv.clientWidth)}px`
   }
   
-  const firstOperandDiv = document.getElementById('first-operand')!
-  const secondOperandDiv = document.getElementById('second-operand')!
-  const maxOperandWidth = Math.max(firstOperandDiv.clientWidth, secondOperandDiv.clientWidth)
-  
-  operationDiv.style.transform = `translateX(${-(operationDiv.clientWidth - maxOperandWidth) / 2}px)`
 }
 
 function onInput(value: number) {
@@ -97,15 +99,13 @@ watch(() => stats.dailyTotalScore, (newTotal) => {
 })
 
 watch(async () => operation, async () => {
-  await nextTick()
-  centerOperation()
+  await centerOperation()
 })
 
 onMounted(async () => {  
   reset()
   
-  await nextTick()
-  centerOperation()
+  await centerOperation()
   
   if (isMobile()) {
     return
@@ -129,18 +129,15 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
   <main>
     <section>
       <div class="spacer"></div>
-      <div id="operation-wrapper">
-        <div id="operation" ref="operation-template" v-if="operation">
-          <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
-            <h1 id="first-operand">{{ operation.operands[0] }}</h1>
-            <div id="operator-and-second-operand">
-              <SvgIcon id="operator" :icon="operatorIcon(operation.operator)" />
-              <h1 id="second-operand">{{ operation.operands[1] }}</h1>
-            </div>
+      <div id="operation" ref="operation-template" v-if="operation">
+        <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
+          <h1 id="first-operand">{{ operation.operands[0] }}</h1>
+          <div id="operator-and-second-operand">
+            <SvgIcon id="operator" :icon="operatorIcon(operation.operator)" />
+            <h1 id="second-operand">{{ operation.operands[1] }}</h1>
           </div>
-          <h1 id="result" :class=" { isCorrect: isInputCorrect }">{{ input.length > 0 ? input : '?' }}
-          </h1>
         </div>
+        <h1 id="result" :class=" { isCorrect: isInputCorrect }">{{ input.length > 0 ? input : '?' }}</h1>
       </div>
       <div class="spacer"></div>
     </section>
@@ -158,6 +155,12 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
 @use '@design-tokens/typography';
 @use '@/assets/math';
 
+.border {
+  border: 1px solid blue;
+  background: aqua;
+  display: inline-block;
+}
+
 main {  
   section {
     $h-padding: 1em;
@@ -171,17 +174,9 @@ main {
     padding: $v-padding $h-padding;
     text-align: center;
     
-    div#operation-wrapper {
-      $h-margin: 1em;
-      
-      display: flex;
-      justify-content: center;
-      margin: 0 $h-margin;
-      max-width: calc(pads.$pad-max-width - 2 * $h-margin);
-      width: 100%;
-    }
-    
     div#operation {
+      max-width: pads.$pad-max-width;
+      
       h1 {
         margin: 0;
       }
@@ -191,12 +186,12 @@ main {
         
         column-gap: $gap;
         display: flex;
+        flex-direction: row;
         flex-wrap: wrap;
         justify-content: right;
         
         #operator {
-          @extend h1;
-          aspect-ratio: 1;
+          width: 3.5em;
         }
         
         #operator-and-second-operand {
