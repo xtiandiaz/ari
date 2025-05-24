@@ -52,10 +52,9 @@ async function centerOperation() {
   const operatorAndSecondOperandDiv = document.getElementById('operator-and-second-operand') as HTMLDivElement
   
   if (operandsDigitCount.value < settings.maxDigitsPerOperationLine) {
-    // operationDiv.style.width = `${firstOperandDiv.clientWidth + 8 + operatorAndSecondOperandDiv.clientWidth}px`
+    operationDiv.style.display = 'none'
     operationDiv.style.removeProperty('width')
-    await nextTick()
-    operationDiv.style.width = 'max-content'
+    operationDiv.style.display = 'block'
   } else {
     const newWidth = firstOperandDiv.clientWidth > operatorAndSecondOperandDiv.clientWidth 
       ? firstOperandDiv.clientWidth
@@ -177,7 +176,7 @@ main {
     div#operation {
       max-width: pads.$pad-max-width;
       width: fit-content;
-      background-color: azure;
+      background-color: orange;
       
       h1 {
         margin: 0;
