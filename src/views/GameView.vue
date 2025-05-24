@@ -48,7 +48,7 @@ async function centerOperation() {
   await nextTick()
   
   const operationDiv = document.getElementById('operation') as HTMLDivElement
-  operationDiv.style.maxWidth = operandsDigitCount.value < settings.maxDigitsPerOperationLine 
+  operationDiv.style.width = operandsDigitCount.value < settings.maxDigitsPerOperationLine 
     ? 'fit-content' 
     : 'min-content'
 }
@@ -164,9 +164,9 @@ main {
     
     div#operation {
       // max-width: pads.$pad-max-width;
-      max-width: fit-content;
+      width: fit-content;
       // max-width: min-content;
-      background-color: greenyellow;
+      background-color: purple;
       
       h1 {
         margin: 0;
