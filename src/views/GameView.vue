@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch, useTemplateRef, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import type { Operation, Operator } from '@/models/math';
+import settingsStore from '@/stores/settings'
 import statsStore from '@/stores/stats'
 import { generateRandomOperation } from '@/services/operation-generator';
 import { operatorIcon } from '@/view-models/vm-math';
@@ -18,6 +19,7 @@ const isLocked = computed(() => resetInterval.value !== undefined)
 
 const input = ref('')
 
+const settings = settingsStore()
 const stats = statsStore()
 
 function reset() {
@@ -47,13 +49,14 @@ async function centerOperation() {
   
   const operationDiv = document.getElementById('operation') as HTMLDivElement
   
-  if (operandDigitTotal.value < 10) {
+  if (operandDigitTotal.value < settings.maxDigitsPerOperationLine) {
     operationDiv.style.removeProperty('width')
   } else {
-    const firstOperandDiv = document.getElementById('first-operand')!
-    const secondOperandDiv = document.getElementById('second-operand')!
+    const firstOperandDiv = document.getElementById('first-operand') as HTMLDivElement
+    // const secondOperandDiv = document.getElementById('second-operand') as HTMLDivElement
+    const operatorAndSecondOperandDiv = document.getElementById('operator-and-second-operand') as HTMLDivElement
     
-    operationDiv.style.width = `${Math.max(firstOperandDiv.clientWidth, secondOperandDiv.clientWidth)}px`
+    operationDiv.style.width = `${Math.max(firstOperandDiv.clientWidth, operatorAndSecondOperandDiv.clientWidth) - 32}px`
   }
   
 }
@@ -155,12 +158,6 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
 @use '@design-tokens/typography';
 @use '@/assets/math';
 
-.border {
-  border: 1px solid blue;
-  background: aqua;
-  display: inline-block;
-}
-
 main {  
   section {
     $h-padding: 1em;
@@ -170,7 +167,6 @@ main {
     display: flex;
     flex-direction: column;
     height: calc(50% - $v-padding * 2);
-    max-width: calc(100% - $h-padding * 2);
     padding: $v-padding $h-padding;
     text-align: center;
     
@@ -180,7 +176,7 @@ main {
       }
       
       #operands-and-operator {
-        $gap: 0.5em;
+        $gap: 0.25em;
         
         column-gap: $gap;
         display: flex;
