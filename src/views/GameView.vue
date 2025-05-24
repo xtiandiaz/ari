@@ -50,13 +50,16 @@ async function centerOperation() {
   const operationDiv = document.getElementById('operation') as HTMLDivElement
   
   if (operandDigitTotal.value < settings.maxDigitsPerOperationLine) {
-    operationDiv.style.removeProperty('width')
+    operationDiv.style.width = 'auto'
   } else {
     const firstOperandDiv = document.getElementById('first-operand') as HTMLDivElement
     // const secondOperandDiv = document.getElementById('second-operand') as HTMLDivElement
     const operatorAndSecondOperandDiv = document.getElementById('operator-and-second-operand') as HTMLDivElement
+    const newWidth = firstOperandDiv.clientWidth > operatorAndSecondOperandDiv.clientWidth 
+      ? firstOperandDiv.clientWidth
+      : operatorAndSecondOperandDiv.clientWidth - 32
     
-    operationDiv.style.width = `${Math.max(firstOperandDiv.clientWidth, operatorAndSecondOperandDiv.clientWidth) - 32}px`
+    operationDiv.style.width = `${newWidth}px`
   }
   
 }
@@ -170,7 +173,9 @@ main {
     padding: $v-padding $h-padding;
     text-align: center;
     
-    div#operation {      
+    div#operation {
+      max-width: pads.$pad-max-width;
+      
       h1 {
         margin: 0;
       }
