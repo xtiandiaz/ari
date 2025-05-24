@@ -53,6 +53,8 @@ async function centerOperation() {
   
   if (operandsDigitCount.value < settings.maxDigitsPerOperationLine) {
     // operationDiv.style.width = `${firstOperandDiv.clientWidth + 8 + operatorAndSecondOperandDiv.clientWidth}px`
+    operationDiv.style.removeProperty('width')
+    await nextTick()
     operationDiv.style.width = 'max-content'
   } else {
     const newWidth = firstOperandDiv.clientWidth > operatorAndSecondOperandDiv.clientWidth 
@@ -175,7 +177,7 @@ main {
     div#operation {
       max-width: pads.$pad-max-width;
       width: fit-content;
-      background-color: pink;
+      background-color: azure;
       
       h1 {
         margin: 0;
