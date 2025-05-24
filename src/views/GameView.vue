@@ -48,15 +48,9 @@ async function centerOperation() {
   await nextTick()
   
   const operationDiv = document.getElementById('operation') as HTMLDivElement
-  
-  if (operandsDigitCount.value < settings.maxDigitsPerOperationLine) {
-    operationDiv.style.maxWidth = '100%'
-  } else {
-    const firstOperandDiv = document.getElementById('first-operand') as HTMLDivElement
-    const operatorAndSecondOperandDiv = document.getElementById('operator-and-second-operand') as HTMLDivElement
-  
-    operationDiv.style.maxWidth = `${Math.max(firstOperandDiv.clientWidth, operatorAndSecondOperandDiv.clientWidth)}px`
-  }
+  operationDiv.style.maxWidth = operandsDigitCount.value < settings.maxDigitsPerOperationLine 
+    ? 'fit-content' 
+    : 'min-content'
 }
 
 function onInput(value: number) {
@@ -170,7 +164,9 @@ main {
     
     div#operation {
       // max-width: pads.$pad-max-width;
-      max-width: 100%;
+      max-width: fit-content;
+      // max-width: min-content;
+      background-color: greenyellow;
       
       h1 {
         margin: 0;
