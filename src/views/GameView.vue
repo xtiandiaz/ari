@@ -2,13 +2,13 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import type { Operation, Operator } from '@/models/math';
 import settingsStore from '@/stores/settings'
-import statsStore from '@/stores/stats'
+import statsStore from '@/stores/score'
 import { generateRandomOperation } from '@/services/operation-generator';
 import { operatorIcon } from '@/view-models/vm-math';
 import NumberPad from '@vueties/pads/NumberPad.vue';
 import SvgIcon from '@vueties/misc/SvgIcon.vue';
 import { isMobile } from '@/assets/tungsten/navigator';
-import { clearScoreIfNeeded, saveScore, saveRecords } from '@/services/stats-management'
+import { clearScoreIfNeeded, saveScore } from '@/services/score-management'
 import { onWindowEvent } from '@vueties/composables/window-event'
 
 const operation = ref<Operation>()
@@ -38,10 +38,9 @@ function resetAndSaveScoreForOperatorIfNeeded(operator: Operator) {
     return
   }
   
-  stats.addScore(operator)
+  stats.addOperatorScore(operator)
   
   saveScore()
-  saveRecords()
 }
 
 async function centerOperation() {

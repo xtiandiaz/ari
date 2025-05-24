@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // import settingsStore from '@/stores/settings'
 import { onBeforeMount } from 'vue';
-import statsStore from '@/stores/stats'
-import { clearScore, clearRecords } from '@/services/stats-management'
+import statsStore from '@/stores/score'
+import { clearScore, resetRecords } from '@/services/score-management'
 import ButtonRow from '@vueties/form/ButtonRow.vue'
 import { version } from '@/../package.json'
 

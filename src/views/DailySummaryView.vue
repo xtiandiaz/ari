@@ -1,29 +1,31 @@
 <script setup lang="ts">
-import { capitalize, computed, onBeforeMount } from 'vue';
+import { onBeforeMount } from 'vue';
 import { Operator } from '@/models/math'
-import statsStore from '@/stores/stats'
-import { calculateLevelForOperator, calculateOverallLevel } from '@/utils/stats.utils'
-import '@/assets/tungsten/extensions/array.extensions'
+import statsStore from '@/stores/score'
+import { calculateLevel, calculateRecordLevel } from '@/utils/score.utils'
 import { Icon } from '@design-tokens/iconography'
-import SvgIcon from '@/vueties/misc/SvgIcon.vue';
 import { operatorIcon } from '@/view-models/vm-math';
-import InfoRow from '@/vueties/form/InfoRow.vue';
+import SvgIcon from '@/vueties/misc/SvgIcon.vue';
+import DataMark from '@/vueties/accessories/DataMark.vue';
+import '@/assets/tungsten/extensions/array.extensions'
 
 const emits = defineEmits<{
   viewTitle: [string],
 }>()
 
 const stats = statsStore()
-const operatorsStats = computed(() => [
-    Operator.Addition, 
-    Operator.Subtraction, 
-    Operator.Multiplication, 
-    Operator.Division
-  ].map(o => stats.getOperatorDailyStats(o) ?? {
-    operator: o,
-    score: 0
-  })
-)
+const operatorsScores = [
+  Operator.Addition, 
+  Operator.Subtraction, 
+  Operator.Multiplication, 
+  Operator.Division
+].map(o => stats.getOperatorDailyScore(o) ?? {
+  operator: o,
+  score: 0,
+  record: 0
+})
+const currentLevel = calculateLevel()
+const recordLevel = calculateRecordLevel()
 
 onBeforeMount(() => {
   emits('viewTitle', `Today's Scores`)
@@ -32,142 +34,98 @@ onBeforeMount(() => {
 
 <template>
   <main>
-    <section id="average">
+    <section id="levels">
       <span class="caption-all-caps">Level</span>
-      <h1>{{ calculateOverallLevel() }}</h1>
+      <h1 id="level" :class="{ 'current-record': currentLevel >= recordLevel }">{{ currentLevel }}</h1>
+      <div id="record-level" :class="{ 'current-record': recordLevel > currentLevel }">
+        <span class="caption-all-caps">Best</span>
+        <h5>{{ recordLevel }}</h5>
+      </div>
     </section>
-    <section id="summary" class="form">
+    
+    <section id="scores" class="form">
       <div class="section">
         <div class="header">
-          <span class="title">Levels</span>
+          <span class="title">Scores</span>
         </div>
         <div class="rows">
-          <InfoRow 
-            v-for="(operatorStats) of operatorsStats" 
-            :key="operatorStats.operator"
-            :title="capitalize(operatorStats.operator)"
-            :subtitle="`Solutions: ${operatorStats.score}`"
-            :value="String(calculateLevelForOperator(operatorStats.operator))"
-            :icon="operatorIcon(operatorStats.operator)"
-            :class="`operator-${operatorStats.operator.toLowerCase()}`"
-          />
+          <div 
+            v-for="(operatorScore) in operatorsScores" 
+            :key="operatorScore.operator" 
+            class="row score-row" :class="operatorScore.operator.toLowerCase()"
+          >
+            <SvgIcon :icon="operatorIcon(operatorScore.operator)" class="representative-icon" />
+            <div class="spacer"></div>
+            <div class="marks operator-colored-items">
+              <DataMark 
+                :icon="Icon.Right" 
+                :value="operatorScore.score"
+                class="strong"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          All scores will be cleared automatically by the end of the day. <strong>Try to beat your own records every day!</strong>
         </div>
       </div>
-        
-        <!-- <div class="stats">
-          <h3 class="operator-colored-item">{{  }}</h3>
-          
-          <div class="marks">
-            <span class="mark">
-              <SvgIcon :icon="Icon.Right" />
-              <span>{{ operatorStats.solutionCount }}</span>
-            </span> -->
-            <!-- <span class="mark operator-colored-item">
-              <SvgIcon :icon="Icon.Lighning" />
-              <span>{{ operatorStats.solutionCount }}</span>
-            </span> -->
-          <!-- </div>
-        </div> -->
     </section>
   </main>
 </template>
 
 <style scoped lang="scss">
 @use '@vueties/styles/form';
-@use '@vueties/styles/utils';
+@use '@vueties/styles/accessories';
 @use '@design-tokens/palette';
 @use '@design-tokens/typography';
 @use '@/assets/math';
 
-span.caption-all-caps {
-  @extend .caption;
-  letter-spacing: 0.125em;
-  text-transform: uppercase;
+strong {
+  display: inline !important;
 }
 
-:deep(.row.info) {
-  .value {
-    @extend .h6;
-  }
+span.caption-all-caps {
+  @extend .caption;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 main {  
   section {
     margin: 0 1em;
     
-    &#average {
-      padding: 3em 1em;
-      text-align: center;
+    &#levels {
+      align-items: center;
+      display: flex;
+      gap: 2em;
+      justify-content: center;
+      padding: 1em;
       
-      h1 {
+      > * {
+        flex: 1;
+      }
+      
+      > :first-child {
+        text-align: right;
+      }
+      
+      h1, h5 {
         margin: 0;
       }
-    }
-    
-    &#summary {
-      $gap: 0.5em;
       
-      display: flex;
-      flex-wrap: wrap;
-      gap: $gap;
+      #level {
+        text-align: center;
+        flex: 0;
+      }
       
-      div.operator-stats-box {
-        $h-padding: 1em;
-        $v-padding: 1em;
-        
-        border-radius: 1em;
-        flex: 1 1 calc(25% - 2 * $h-padding - 3 * $gap);
-        padding: $v-padding $h-padding;
-        position: relative;
-        @include palette.color-attribute('background-color', 'background');
-        
-        @media screen and (max-width: 560px) {  
-          flex-basis: calc(50% - 2 * $h-padding - $gap);
-        }
-        
-        .svg-icon {
-          $icon-size: 2em;
-          
-          height: $icon-size;
-          width:  $icon-size;
-          
-          &.operator-icon {
-            position: absolute;
-            top: $v-padding;
-            right: $h-padding;
-          }
-        }
-        
-        .stats {
-          margin-top: 0.5em;
-          padding: 2em 0 0 0.25em;
-          
-          h3 {
-            margin: 0;
-          }
-          
-          .marks {
-            display: flex;
-            gap: 1em;
-            margin-top: 0.25em;
-            
-            span.mark {              
-              @extend strong;
-              
-              > * {
-                vertical-align: middle;
-              }
-              
-              .svg-icon {
-                $icon-size: 1.25em;
-                
-                height: $icon-size;
-                margin-right: 0.25em;
-                width:  $icon-size;
-              }
-            }
-          }
-        }
+      // .current-record {
+      //   &, * {
+      //     @include palette.color-attribute('color', 'yellow');
+      //   }
+      // }
+      
+      #record-level {
+        @include palette.color-attribute('color', 'tertiary-body');
       }
     }
   }
