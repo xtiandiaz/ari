@@ -13,7 +13,7 @@ import { onWindowEvent } from '@vueties/composables/window-event'
 
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
-const operandDigitTotal = computed(() => operation.value?.operands.reduce((count, o) => count + String(o).length, 0) ?? 0)
+const operandsDigitCount = computed(() => operation.value?.operands.reduce((count, o) => count + String(o).length, 0) ?? 0)
 const isInputCorrect = computed(() => operation.value && Number(input.value) === operation.value.result)
 const isLocked = computed(() => resetInterval.value !== undefined)
 
@@ -48,13 +48,13 @@ async function centerOperation() {
   await nextTick()
   
   const operationDiv = document.getElementById('operation') as HTMLDivElement
+  const firstOperandDiv = document.getElementById('first-operand') as HTMLDivElement
+  const operatorAndSecondOperandDiv = document.getElementById('operator-and-second-operand') as HTMLDivElement
   
-  if (operandDigitTotal.value < settings.maxDigitsPerOperationLine) {
-    operationDiv.style.width = 'auto'
+  if (operandsDigitCount.value < settings.maxDigitsPerOperationLine) {
+    // operationDiv.style.width = `${firstOperandDiv.clientWidth + 8 + operatorAndSecondOperandDiv.clientWidth}px`
+    operationDiv.style.width = 'fit-content'
   } else {
-    const firstOperandDiv = document.getElementById('first-operand') as HTMLDivElement
-    // const secondOperandDiv = document.getElementById('second-operand') as HTMLDivElement
-    const operatorAndSecondOperandDiv = document.getElementById('operator-and-second-operand') as HTMLDivElement
     const newWidth = firstOperandDiv.clientWidth > operatorAndSecondOperandDiv.clientWidth 
       ? firstOperandDiv.clientWidth
       : operatorAndSecondOperandDiv.clientWidth - 32
@@ -175,6 +175,7 @@ main {
     
     div#operation {
       max-width: pads.$pad-max-width;
+      width: fit-content;
       
       h1 {
         margin: 0;
