@@ -16,11 +16,11 @@ import { hexString } from '@/assets/tungsten/stringify';
 
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
-const operandsDigitCount = computed(() => operation.value?.operands.reduce((count, o) => count + String(o).length, 0) ?? 0)
-const isInputCorrect = computed(() => operation.value && Number(input.value) === operation.value.result)
-const isLocked = computed(() => resetInterval.value !== undefined)
-
 const input = ref('')
+
+const operandsDigitCount = computed(() => operation.value?.operands.reduce((count, o) => count + String(o).length, 0) ?? 0)
+const isInputCorrect = computed(() => input.value && operation.value && Number(input.value) === operation.value.result)
+const isLocked = computed(() => resetInterval.value !== undefined)
 
 const settings = settingsStore()
 const stats = statsStore()
@@ -130,13 +130,15 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
       <div class="spacer"></div>
       <div id="operation" ref="operation-template" v-if="operation">
         <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
-          <h1 id="first-operand">{{ operation.operands[0] }}</h1>
+          <h1 id="first-operand">{{ operation.operands[0].toLocaleString() }}</h1>
           <div id="operator-and-second-operand">
             <SvgIcon id="operator" :icon="operatorIcon(operation.operator)" />
-            <h1 id="second-operand">{{ operation.operands[1] }}</h1>
+            <h1 id="second-operand">{{ operation.operands[1].toLocaleString() }}</h1>
           </div>
         </div>
-        <h1 id="result" :class=" { isCorrect: isInputCorrect }">{{ input.length > 0 ? input : '?' }}</h1>
+        <h1 id="result" :class=" { isCorrect: isInputCorrect }">
+          {{ input.length > 0 ? Number(input).toLocaleString() : '?' }}
+        </h1>
       </div>
       <div class="spacer"></div>
     </section>
