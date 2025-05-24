@@ -47,7 +47,7 @@ async function centerOperation() {
   
   const operationDiv = document.getElementById('operation') as HTMLDivElement
   
-  if (operandDigitTotal.value <= 12) {
+  if (operandDigitTotal.value < 10) {
     operationDiv.style.removeProperty('width')
   } else {
     const firstOperandDiv = document.getElementById('first-operand')!
@@ -174,9 +174,7 @@ main {
     padding: $v-padding $h-padding;
     text-align: center;
     
-    div#operation {
-      max-width: pads.$pad-max-width;
-      
+    div#operation {      
       h1 {
         margin: 0;
       }

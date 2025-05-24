@@ -22,7 +22,7 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
   const score = stats.getOperatorDailyStats(operator)?.score ?? 0
   const fixedScore = Math.max(1, score)
   
-  // return [65696589, 92700]
+  // return [65696589, 9]
   
   switch (operator) {
     case Operator.Addition:
