@@ -10,9 +10,6 @@ import SvgIcon from '@vueties/misc/SvgIcon.vue';
 import { isMobile } from '@/assets/tungsten/navigator';
 import { clearScoreIfNeeded, saveScore, saveRecords } from '@/services/stats-management'
 import { onWindowEvent } from '@vueties/composables/window-event'
-import { Color, ColorScheme, schemeColor } from '@/assets/design-tokens/palette';
-import { getRandomInteger } from '@/assets/tungsten/randomness';
-import { hexString } from '@/assets/tungsten/stringify';
 
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
@@ -54,7 +51,6 @@ async function centerOperation() {
   operationDiv.style.width = operandsDigitCount.value < settings.maxDigitsPerOperationLine 
     ? 'fit-content' 
     : 'min-content'
-  operationDiv.style.backgroundColor = `#${hexString(schemeColor(ColorScheme.Dark, Object.values(Color)[getRandomInteger(0, 10)]))}`
 }
 
 function onInput(value: number) {
