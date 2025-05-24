@@ -97,14 +97,12 @@ watch(() => stats.dailyTotalScore, (newTotal) => {
   }
 })
 
-watch(async () => operation, async () => {
+watch(operation, async () => {
   await centerOperation()
 })
 
 onMounted(async () => {  
   reset()
-  
-  await centerOperation()
   
   if (isMobile()) {
     return
