@@ -6,10 +6,7 @@ import { retrieveActiveDailyScore } from '@/services/score-management'
 import '@/assets/tungsten/extensions/date.extensions'
 
 export default defineStore('score', () => {
-  const dailyScore = ref(retrieveActiveDailyScore() ?? {
-    date: Date.today(),
-    operatorsScores: []
-  } as DailyScore)
+  const dailyScore = ref(retrieveActiveDailyScore())
   const dailyTotalScore = computed(() => dailyScore.value.operatorsScores.reduce((acc, os) => acc + os.score, 0))
   
   function getOperatorDailyScore(operator: Operator): OperatorScore | undefined {
@@ -30,21 +27,11 @@ export default defineStore('score', () => {
     }
   }
   
-  function resetOperatorScores() {
-    dailyScore.value.operatorsScores.forEach(os => os.score = 0)
-  }
-  
-  function resetOperatorRecords() {
-    dailyScore.value.operatorsScores.forEach(os => os.record = Math.max(0, os.score))
-  }
-  
   return {
     dailyScore,
     dailyTotalScore,
     
     addOperatorScore,
-    resetOperatorRecords,
-    resetOperatorScores,
     getOperatorDailyScore,
   }
 })

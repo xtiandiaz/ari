@@ -4,30 +4,32 @@ import scoreStore from '@/stores/score'
 import { retrieve, save } from '@/assets/tungsten/local-storage'
 import '@/assets/tungsten/extensions/date.extensions'
 
-function retrieveSavedDailyScore(): DailyScore | undefined {
+export function retrieveActiveDailyScore(): DailyScore {
   const rawDailyScore = retrieve(LocalStorageItemKey.DailyScore) as RawDailyScore
   if (!rawDailyScore) {
-    return undefined
+    return {
+      date: Date.today(),
+      operatorsScores: []
+    }
+  }
+  
+  const savedDate = new Date(rawDailyScore.date)
+  const isStale = (new Date()).getDaysFrom(savedDate) >= 1
+  
+  if (isStale) {
+    clearScore()
   }
   
   return {
-    date: new Date(rawDailyScore.date),
+    date: isStale ? Date.today() : savedDate,
     operatorsScores: rawDailyScore.operatorsScores
   }
 }
 
-export function retrieveActiveDailyScore(): DailyScore | undefined {
-  const savedDailyScore = retrieveSavedDailyScore()
-  
-  if (savedDailyScore && (new Date()).getDaysFrom(savedDailyScore.date) >= 1) {
-    return undefined
-  }
-  
-  return savedDailyScore
-}
-
 export function saveScore() {
   const score = scoreStore()
+  
+  score.dailyScore.date = Date.today()
   
   save(LocalStorageItemKey.DailyScore, score.dailyScore)
 }
@@ -35,28 +37,26 @@ export function saveScore() {
 export function clearScore() {
   const score = scoreStore()
   
-  score.resetOperatorScores()
+  score.dailyScore.operatorsScores.forEach(os => os.score = 0)
   
   saveScore()
 }
 
 export function clearScoreIfNeeded(): boolean {
   const score = scoreStore()
+  const isStale = (new Date()).getDaysFrom(score.dailyScore.date) >= 1
   
-  const dateDifference = (new Date()).getDaysFrom(score.dailyScore.date)
-  if (dateDifference < 1) {
-    return false
+  if (isStale) {
+    clearScore()
   }
   
-  clearScore()
-  
-  return true
+  return isStale
 }
 
 export function resetRecords() {
   const score = scoreStore()
   
-  score.resetOperatorRecords()
+  score.dailyScore.operatorsScores.forEach(os => os.record = Math.max(0, os.score))
   
   saveScore()
 }
