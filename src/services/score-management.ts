@@ -17,7 +17,7 @@ export function retrieveActiveDailyScore(): DailyScore {
   const isStale = (new Date()).getDaysFrom(savedDate) >= 1
   
   if (isStale) {
-    clearScore()
+    rawDailyScore.operatorsScores.forEach(os => os.score = 0)
   }
   
   return {
