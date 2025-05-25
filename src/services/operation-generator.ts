@@ -8,13 +8,11 @@ function getRandomWeightedOperator(): Operator {
   const score = scoreStore()
   
   const weights = (() => {
-    const operatorScore = settings.playableOperators.map(o => score.getOperatorDailyScore(o)?.score ?? 0)
-    const maxScore = operatorScore.reduce((max, cur) => cur > max ? cur : max, operatorScore[0])
+    const playableOperatorsScores = settings.playableOperators.map(o => score.getOperatorDailyScore(o)?.score ?? 0)
+    const maxScore = playableOperatorsScores.reduce((max, cur) => cur > max ? cur : max, playableOperatorsScores[0])
     
-    return operatorScore.map(os => maxScore / Math.max(os, 1))
+    return playableOperatorsScores.map(os => 1 + maxScore / Math.max(os, 1))
   })()
-  
-  console.log(weights)
   
   return getRandomWeightedChoice(settings.playableOperators, weights)
 }
