@@ -36,10 +36,15 @@ onBeforeMount(() => {
   <main>
     <section id="levels">
       <span class="caption-all-caps">Level</span>
-      <h1 id="level" :class="{ 'current-record': currentLevel >= recordLevel }">{{ currentLevel }}</h1>
-      <div id="record-level" :class="{ 'current-record': recordLevel > currentLevel }">
-        <span class="caption-all-caps">Best</span>
-        <h5>{{ recordLevel }}</h5>
+      <div id="level" :class="{ 'new-record': currentLevel >= recordLevel }">
+        <SvgIcon :icon="Icon.Crown" />
+        <h1>{{ currentLevel }}</h1>
+      </div>
+      <div id="record-level">
+        <span>
+          <DataMark :icon="Icon.Crown" :value="`Best`" class="caption-all-caps" />
+          <h5>{{ recordLevel }}</h5>
+        </span>
       </div>
     </section>
     
@@ -100,6 +105,7 @@ main {
       gap: 2em;
       justify-content: center;
       padding: 1em;
+      @include palette.color-attribute('color', 'tertiary-body');
       
       > * {
         flex: 1;
@@ -116,16 +122,31 @@ main {
       #level {
         text-align: center;
         flex: 0;
+        @include palette.color-attribute('color', 'body');
+        
+        .svg-icon {
+          width: 2em;
+          display: none;
+        }
+        
+        &.new-record {          
+          .svg-icon {
+            display: inline-block;
+          }
+        }
       }
       
-      // .current-record {
-      //   &, * {
-      //     @include palette.color-attribute('color', 'yellow');
-      //   }
-      // }
-      
       #record-level {
-        @include palette.color-attribute('color', 'tertiary-body');
+        > :first-child {
+          display: inline-block;
+          text-align: center;
+        }
+      }
+      
+      .new-record {
+        &, * {
+          @include palette.color-attribute('color', 'yellow');
+        }
       }
     }
   }
