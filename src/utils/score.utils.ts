@@ -4,28 +4,28 @@ import '@/assets/tungsten/extensions/array.extensions'
 
 export const levelWeight = 3
 
-export function calculateLevel(): number {
+function calculateLevel(averageOperatorScore: number): number {
+  return Math.ceil(averageOperatorScore / levelWeight)
+}
+
+export function calculateDailyLevel(): number {
   const score = scoreStore()
   const settings = settingsStore()
   
-  return Math.ceil(
-    (
-      settings.playableOperators
-        .compactMap(o => score.getOperatorDailyScore(o))
-        .reduce((acc, os) => acc + os.score, 0) / settings.playableOperators.length
-      ) / levelWeight
-    )
+  return calculateLevel(
+    settings.playableOperators
+      .compactMap(o => score.getOperatorDailyScore(o))
+      .reduce((acc, os) => acc + os.score, 0) / settings.playableOperators.length
+  )
 }
 
 export function calculateRecordLevel(): number {
   const score = scoreStore()
   const settings = settingsStore()
   
-  return Math.ceil(
-    (
-      settings.playableOperators
-        .compactMap(o => score.getOperatorDailyScore(o))
-        .reduce((acc, os) => acc + os.record, 0) / settings.playableOperators.length
-      ) / levelWeight
-    )
+  return calculateLevel(
+    settings.playableOperators
+      .compactMap(o => score.getOperatorDailyScore(o))
+      .reduce((acc, os) => acc + os.record, 0) / settings.playableOperators.length
+  )
 }

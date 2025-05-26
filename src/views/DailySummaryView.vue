@@ -2,7 +2,7 @@
 import { onBeforeMount } from 'vue';
 import { Operator } from '@/models/math'
 import statsStore from '@/stores/score'
-import { calculateLevel, calculateRecordLevel } from '@/utils/score.utils'
+import { calculateDailyLevel, calculateRecordLevel } from '@/utils/score.utils'
 import { Icon } from '@design-tokens/iconography'
 import { operatorIcon } from '@/view-models/vm-math';
 import SvgIcon from '@/vueties/misc/SvgIcon.vue';
@@ -24,7 +24,7 @@ const operatorsScores = [
   score: 0,
   record: 0
 })
-const currentLevel = calculateLevel()
+const currentLevel = calculateDailyLevel()
 const recordLevel = calculateRecordLevel()
 
 onBeforeMount(() => {

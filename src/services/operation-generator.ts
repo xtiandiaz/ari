@@ -1,6 +1,7 @@
 import { Operator, type Operation } from "@/models/math";
 import settingsStore from '@/stores/settings'
 import scoreStore from '@/stores/score'
+import { levelWeight } from "@/utils/score.utils";
 import { getRandomInteger, getRandomWeightedChoice } from "@/assets/tungsten/randomness";
 
 function getRandomWeightedOperator(): Operator {
@@ -25,8 +26,9 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
   switch (operator) {
     case Operator.Addition:
       return (() => {
-        const rangeMin = Math.max(2, Math.pow(operatorScore, 3))
-        const rangeMax = Math.max(99, Math.pow(operatorScore, 4))
+        const mult = Math.pow(2, Math.floor(operatorScore / 5))
+        const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 2))
+        const rangeMax = Math.max(99, mult * Math.pow(operatorScore, 3))
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
@@ -49,8 +51,9 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
       })()
     case Operator.Subtraction:
       return (() => {
-        const rangeMin = Math.max(2, Math.pow(operatorScore, 3))
-        const rangeMax = Math.max(99, Math.pow(operatorScore, 4))
+        const mult = Math.pow(2, Math.floor(operatorScore / 5))
+        const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 3))
+        const rangeMax = Math.max(99, mult * Math.pow(operatorScore, 4))
         
         const minuend = getRandomInteger(rangeMin, rangeMax)
         const subtrahend = getRandomInteger(1, minuend - 1)
