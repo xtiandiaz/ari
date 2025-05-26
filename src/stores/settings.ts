@@ -4,7 +4,7 @@ import { isMobile } from '@/assets/tungsten/navigator'
 
 export default defineStore('settings', () => {
   const playableOperators = [Operator.Addition, Operator.Subtraction, Operator.Multiplication, Operator.Division]
-  const maxDigitsPerOperationLine = isMobile() ? 9 : 15
+  const maxDigitsPerOperationLine = isMobile() ? 9 : 12
   
   return {
     playableOperators,

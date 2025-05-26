@@ -20,20 +20,20 @@ function getRandomWeightedOperator(): Operator {
 function generateRandomOperandsForOperator(operator: Operator): number[] {
   const score = scoreStore()
   const operatorScore = score.getOperatorDailyScore(operator)?.score ?? 0
-  const fixedScore = Math.max(1, operatorScore)
+  const fixedOperatorScore = Math.max(1, operatorScore)
   
   switch (operator) {
     case Operator.Addition:
       return (() => {
-        const rangeMin = Math.max(2, Math.sqrt(operatorScore) * Math.pow(operatorScore, 2))
-        const rangeMax = Math.max(99, Math.pow(operatorScore, 3))
+        const rangeMin = Math.max(2, Math.pow(operatorScore, 3))
+        const rangeMax = Math.max(99, Math.pow(operatorScore, 4))
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
     case Operator.Division:
       return (() => {
         const rangeMin = Math.max(2, operatorScore)
-        const rangeMax = Math.max(11, operatorScore * Math.log2(fixedScore))
+        const rangeMax = Math.max(11, operatorScore * Math.log2(fixedOperatorScore))
         
         const divisor = getRandomInteger(rangeMin, rangeMax)
         const dividend = getRandomInteger(rangeMin, rangeMax)
@@ -43,14 +43,14 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
     case Operator.Multiplication:
       return (() => {  
         const rangeMin = Math.max(2, operatorScore)
-        const rangeMax = Math.max(11, operatorScore * Math.log2(fixedScore))
+        const rangeMax = Math.max(11, operatorScore * Math.log2(fixedOperatorScore))
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
     case Operator.Subtraction:
       return (() => {
-        const rangeMin = Math.max(2, Math.sqrt(operatorScore) * Math.pow(operatorScore, 2))
-        const rangeMax = Math.max(99, Math.pow(operatorScore, 3))
+        const rangeMin = Math.max(2, Math.pow(operatorScore, 3))
+        const rangeMax = Math.max(99, Math.pow(operatorScore, 4))
         
         const minuend = getRandomInteger(rangeMin, rangeMax)
         const subtrahend = getRandomInteger(1, minuend - 1)

@@ -162,7 +162,6 @@ main {
     text-align: center;
     
     div#operation {
-      max-width: pads.$pad-max-width;
       width: fit-content;
       
       h1 {
