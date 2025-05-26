@@ -52,8 +52,8 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
     case Operator.Subtraction:
       return (() => {
         const mult = Math.pow(2, Math.floor(operatorScore / 5))
-        const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 3))
-        const rangeMax = Math.max(99, mult * Math.pow(operatorScore, 4))
+        const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 2))
+        const rangeMax = Math.max(99, mult * Math.pow(operatorScore, 3))
         
         const minuend = getRandomInteger(rangeMin, rangeMax)
         const subtrahend = getRandomInteger(1, minuend - 1)
