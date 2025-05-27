@@ -1,7 +1,6 @@
 import { Operator, type Operation } from "@/models/math";
 import settingsStore from '@/stores/settings'
 import scoreStore from '@/stores/score'
-import { levelWeight } from "@/utils/score.utils";
 import { getRandomInteger, getRandomWeightedChoice } from "@/assets/tungsten/randomness";
 
 function getRandomWeightedOperator(): Operator {
@@ -21,21 +20,21 @@ function getRandomWeightedOperator(): Operator {
 function generateRandomOperandsForOperator(operator: Operator): number[] {
   const score = scoreStore()
   const operatorScore = score.getOperatorDailyScore(operator)?.score ?? 0
-  const fixedOperatorScore = Math.max(1, operatorScore)
+  // const fixedOperatorScore = Math.max(1, operatorScore)
   
   switch (operator) {
     case Operator.Addition:
       return (() => {
         const mult = Math.pow(2, Math.floor(operatorScore / 5))
         const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 2))
-        const rangeMax = Math.max(99, mult * Math.pow(operatorScore, 3))
+        const rangeMax = Math.max(100, mult * Math.pow(operatorScore, 3))
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
     case Operator.Division:
       return (() => {
-        const rangeMin = Math.max(2, operatorScore)
-        const rangeMax = Math.max(11, operatorScore * Math.log2(fixedOperatorScore))
+        const rangeMax = Math.max(17, Math.pow(operatorScore, 3 / 2))
+        const rangeMin = Math.max(2, rangeMax / 2)
         
         const divisor = getRandomInteger(rangeMin, rangeMax)
         const dividend = getRandomInteger(rangeMin, rangeMax)
@@ -44,8 +43,8 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
       })()
     case Operator.Multiplication:
       return (() => {  
-        const rangeMin = Math.max(2, operatorScore)
-        const rangeMax = Math.max(11, operatorScore * Math.log2(fixedOperatorScore))
+        const rangeMax = Math.max(17, Math.pow(operatorScore, 3 / 2))
+        const rangeMin = Math.max(2, rangeMax / 2)
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
@@ -53,7 +52,7 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
       return (() => {
         const mult = Math.pow(2, Math.floor(operatorScore / 5))
         const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 2))
-        const rangeMax = Math.max(99, mult * Math.pow(operatorScore, 3))
+        const rangeMax = Math.max(100, mult * Math.pow(operatorScore, 3))
         
         const minuend = getRandomInteger(rangeMin, rangeMax)
         const subtrahend = getRandomInteger(1, minuend - 1)
