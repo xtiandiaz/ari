@@ -120,7 +120,7 @@ main {
       }
       
       h1 {
-        font-size: 3.5em;
+        font-size: 4em;
       }
       
       #level {
