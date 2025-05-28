@@ -10,6 +10,8 @@ import { isMobile } from '@/assets/tungsten/navigator';
 import { clearScoreIfNeeded, saveScore } from '@/services/score-management'
 import { onWindowEvent } from '@vueties/composables/window-event'
 
+const score = scoreStore()
+
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
 const input = ref('')
@@ -17,9 +19,16 @@ const input = ref('')
 const isInputCorrect = computed(() => input.value && operation.value && Number(input.value) === operation.value.result)
 const isLocked = computed(() => resetInterval.value !== undefined)
 
-const operandsDigitCount = computed(() => operation.value?.operands.reduce((count, o) => count + String(o).length, 0) ?? 0)
-const operationSizeTier = computed(() => Math.min(3, Math.floor(operandsDigitCount.value / 9) + 1))
-const score = scoreStore()
+const operationSizeTier = computed(() => {
+  const operandsDigitCount = operation.value?.operands.map(o => o.toString().length) ?? []
+  if (operandsDigitCount.length < 2) {
+    return 1
+  }
+  if (operandsDigitCount[0] >= 12 || operandsDigitCount[1] >= 10) {
+    return 'max'
+  }
+  return Math.min(3, Math.floor(operandsDigitCount.reduce((sum, odc) => sum + odc, 0) / 9) + 1).toString()
+})
 
 function reset() {
   clearInterval(resetInterval.value)
@@ -148,22 +157,25 @@ main {
     text-align: center;
     
     div#operation {
+      font-family: 'Inter Medium', sans-serif;
+      font-size: 3.25em;
+      width: min-content;
+      
       &.size-tier-1 {
-        @extend .h1;
         width: fit-content;
       }
       
       &.size-tier-2 {
-        @extend .h1;
-        width: min-content;
+        font-size: 3em;
       }
       
       &.size-tier-3 {
-        @extend .h2;
-        width: min-content;
+        font-size: 2.75em;
       }
       
-      width: fit-content;
+      &.size-tier-max {
+        font-size: 2.5em;
+      }
       
       #operands-and-operator {
         $gap: 0.25rem;
