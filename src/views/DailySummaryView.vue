@@ -43,7 +43,7 @@ onBeforeMount(() => {
       <div id="record-level">
         <span>
           <DataMark :icon="Icon.Crown" :value="`Best`" class="caption-all-caps" />
-          <h5>{{ recordLevel }}</h5>
+          <h4>{{ recordLevel }}</h4>
         </span>
       </div>
     </section>
@@ -115,8 +115,12 @@ main {
         text-align: right;
       }
       
-      h1, h5 {
+      h1, h4 {
         margin: 0;
+      }
+      
+      h1 {
+        font-size: 3.5em;
       }
       
       #level {

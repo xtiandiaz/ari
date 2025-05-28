@@ -23,20 +23,20 @@ const isLocked = computed(() => resetInterval.value !== undefined)
 const operandsDigitCount = computed(() => operation.value?.operands.map(o => o.toString().length))
 const operandsDigitTotal = computed(() => operandsDigitCount.value?.reduce((sum, odc) => sum + odc, 0) ?? 0)
 
-const operationResponsiveWidth = computed(() => operandsDigitTotal.value >= 9 ? 'min-content' : 'fit-content')
+const operationResponsiveWidth = computed(() => operandsDigitTotal.value <= 8 ? 'fit-content' : 'min-content')
 const operationFontSize = computed(() => {
   const operationViewport = document.getElementById('operation-viewport')!
   const operationViewportWidth = operationViewport.clientWidth
-  const maxSizeEm = 3.25
-  const maxDigitTotal = Math.floor(operationViewportWidth / (maxSizeEm * 16))
-  const maxDigitCount = operationResponsiveWidth.value === 'min-content' 
-    ? Math.max(...(operandsDigitCount.value ?? [maxDigitTotal]))
-    : Math.min(operandsDigitTotal.value, maxDigitTotal)
+  const maxFontSizeEm = 3.25
+  const maxDigitTotal = Math.floor(operationViewportWidth / (maxFontSizeEm * 16))
+  const maxDigitCount = operationResponsiveWidth.value === 'fit-content' 
+    ? Math.min(operandsDigitTotal.value, maxDigitTotal)
+    : Math.max(...(operandsDigitCount.value ?? [maxDigitTotal]))
   const rawSize = operationViewportWidth / maxDigitCount / 16
   
-  console.log(operationViewportWidth, maxDigitCount, maxDigitTotal)
+  // console.log('width:', operationViewportWidth, 'maxDigitCount:', maxDigitCount, 'maxDigitTotal:', maxDigitTotal, 'rawSize:', rawSize)
   
-  return `${clamp(rawSize, 2, maxSizeEm)}em`
+  return `${clamp(rawSize, 2, maxFontSizeEm)}em`
 })
 
 function reset() {
@@ -125,11 +125,7 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
   <main>
     <section id="operation-viewport">
       <div class="spacer"></div>
-      <div 
-        id="operation" 
-        v-if="operation" 
-        :style="{ fontSize: operationFontSize, width: operationResponsiveWidth }"
-      >
+      <div id="operation" v-if="operation">
         <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
           <span id="first-operand">{{ operation.operands[0].toLocaleString() }}</span>
           <div id="operator-and-second-operand">
@@ -175,7 +171,8 @@ main {
     
     div#operation {
       font-family: 'Inter Medium', sans-serif;
-      font-size: 3em;
+      font-size: v-bind(operationFontSize);
+      width: v-bind(operationResponsiveWidth);
       
       #operands-and-operator {
         $gap: 0.25rem;
