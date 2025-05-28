@@ -9,6 +9,7 @@ import SvgIcon from '@vueties/misc/SvgIcon.vue';
 import { isMobile } from '@/assets/tungsten/navigator';
 import { clearScoreIfNeeded, saveScore } from '@/services/score-management'
 import { onWindowEvent } from '@vueties/composables/window-event'
+import { clamp } from '@/assets/tungsten/math';
 
 const score = scoreStore()
 
@@ -19,15 +20,23 @@ const input = ref('')
 const isInputCorrect = computed(() => input.value && operation.value && Number(input.value) === operation.value.result)
 const isLocked = computed(() => resetInterval.value !== undefined)
 
-const operationSizeTier = computed(() => {
-  const operandsDigitCount = operation.value?.operands.map(o => o.toString().length) ?? []
-  if (operandsDigitCount.length < 2) {
-    return 1
-  }
-  if (operandsDigitCount[0] >= 12 || operandsDigitCount[1] >= 10) {
-    return 'max'
-  }
-  return Math.min(3, Math.floor(operandsDigitCount.reduce((sum, odc) => sum + odc, 0) / 9) + 1).toString()
+const operandsDigitCount = computed(() => operation.value?.operands.map(o => o.toString().length))
+const operandsDigitTotal = computed(() => operandsDigitCount.value?.reduce((sum, odc) => sum + odc, 0) ?? 0)
+
+const operationResponsiveWidth = computed(() => operandsDigitTotal.value >= 9 ? 'min-content' : 'fit-content')
+const operationFontSize = computed(() => {
+  const operationViewport = document.getElementById('operation-viewport')!
+  const operationViewportWidth = operationViewport.clientWidth
+  const maxSizeEm = 3.25
+  const maxDigitTotal = Math.floor(operationViewportWidth / (maxSizeEm * 16))
+  const maxDigitCount = operationResponsiveWidth.value === 'min-content' 
+    ? Math.max(...(operandsDigitCount.value ?? [maxDigitTotal]))
+    : Math.min(operandsDigitTotal.value, maxDigitTotal)
+  const rawSize = operationViewportWidth / maxDigitCount / 16
+  
+  console.log(operationViewportWidth, maxDigitCount, maxDigitTotal)
+  
+  return `${clamp(rawSize, 2, maxSizeEm)}em`
 })
 
 function reset() {
@@ -114,9 +123,13 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
 
 <template>  
   <main>
-    <section>
+    <section id="operation-viewport">
       <div class="spacer"></div>
-      <div id="operation" ref="operation-template" v-if="operation" :class="`size-tier-${operationSizeTier}`">
+      <div 
+        id="operation" 
+        v-if="operation" 
+        :style="{ fontSize: operationFontSize, width: operationResponsiveWidth }"
+      >
         <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
           <span id="first-operand">{{ operation.operands[0].toLocaleString() }}</span>
           <div id="operator-and-second-operand">
@@ -156,26 +169,13 @@ main {
     padding: $v-padding $h-padding;
     text-align: center;
     
+    &#operation-viewport {
+      padding: 0
+    }
+    
     div#operation {
       font-family: 'Inter Medium', sans-serif;
-      font-size: 3.25em;
-      width: min-content;
-      
-      &.size-tier-1 {
-        width: fit-content;
-      }
-      
-      &.size-tier-2 {
-        font-size: 3em;
-      }
-      
-      &.size-tier-3 {
-        font-size: 2.75em;
-      }
-      
-      &.size-tier-max {
-        font-size: 2.5em;
-      }
+      font-size: 3em;
       
       #operands-and-operator {
         $gap: 0.25rem;
