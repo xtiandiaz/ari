@@ -23,18 +23,27 @@ const isLocked = computed(() => resetInterval.value !== undefined)
 const operandsDigitCount = computed(() => operation.value?.operands.map(o => o.toString().length))
 const operandsDigitTotal = computed(() => operandsDigitCount.value?.reduce((sum, odc) => sum + odc, 0) ?? 0)
 
-const operationResponsiveWidth = computed(() => operandsDigitTotal.value <= 8 ? 'fit-content' : 'min-content')
+const maxOperationDigitCountSingleRow = isMobile() ? 8 : 12
+const operationResponsiveWidth = computed(
+  () => operandsDigitTotal.value <= maxOperationDigitCountSingleRow ? 'fit-content' : 'min-content'
+)
 const operationFontSize = computed(() => {
   const operationViewport = document.getElementById('operation-viewport')!
   const operationViewportWidth = operationViewport.clientWidth
-  const maxFontSizeEm = 3.25
+  const maxFontSizeEm = operationViewportWidth / 8 / 16
   const maxDigitTotal = Math.floor(operationViewportWidth / (maxFontSizeEm * 16))
   const maxDigitCount = operationResponsiveWidth.value === 'fit-content' 
     ? Math.min(operandsDigitTotal.value, maxDigitTotal)
     : Math.max(...(operandsDigitCount.value ?? [maxDigitTotal]))
   const rawSize = operationViewportWidth / maxDigitCount / 16
   
-  // console.log('width:', operationViewportWidth, 'maxDigitCount:', maxDigitCount, 'maxDigitTotal:', maxDigitTotal, 'rawSize:', rawSize)
+  // console.log(
+  //   'width:', operationViewportWidth, 
+  //   'maxDigitCount:', maxDigitCount, 
+  //   'maxDigitTotal:', maxDigitTotal, 
+  //   'rawSize:', rawSize,
+  //   'maxFontSizeEm:', maxFontSizeEm, 
+  // )
   
   return `${clamp(rawSize, 2, maxFontSizeEm)}em`
 })

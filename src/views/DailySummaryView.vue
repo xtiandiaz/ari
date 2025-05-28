@@ -102,7 +102,7 @@ main {
     &#levels {
       align-items: center;
       display: flex;
-      gap: 2em;
+      gap: 1.5em;
       justify-content: center;
       padding: 1em;
       @include palette.color-attribute('color', 'tertiary-body');
