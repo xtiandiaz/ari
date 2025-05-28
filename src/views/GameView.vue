@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import type { Operation, Operator } from '@/models/math';
-import settingsStore from '@/stores/settings'
-import statsStore from '@/stores/score'
+import scoreStore from '@/stores/score'
 import { generateRandomOperation } from '@/services/operation-generator';
 import { operatorIcon } from '@/view-models/vm-math';
 import NumberPad from '@vueties/pads/NumberPad.vue';
@@ -15,12 +14,12 @@ const operation = ref<Operation>()
 const resetInterval = ref<number>()
 const input = ref('')
 
-const operandsDigitCount = computed(() => operation.value?.operands.reduce((count, o) => count + String(o).length, 0) ?? 0)
 const isInputCorrect = computed(() => input.value && operation.value && Number(input.value) === operation.value.result)
 const isLocked = computed(() => resetInterval.value !== undefined)
 
-const settings = settingsStore()
-const stats = statsStore()
+const operandsDigitCount = computed(() => operation.value?.operands.reduce((count, o) => count + String(o).length, 0) ?? 0)
+const operationSizeTier = computed(() => Math.min(3, Math.floor(operandsDigitCount.value / 9) + 1))
+const score = scoreStore()
 
 function reset() {
   clearInterval(resetInterval.value)
@@ -38,18 +37,9 @@ function resetAndSaveScoreForOperatorIfNeeded(operator: Operator) {
     return
   }
   
-  stats.addOperatorScore(operator)
+  score.addOperatorScore(operator)
   
   saveScore()
-}
-
-async function centerOperation() {
-  await nextTick()
-  
-  const operationDiv = document.getElementById('operation') as HTMLDivElement
-  operationDiv.style.width = operandsDigitCount.value < settings.maxDigitsPerOperationLine 
-    ? 'fit-content' 
-    : 'min-content'
 }
 
 function onInput(value: number) {
@@ -86,14 +76,10 @@ function onPageFocusedOrUnmounted() {
   clearScoreIfNeeded()
 }
 
-watch(() => stats.dailyTotalScore, (newTotal) => {
+watch(() => score.dailyTotalScore, (newTotal) => {
   if (newTotal === 0) {
     reset()
   }
-})
-
-watch(operation, async () => {
-  await centerOperation()
 })
 
 onMounted(async () => {  
@@ -121,17 +107,17 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
   <main>
     <section>
       <div class="spacer"></div>
-      <div id="operation" ref="operation-template" v-if="operation">
+      <div id="operation" ref="operation-template" v-if="operation" :class="`size-tier-${operationSizeTier}`">
         <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
-          <h1 id="first-operand">{{ operation.operands[0].toLocaleString() }}</h1>
+          <span id="first-operand">{{ operation.operands[0].toLocaleString() }}</span>
           <div id="operator-and-second-operand">
             <SvgIcon id="operator" :icon="operatorIcon(operation.operator)" />
-            <h1 id="second-operand">{{ operation.operands[1].toLocaleString() }}</h1>
+            <span id="second-operand">{{ operation.operands[1].toLocaleString() }}</span>
           </div>
         </div>
-        <h1 id="result" :class=" { isCorrect: isInputCorrect }">
+        <span id="result" :class=" { isCorrect: isInputCorrect }">
           {{ input.length > 0 ? Number(input).toLocaleString() : '?' }}
-        </h1>
+        </span>
       </div>
       <div class="spacer"></div>
     </section>
@@ -162,14 +148,25 @@ main {
     text-align: center;
     
     div#operation {
-      width: fit-content;
-      
-      h1 {
-        margin: 0;
+      &.size-tier-1 {
+        @extend .h1;
+        width: fit-content;
       }
       
+      &.size-tier-2 {
+        @extend .h1;
+        width: min-content;
+      }
+      
+      &.size-tier-3 {
+        @extend .h2;
+        width: min-content;
+      }
+      
+      width: fit-content;
+      
       #operands-and-operator {
-        $gap: 0.25em;
+        $gap: 0.25rem;
         
         column-gap: $gap;
         display: flex;
@@ -178,7 +175,7 @@ main {
         justify-content: right;
         
         #operator {
-          width: 3.5em;
+          width: 1.125em;
         }
         
         #operator-and-second-operand {
@@ -188,7 +185,7 @@ main {
         }
       }
       
-      h1#result {
+      #result {
         float: right;
         @include palette.color-attribute('color', 'tertiary-body');
         

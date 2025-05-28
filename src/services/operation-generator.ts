@@ -20,7 +20,6 @@ function getRandomWeightedOperator(): Operator {
 function generateRandomOperandsForOperator(operator: Operator): number[] {
   const score = scoreStore()
   const operatorScore = score.getOperatorDailyScore(operator)?.score ?? 0
-  // const fixedOperatorScore = Math.max(1, operatorScore)
   
   switch (operator) {
     case Operator.Addition:
