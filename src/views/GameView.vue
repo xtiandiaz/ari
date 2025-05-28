@@ -170,7 +170,7 @@ main {
     text-align: center;
     
     &#operation-viewport {
-      padding: 0
+      padding: $v-padding 0;
     }
     
     div#operation {
