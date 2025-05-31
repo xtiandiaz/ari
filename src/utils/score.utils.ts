@@ -1,31 +1,27 @@
-import scoreStore from '@/stores/score'
-import settingsStore from '@/stores/settings'
+import type { Operator } from '@/models/math'
+import { LevelKind, type OperatorScores } from '@/models/scores'
 import '@/assets/tungsten/extensions/array.extensions'
 
-export const levelWeight = 3
+export const levelScoreWeight = 3
 
-function calculateLevel(averageOperatorScore: number): number {
-  return Math.ceil(averageOperatorScore / levelWeight)
+export function createBlankOperatorScores(operator: Operator): OperatorScores {
+  return {
+    operator,
+    score: 0, 
+    record: 0
+  }
 }
 
-export function calculateDailyLevel(): number {
-  const score = scoreStore()
-  const settings = settingsStore()
-  
-  return calculateLevel(
-    settings.playableOperators
-      .compactMap(o => score.getOperatorDailyScore(o))
-      .reduce((acc, os) => acc + os.score, 0) / settings.playableOperators.length
-  )
+export function calculateOperatorsAverageValue(scores: OperatorScores[], valueSelector: (o: OperatorScores) => number): number {
+  return scores.reduce((acc, os) => acc + valueSelector(os), 0) / scores.length
 }
 
-export function calculateRecordLevel(): number {
-  const score = scoreStore()
-  const settings = settingsStore()
-  
-  return calculateLevel(
-    settings.playableOperators
-      .compactMap(o => score.getOperatorDailyScore(o))
-      .reduce((acc, os) => acc + os.record, 0) / settings.playableOperators.length
-  )
+export function calculateLevel(kind: LevelKind, operatorsScores: OperatorScores[]): number {
+  const valueSelector = (os: OperatorScores) => {
+    switch (kind) {
+      case LevelKind.Daily: return os.score
+      case LevelKind.Record: return os.record
+    }
+  }
+  return Math.ceil(calculateOperatorsAverageValue(operatorsScores, valueSelector) / levelScoreWeight)
 }

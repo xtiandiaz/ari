@@ -1,3 +1,3 @@
 export enum LocalStorageItemKey {
-  DailyScore = 'daily-score',
+  DailyScores = 'daily-scores',
 }

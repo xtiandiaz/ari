@@ -1,6 +1,6 @@
 import { Operator, type Operation } from "@/models/math";
 import settingsStore from '@/stores/settings'
-import scoreStore from '@/stores/score'
+import scoreStore from '@/stores/scores'
 import { getRandomInteger, getRandomWeightedChoice } from "@/assets/tungsten/randomness";
 
 function getRandomWeightedOperator(): Operator {
@@ -8,7 +8,7 @@ function getRandomWeightedOperator(): Operator {
   const score = scoreStore()
   
   const weights = (() => {
-    const playableOperatorsScores = settings.playableOperators.map(o => score.getOperatorDailyScore(o)?.score ?? 0)
+    const playableOperatorsScores = settings.playableOperators.map(o => score.getOperatorDailyScores(o)?.score ?? 0)
     const maxScore = playableOperatorsScores.reduce((max, cur) => cur > max ? cur : max, playableOperatorsScores[0])
     
     return playableOperatorsScores.map(os => 1 + maxScore / Math.max(os, 1))
@@ -19,7 +19,7 @@ function getRandomWeightedOperator(): Operator {
 
 function generateRandomOperandsForOperator(operator: Operator): number[] {
   const score = scoreStore()
-  const operatorScore = score.getOperatorDailyScore(operator)?.score ?? 0
+  const operatorScore = score.getOperatorDailyScores(operator)?.score ?? 0
   
   switch (operator) {
     case Operator.Addition:

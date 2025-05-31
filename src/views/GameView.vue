@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import type { Operation, Operator } from '@/models/math';
-import scoreStore from '@/stores/score'
+import scoreStore from '@/stores/scores'
 import { generateRandomOperation } from '@/services/operation-generator';
 import { operatorIcon } from '@/view-models/vm-math';
 import NumberPad from '@vueties/pads/NumberPad.vue';
 import SvgIcon from '@vueties/misc/SvgIcon.vue';
 import { isMobile } from '@/assets/tungsten/navigator';
-import { clearScoreIfNeeded, saveScore } from '@/services/score-management'
+import { clearScoreIfNeeded, saveScores } from '@/services/scores-management'
 import { onWindowEvent } from '@vueties/composables/window-event'
 import { clamp } from '@/assets/tungsten/math';
 
@@ -30,20 +30,20 @@ const operationResponsiveWidth = computed(
 const operationFontSize = computed(() => {
   const operationViewport = document.getElementById('operation-viewport')!
   const operationViewportWidth = operationViewport.clientWidth
-  const maxFontSizeEm = operationViewportWidth / 8 / 16
+  const maxFontSizeEm = Math.min(3.5, operationViewportWidth / 8 / 16)
   const maxDigitTotal = Math.floor(operationViewportWidth / (maxFontSizeEm * 16))
   const maxDigitCount = operationResponsiveWidth.value === 'fit-content' 
     ? Math.min(operandsDigitTotal.value, maxDigitTotal)
     : Math.max(...(operandsDigitCount.value ?? [maxDigitTotal]))
   const rawSize = operationViewportWidth / maxDigitCount / 16
   
-  // console.log(
-  //   'width:', operationViewportWidth, 
-  //   'maxDigitCount:', maxDigitCount, 
-  //   'maxDigitTotal:', maxDigitTotal, 
-  //   'rawSize:', rawSize,
-  //   'maxFontSizeEm:', maxFontSizeEm, 
-  // )
+  console.log(
+    'width:', operationViewportWidth, 
+    'maxDigitCount:', maxDigitCount, 
+    'maxDigitTotal:', maxDigitTotal, 
+    'rawSize:', rawSize,
+    'maxFontSizeEm:', maxFontSizeEm, 
+  )
   
   return `${clamp(rawSize, 2, maxFontSizeEm)}em`
 })
@@ -66,7 +66,7 @@ function resetAndSaveScoreForOperatorIfNeeded(operator: Operator) {
   
   score.addOperatorScore(operator)
   
-  saveScore()
+  saveScores()
 }
 
 function onInput(value: number) {
@@ -103,7 +103,7 @@ function onPageFocusedOrUnmounted() {
   clearScoreIfNeeded()
 }
 
-watch(() => score.dailyTotalScore, (newTotal) => {
+watch(() => score.dailyTotalOperatorsScore, (newTotal) => {
   if (newTotal === 0) {
     reset()
   }

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-// import settingsStore from '@/stores/settings'
 import { onBeforeMount } from 'vue';
-import statsStore from '@/stores/score'
-import { clearScore, resetRecords } from '@/services/score-management'
+import scoresStore from '@/stores/scores'
+import { clearScores, clearRecords } from '@/services/scores-management'
 import ButtonRow from '@vueties/form/ButtonRow.vue'
 import { version } from '@/../package.json'
 
@@ -10,7 +9,7 @@ const emits = defineEmits<{
   viewTitle: [string?]
 }>()
 
-const stats = statsStore()
+const scores = scoresStore()
 
 onBeforeMount(() => {
   emits('viewTitle', 'Settings')
@@ -26,21 +25,27 @@ onBeforeMount(() => {
           <ButtonRow 
             :label="`Clear today's scores`" 
             :isDestructive="true"
-            :class="{ disabled: stats.dailyTotalScore === 0 }"
-            @click="clearScore()"
+            :class="{ disabled: scores.dailyTotalOperatorsScore === 0 }"
+            @click="clearScores()"
           />
         </div>
+        <div class="footer">
+          Daily scores will be cleared automatically by the end of the day. But, clear them now if you want to start today over.
+        </div>
       </div>
-      <!-- <div class="section">
+      <div class="section">
         <div class="rows">
           <ButtonRow 
             :label="`Clear all records`" 
             :isDestructive="true"
-            :disabled="true"
+            :class="{ disabled: scores.recordLevel <= scores.todayLevel }"
             @click="clearRecords()"
           />
         </div>
-      </div> -->
+        <div class="footer">
+          Use your records to compare your daily achievements. Clear them only if you'd like to re-establish your personal records.
+        </div>
+      </div>
     </section>
     <span class='version'>v{{ version }}</span>
   </main>
