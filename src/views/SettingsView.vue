@@ -25,7 +25,7 @@ onBeforeMount(() => {
           <ButtonRow 
             :label="`Clear today's scores`" 
             :isDestructive="true"
-            :class="{ disabled: scores.dailyTotalOperatorsScore === 0 }"
+            :class="{ disabled: !scores.hasAnyDailyScore }"
             @click="clearScores()"
           />
         </div>

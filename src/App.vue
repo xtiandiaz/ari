@@ -14,7 +14,7 @@ const navigationBarVM = computed<NavigationBarVM>(() => {
       { icon: Icon.Gear, isEnabled: true, routeKey: 'settings' }
     ],
     rightBarItems: [
-      { icon: Icon.Stats, isEnabled: score.dailyTotalOperatorsScore > 0, routeKey: 'daily-summary' }
+      { icon: Icon.Stats, isEnabled: score.hasAnyDailyScore, routeKey: 'daily-summary' }
     ]
   }
 })

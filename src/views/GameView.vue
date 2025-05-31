@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import type { Operation, Operator } from '@/models/math';
-import scoreStore from '@/stores/scores'
+import scoresStore from '@/stores/scores'
 import { generateRandomOperation } from '@/services/operation-generator';
 import { operatorIcon } from '@/view-models/vm-math';
 import NumberPad from '@vueties/pads/NumberPad.vue';
@@ -11,7 +11,7 @@ import { clearScoreIfNeeded, saveScores } from '@/services/scores-management'
 import { onWindowEvent } from '@vueties/composables/window-event'
 import { clamp } from '@/assets/tungsten/math';
 
-const score = scoreStore()
+const scores = scoresStore()
 
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
@@ -37,13 +37,13 @@ const operationFontSize = computed(() => {
     : Math.max(...(operandsDigitCount.value ?? [maxDigitTotal]))
   const rawSize = operationViewportWidth / maxDigitCount / 16
   
-  console.log(
-    'width:', operationViewportWidth, 
-    'maxDigitCount:', maxDigitCount, 
-    'maxDigitTotal:', maxDigitTotal, 
-    'rawSize:', rawSize,
-    'maxFontSizeEm:', maxFontSizeEm, 
-  )
+  // console.log(
+  //   'width:', operationViewportWidth, 
+  //   'maxDigitCount:', maxDigitCount, 
+  //   'maxDigitTotal:', maxDigitTotal, 
+  //   'rawSize:', rawSize,
+  //   'maxFontSizeEm:', maxFontSizeEm, 
+  // )
   
   return `${clamp(rawSize, 2, maxFontSizeEm)}em`
 })
@@ -64,7 +64,7 @@ function resetAndSaveScoreForOperatorIfNeeded(operator: Operator) {
     return
   }
   
-  score.addOperatorScore(operator)
+  scores.addOperatorScore(operator)
   
   saveScores()
 }
@@ -103,8 +103,8 @@ function onPageFocusedOrUnmounted() {
   clearScoreIfNeeded()
 }
 
-watch(() => score.dailyTotalOperatorsScore, (newTotal) => {
-  if (newTotal === 0) {
+watch(() => scores.hasAnyDailyScore, (stillHas) => {
+  if (!stillHas) {
     reset()
   }
 })
