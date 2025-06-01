@@ -3,11 +3,11 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import type { Operation, Operator } from '@/models/math';
 import scoresStore from '@/stores/scores'
 import { generateRandomOperation } from '@/services/operation-generator';
-import { operatorIcon } from '@/view-models/vm-math';
-import NumberPad from '@vueties/pads/NumberPad.vue';
-import SvgIcon from '@vueties/misc/SvgIcon.vue';
-import { isMobile } from '@/assets/tungsten/navigator';
 import { clearScoreIfNeeded, saveScores } from '@/services/scores-management'
+import { operatorIcon } from '@/view-models/vm-math';
+import NumberPad from '@/vueties/components/pads/VuetyNumberPad.vue';
+import SvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
+import { isMobile } from '@/assets/tungsten/navigator';
 import { onWindowEvent } from '@vueties/composables/window-event'
 import { clamp } from '@/assets/tungsten/math';
 
@@ -155,9 +155,9 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
 </template>
 
 <style scoped lang="scss">
-@use '@vueties/styles/utils';
-@use '@vueties/styles/pads';
-@use '@vueties/styles/bars';
+@use '@vueties/utils/styles' as utility-styles;
+@use '@vueties/components/pads/styles' as pad-styles;
+@use '@vueties/components/bars/styles' as bar-styles;
 @use '@design-tokens/palette';
 @use '@design-tokens/typography';
 @use '@/assets/math';

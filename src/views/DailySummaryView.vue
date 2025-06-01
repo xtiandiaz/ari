@@ -3,8 +3,11 @@ import { onBeforeMount } from 'vue';
 import scoresStore from '@/stores/scores'
 import { Icon } from '@design-tokens/iconography'
 import { operatorIcon } from '@/view-models/vm-math';
-import SvgIcon from '@/vueties/misc/SvgIcon.vue';
-import DataMark from '@/vueties/accessories/DataMark.vue';
+import Form from '@vueties/components/form/VuetyForm.vue';
+import FormSection from '@vueties/components/form/VuetyFormSection.vue';
+import CustomFormRow from '@/vueties/components/form/rows/VuetyCustomFormRow.vue';
+import SvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
+import DataMark from '@/vueties/components/accessories/VuetyDataMark.vue';
 import '@/assets/tungsten/extensions/array.extensions'
 
 const emits = defineEmits<{
@@ -34,39 +37,34 @@ onBeforeMount(() => {
       </div>
     </section>
     
-    <section id="scores" class="form">
-      <div class="section">
-        <div class="header">
-          <span class="title">Scores</span>
-        </div>
-        <div class="rows">
-          <div 
-            v-for="(operatorScores) in scores.playableOperatorsScores" 
-            :key="operatorScores.operator" 
-            class="row score-row" :class="operatorScores.operator.toLowerCase()"
-          >
-            <SvgIcon :icon="operatorIcon(operatorScores.operator)" class="representative-icon" />
-            <div class="spacer"></div>
-            <div class="marks operator-colored-items">
-              <DataMark 
-                :icon="Icon.Right" 
-                :value="operatorScores.score"
-                class="strong"
-              />
-            </div>
+    <Form id="scores">
+      <FormSection
+        :title="'Scores'"
+        :footnote="`These scores will be cleared automatically by the end of the day. Try to beat your own records every day!`"
+      >
+        <CustomFormRow 
+          v-for="(operatorScores) in scores.playableOperatorsScores" 
+          :key="operatorScores.operator" 
+          class="score-row" :class="operatorScores.operator.toLowerCase()"
+        >
+          <SvgIcon :icon="operatorIcon(operatorScores.operator)" class="representative-icon" />
+          <div class="spacer"></div>
+          <div class="marks operator-colored-items">
+            <DataMark 
+              :icon="Icon.Right" 
+              :value="operatorScores.score"
+              class="strong"
+            />
           </div>
-        </div>
-        <div class="footer">
-          These scores will be cleared automatically by the end of the day. <strong>Try to beat your own records every day!</strong>
-        </div>
-      </div>
-    </section>
+        </CustomFormRow>
+      </FormSection>
+    </Form>
   </main>
 </template>
 
 <style scoped lang="scss">
-@use '@vueties/styles/form';
-@use '@vueties/styles/accessories';
+@use '@vueties/components/form/styles' as form-styles;
+@use '@vueties/components/accessories/styles' as accessory-styles;
 @use '@design-tokens/palette';
 @use '@design-tokens/typography';
 @use '@/assets/math';
@@ -106,7 +104,7 @@ main {
       }
       
       h1 {
-        font-size: 4em;
+        font-size: 3.75em;
       }
       
       #level {
@@ -115,8 +113,8 @@ main {
         @include palette.color-attribute('color', 'body');
         
         .svg-icon {
-          width: 2em;
           display: none;
+          width: 2em;
         }
         
         &.new-record {          
