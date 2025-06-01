@@ -54,7 +54,7 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
         const rangeMax = Math.max(100, mult * Math.pow(operatorScore, 3))
         
         const minuend = getRandomInteger(rangeMin, rangeMax)
-        const subtrahend = Math.max(getRandomInteger(rangeMin / 2, minuend), 2)
+        const subtrahend = Math.max(getRandomInteger(rangeMin / 2, minuend) - 2, 2)
         
         return [minuend, subtrahend]
       })()
