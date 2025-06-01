@@ -2,12 +2,12 @@
 import { computed } from 'vue'
 import scoreStore from '@/stores/scores'
 import HashRouterScene from '@/hash-router/scenes/HashRouterScene.vue'
-import { type NavigationBarVM } from '@vueties/view-models'
+import { type VuetyNavigationBarVM } from '@vueties/components/bars/view-models'
 import { Icon } from '@design-tokens/iconography'
 
 const score = scoreStore()
 
-const navigationBarVM = computed<NavigationBarVM>(() => {
+const navigationBarVM = computed<VuetyNavigationBarVM>(() => {
   return {
     isVisible: true,
     leftBarItems: [
