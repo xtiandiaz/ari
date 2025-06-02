@@ -32,7 +32,7 @@ onBeforeMount(() => {
         />
       </FormSection>
       <FormSection
-        :footnote="`Use the records to compare your daily achievements. Clear them only if you'd like to re-establish your personal records.`"
+        :footnote="`Use the records to assess your daily achievements. Clear them only if you'd like to re-establish your personal records.`"
       >
         <ButtonFormRow 
           :label="`Clear all records`" 

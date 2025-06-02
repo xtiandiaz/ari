@@ -23,5 +23,5 @@ export function calculateLevel(kind: LevelKind, operatorsScores: OperatorScores[
       case LevelKind.Record: return os.record
     }
   }
-  return Math.ceil(calculateOperatorsAverageValue(operatorsScores, valueSelector) / levelScoreWeight)
+  return Math.max(1, Math.floor(calculateOperatorsAverageValue(operatorsScores, valueSelector) / levelScoreWeight))
 }
