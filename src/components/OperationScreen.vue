@@ -48,7 +48,7 @@ const operationFontSize = computed(() => {
   
   const operationViewport = document.getElementById('operation-viewport')!
   const operationViewportWidth = operationViewport.clientWidth
-  const maxFontSizeEm = 3.5
+  const maxFontSizeEm = 3.25
   const rawSize = operationViewportWidth / _layout.maxDigitCountPerLine / 16
   
   console.log(
