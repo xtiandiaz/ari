@@ -87,7 +87,8 @@ const operationFontSize = computed(() => {
 @use '@/assets/math';
 
 section#operation-viewport {
-  padding: 0;
+  padding-left: 0;
+  padding-right: 0;
   
   #operation {
     font-family: 'Inter Medium', sans-serif;
