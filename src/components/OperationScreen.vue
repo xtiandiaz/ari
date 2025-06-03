@@ -30,10 +30,10 @@ const layout = computed<Layout>(() => {
   const digitCounts = operation?.operands.map(o => o.toString().length)  
   const digitTotal = digitCounts.reduce((sum, odc) => sum + odc, 0)
   
-  if (digitTotal <= maxDigitCountSingleLineOperation) {
+  if (operation.operator !== Operator.Percent && digitTotal <= maxDigitCountSingleLineOperation) {
     return { 
       maxDigitCountPerLine: Math.min(digitTotal, maxDigitCountSingleLineOperation), 
-      responsiveWidth: operation.operator === Operator.Percent ? 'min-content' : 'fit-content' 
+      responsiveWidth: 'fit-content' 
     }
   } else {
     return { 
@@ -49,16 +49,16 @@ const operationFontSize = computed(() => {
   const operationViewport = document.getElementById('operation-viewport')!
   const operationViewportWidth = operationViewport.clientWidth
   const maxFontSizeEm = 3.25
-  const rawSize = operationViewportWidth / _layout.maxDigitCountPerLine / 16
+  const rawFontSizeEm = operationViewportWidth / _layout.maxDigitCountPerLine / 16
   
-  console.log(
-    'viewportWidth:', operationViewportWidth, 
-    'layout:', _layout,
-    'rawSize:', rawSize,
-    'maxFontSizeEm:', maxFontSizeEm, 
-  )
+  // console.log(
+  //   'viewportWidth:', operationViewportWidth, 
+  //   'layout:', _layout,
+  //   'rawFontSizeEm:', rawFontSizeEm,
+  //   'maxFontSizeEm:', maxFontSizeEm, 
+  // )
   
-  return `${clamp(rawSize, 2, maxFontSizeEm)}em`
+  return `${clamp(rawFontSizeEm, 2, maxFontSizeEm)}em`
 })
 </script>
 
