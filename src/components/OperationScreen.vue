@@ -33,7 +33,7 @@ const layout = computed<Layout>(() => {
   if (operation.operator !== Operator.Percent && digitTotal <= maxDigitCountSingleLineOperation) {
     return { 
       maxDigitCountPerLine: Math.min(digitTotal, maxDigitCountSingleLineOperation), 
-      responsiveWidth: 'fit-content' 
+      responsiveWidth: 'fit-content'
     }
   } else {
     return { 

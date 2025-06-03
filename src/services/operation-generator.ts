@@ -107,8 +107,9 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
     case Operator.Percent:
       return (() => {        
         const percentAndOperand = getRandomPercentAndOperand(operatorScore, overallLevel)
+        const percentage = Math.floor(percentAndOperand[0] * 100)
         
-        return [percentAndOperand[1], percentAndOperand[0] * 100]
+        return [percentAndOperand[1], percentage]
       })()
 
     case Operator.Subtraction:

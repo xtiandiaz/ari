@@ -117,6 +117,7 @@ main {
         
         .svg-icon {
           display: none;
+          transform: translateY(8px);
           width: 2em;
         }
         

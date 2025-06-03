@@ -85,13 +85,15 @@ watch(() => scores.hasAnyDailyScore, (stillHas) => {
 onMounted(async () => {  
   reset()
   
-  if (isMobile()) {
+  if (!import.meta.env.DEV && isMobile()) {
     return
   }
   
   window.addEventListener("keydown", (e: KeyboardEvent) => {    
     if (/^Digit\d|Backspace$/.test(e.code)) {
       onInput(e.code === 'Backspace' ? -1 : Number(e.key))
+    } else if (e.code === 'Escape') {
+      reset()
     }
   })
 })
