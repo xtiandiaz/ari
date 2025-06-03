@@ -37,7 +37,7 @@ onBeforeMount(() => {
         <ButtonFormRow 
           :label="`Clear all records`" 
           :isDestructive="true"
-          :class="{ disabled: scores.recordLevel <= scores.todayLevel }"
+          :class="{ disabled: scores.recordLevel === undefined }"
           @click="clearRecords()"
         />
       </FormSection>

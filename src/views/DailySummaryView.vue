@@ -25,14 +25,17 @@ onBeforeMount(() => {
   <main>
     <section id="levels">
       <span class="caption-all-caps">Level</span>
-      <div id="level" :class="{ 'new-record': scores.todayLevel >= scores.recordLevel }">
+      <div 
+        id="level" 
+        :class="{ 'new-record': scores.recordLevel === undefined || scores.todayLevel >= scores.recordLevel }"
+      >
         <SvgIcon :icon="Icon.Crown" />
         <h1>{{ scores.todayLevel }}</h1>
       </div>
       <div id="record-level">
         <span>
           <DataMark :icon="Icon.Crown" :value="`Best`" class="caption-all-caps" />
-          <h4>{{ scores.recordLevel }}</h4>
+          <h4>{{ scores.recordLevel ?? scores.todayLevel }}</h4>
         </span>
       </div>
     </section>

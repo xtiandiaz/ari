@@ -2,8 +2,9 @@ import type { Operator } from './math'
 
 export interface OperatorScores {
   operator: Operator
-  record: number
   score: number
+  
+  record?: number
 }
 
 export interface RawDailyScores {

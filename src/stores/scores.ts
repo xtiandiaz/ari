@@ -25,7 +25,7 @@ export default defineStore('scores', () => {
   const hasAnyDailyScore = computed(() => dailyScores.value.operatorsScores.findIndex(os => os.score > 0) !== -1)
   
   const todayLevel = computed(() => calculateLevel(playableOperatorsScores.value))
-  const recordLevel = computed(() => dailyScores.value.recordLevel ?? todayLevel.value)
+  const recordLevel = computed(() => dailyScores.value.recordLevel)
   
   function getOperatorDailyScores(operator: Operator): OperatorScores {
     return dailyScores.value.operatorsScores.find(os => os.operator === operator)!
@@ -35,9 +35,9 @@ export default defineStore('scores', () => {
     const operatorStats = getOperatorDailyScores(operator)
     
     operatorStats.score++
-    operatorStats.record = Math.max(operatorStats.score, operatorStats.record)
+    operatorStats.record = Math.max(operatorStats.score, operatorStats.record ?? 0)
     
-    dailyScores.value.recordLevel = Math.max(todayLevel.value, recordLevel.value)
+    dailyScores.value.recordLevel = Math.max(todayLevel.value, recordLevel.value ?? 0)
   }
   
   return {

@@ -57,7 +57,8 @@ export function clearScoreIfNeeded(): boolean {
 export function clearRecords() {
   const scores = scoresStore()
   
-  scores.dailyScores.operatorsScores.forEach(os => os.record = Math.max(0, os.score))
+  scores.dailyScores.operatorsScores.forEach(os => os.record = undefined)
+  scores.dailyScores.recordLevel = undefined
   
   saveScores()
 }
