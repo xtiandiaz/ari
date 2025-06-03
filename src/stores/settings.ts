@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
-import { Operator } from '@/models/math'
+import { allOperators } from '@/models/math'
 
 export default defineStore('settings', () => {
-  const playableOperators = [Operator.Addition, Operator.Subtraction, Operator.Multiplication, Operator.Division]
+  const playableOperators = allOperators
   
   return {
     playableOperators,

@@ -2,7 +2,7 @@
 import { onBeforeMount } from 'vue';
 import scoresStore from '@/stores/scores'
 import { Icon } from '@design-tokens/iconography'
-import { operatorIcon } from '@/view-models/vm-math';
+import { operatorIcon } from '@/view-models/math.vm';
 import Form from '@vueties/components/form/VuetyForm.vue';
 import FormSection from '@vueties/components/form/VuetyFormSection.vue';
 import CustomFormRow from '@/vueties/components/form/rows/VuetyCustomFormRow.vue';

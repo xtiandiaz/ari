@@ -15,6 +15,11 @@
     @include palette.color-attribute('color', 'blue');
   }
 }
+.percent {
+  .svg-icon, .operator-colored-item, .operator-colored-items * {
+    @include palette.color-attribute('color', 'mint');
+  }
+}
 .subtraction {
   .svg-icon, .operator-colored-item, .operator-colored-items * {
     @include palette.color-attribute('color', 'pink');
