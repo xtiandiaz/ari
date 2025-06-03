@@ -39,7 +39,7 @@ onBeforeMount(() => {
     
     <Form id="scores">
       <FormSection
-        :title="'Scores'"
+        :title="`Scores`"
         :footnote="`These scores will be cleared automatically by the end of the day. Try to beat your own records every day!`"
       >
         <CustomFormRow 

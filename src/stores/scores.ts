@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { allOperators, type Operator } from '@/models/math'
-import { LevelKind, type DailyScores, type OperatorScores } from '@/models/scores'
+import type { DailyScores, OperatorScores } from '@/models/scores'
 import settingsStore from '@/stores/settings'
 import { retrieveActiveDailyScores } from '@/services/scores-management'
 import { calculateLevel, createBlankOperatorScores } from '@/utils/score.utils'
@@ -14,7 +14,6 @@ function supplementSavedDailyScores(dailyScores: DailyScores): DailyScores {
       dailyScores.operatorsScores.push(createBlankOperatorScores(operator))
     }
   }
-  
   return dailyScores
 }
 
@@ -25,8 +24,8 @@ export default defineStore('scores', () => {
   const playableOperatorsScores = computed(() => settings.playableOperators.map(os => getOperatorDailyScores(os)))
   const hasAnyDailyScore = computed(() => dailyScores.value.operatorsScores.findIndex(os => os.score > 0) !== -1)
   
-  const todayLevel = computed(() => calculateLevel(LevelKind.Daily, playableOperatorsScores.value))
-  const recordLevel = computed(() => calculateLevel(LevelKind.Record, playableOperatorsScores.value))
+  const todayLevel = computed(() => calculateLevel(playableOperatorsScores.value))
+  const recordLevel = computed(() => dailyScores.value.recordLevel ?? todayLevel.value)
   
   function getOperatorDailyScores(operator: Operator): OperatorScores {
     return dailyScores.value.operatorsScores.find(os => os.operator === operator)!
@@ -37,6 +36,8 @@ export default defineStore('scores', () => {
     
     operatorStats.score++
     operatorStats.record = Math.max(operatorStats.score, operatorStats.record)
+    
+    dailyScores.value.recordLevel = Math.max(todayLevel.value, recordLevel.value)
   }
   
   return {

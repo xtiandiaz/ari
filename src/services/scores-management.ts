@@ -22,7 +22,8 @@ export function retrieveActiveDailyScores(): DailyScores {
   
   return {
     date: isStale ? Date.today() : savedDate,
-    operatorsScores: rawDailyScores.operatorsScores
+    operatorsScores: rawDailyScores.operatorsScores,
+    recordLevel: rawDailyScores.recordLevel
   }
 }
 

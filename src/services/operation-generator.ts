@@ -24,9 +24,8 @@ function getRandomPercentAndOperand(operatorScore: number, overallLevel: number)
     MultiplesOfFive
   }
   
-  const figure: PercentFigure = getRandomWeightedChoice(
-    [PercentFigure.MultiplesOfFive, PercentFigure.PowerOfTwoDivisors], 
-    [Math.min(0.4, overallLevel / 20)]
+  const figure: PercentFigure = getRandomChoice(
+    [PercentFigure.PowerOfTwoDivisors, PercentFigure.MultiplesOfFive]
   )
   
   let divisor: number, dividend: number, preOperand: number
@@ -62,6 +61,7 @@ function getRandomPercentAndOperand(operatorScore: number, overallLevel: number)
       preOperand = (() => {
         const rangeMin = Math.max(2, operatorScore / 2)
         const rangeMax = Math.max(11, operatorScore)
+        
         return getRandomInteger(rangeMin, rangeMax)
       })()
       break

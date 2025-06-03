@@ -9,14 +9,13 @@ export interface OperatorScores {
 export interface RawDailyScores {
   date: string,
   operatorsScores: OperatorScores[]
+  
+  recordLevel?: number
 }
 
 export interface DailyScores {
   date: Date
   operatorsScores: OperatorScores[]
-}
-
-export enum LevelKind {
-  Daily, 
-  Record
+  
+  recordLevel?: number
 }

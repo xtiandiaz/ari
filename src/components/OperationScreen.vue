@@ -12,36 +12,51 @@ const { operation } = defineProps<{
   isInputCorrect: boolean
 }>()
 
-const operandsDigitCount = computed(() => operation?.operands.map(o => o.toString().length))
-const operandsDigitTotal = computed(() => operandsDigitCount.value?.reduce((sum, odc) => sum + odc, 0) ?? 0)
+interface Layout {
+  maxDigitCountPerLine: number
+  responsiveWidth: string
+}
 
-const maxOperationDigitCountSingleRow = isMobile() ? 8 : 12
-const operationResponsiveWidth = computed(() => {
-  switch (operation?.operator) {
-    case Operator.Percent:
-      return 'min-content'
-    default:
-      return operandsDigitTotal.value <= maxOperationDigitCountSingleRow ? 'fit-content' : 'min-content'
+const maxDigitCountSingleLineOperation = isMobile() ? 8 : 12
+
+const layout = computed<Layout>(() => {
+  if (!operation) {
+    return { 
+      maxDigitCountPerLine: maxDigitCountSingleLineOperation, 
+      responsiveWidth: 'fit-content' 
+    }
+  }
+  
+  const digitCounts = operation?.operands.map(o => o.toString().length)  
+  const digitTotal = digitCounts.reduce((sum, odc) => sum + odc, 0)
+  
+  if (digitTotal <= maxDigitCountSingleLineOperation) {
+    return { 
+      maxDigitCountPerLine: Math.min(digitTotal, maxDigitCountSingleLineOperation), 
+      responsiveWidth: operation.operator === Operator.Percent ? 'min-content' : 'fit-content' 
+    }
+  } else {
+    return { 
+      maxDigitCountPerLine: Math.max(...digitCounts),
+      responsiveWidth: 'min-content' 
+    }
   }
 })
 
 const operationFontSize = computed(() => {
+  const _layout = layout.value
+  
   const operationViewport = document.getElementById('operation-viewport')!
   const operationViewportWidth = operationViewport.clientWidth
-  const maxFontSizeEm = Math.min(3.5, operationViewportWidth / 8 / 16)
-  const maxDigitTotal = Math.floor(operationViewportWidth / (maxFontSizeEm * 16))
-  const maxDigitCount = operationResponsiveWidth.value === 'fit-content' 
-    ? Math.min(operandsDigitTotal.value, maxDigitTotal)
-    : Math.max(...(operandsDigitCount.value ?? [maxDigitTotal]))
-  const rawSize = operationViewportWidth / maxDigitCount / 16
+  const maxFontSizeEm = 3.5
+  const rawSize = operationViewportWidth / _layout.maxDigitCountPerLine / 16
   
-  // console.log(
-  //   'width:', operationViewportWidth, 
-  //   'maxDigitCount:', maxDigitCount, 
-  //   'maxDigitTotal:', maxDigitTotal, 
-  //   'rawSize:', rawSize,
-  //   'maxFontSizeEm:', maxFontSizeEm, 
-  // )
+  console.log(
+    'viewportWidth:', operationViewportWidth, 
+    'layout:', _layout,
+    'rawSize:', rawSize,
+    'maxFontSizeEm:', maxFontSizeEm, 
+  )
   
   return `${clamp(rawSize, 2, maxFontSizeEm)}em`
 })
@@ -71,11 +86,13 @@ const operationFontSize = computed(() => {
 @use '@design-tokens/palette';
 @use '@/assets/math';
 
-section#operation-viewport {  
+section#operation-viewport {
+  padding: 0;
+  
   #operation {
     font-family: 'Inter Medium', sans-serif;
     font-size: v-bind(operationFontSize);
-    width: v-bind(operationResponsiveWidth);
+    width: v-bind('layout.responsiveWidth');
     
     #operands-and-operator {
       $gap: 0.25rem;
