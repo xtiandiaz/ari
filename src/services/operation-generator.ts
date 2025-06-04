@@ -28,25 +28,19 @@ function getRandomPercentAndOperand(operatorScore: number, overallLevel: number)
     [PercentFigure.PowerOfTwoDivisors, PercentFigure.MultiplesOfFive]
   )
   
-  let divisor: number, dividend: number, preOperand: number
+  let divisor: number, dividend: number
   
   switch (figure) {
     case PercentFigure.PowerOfTwoDivisors:
-      divisor = Math.pow(2, Math.max(1, Math.min(3, getRandomInteger(1, overallLevel))))
+      const maxPower = Math.min(Math.floor(overallLevel / 3), 3)
+      divisor = Math.pow(2, Math.max(1, getRandomInteger(1, maxPower)))
       const dividendFractions = [
         ...Array.range(1, divisor, 1),
         ...Array.range(divisor + 1, divisor + overallLevel, 1)
       ]
       dividend = getRandomChoice(dividendFractions)
-      
-      preOperand = (() => {
-        const rangeMin = Math.max(2, operatorScore)
-        const rangeMax = Math.max(50, Math.pow(operatorScore, 2))
-        
-        return getRandomInteger(rangeMin, rangeMax)
-      })()
       break
-
+      
     case PercentFigure.MultiplesOfFive:
       const multRangeMax = overallLevel * 5
       const multRange = multRangeMax < 21 
@@ -57,17 +51,17 @@ function getRandomPercentAndOperand(operatorScore: number, overallLevel: number)
       const commonDenominator = gcd(percentage, 100)
       dividend = percentage / commonDenominator
       divisor = 100 / commonDenominator
-        
-      preOperand = (() => {
-        const rangeMin = Math.max(2, operatorScore / 2)
-        const rangeMax = Math.max(11, operatorScore)
-        
-        return getRandomInteger(rangeMin, rangeMax)
-      })()
       break
     }
     
-    return [dividend / divisor, preOperand * dividend * divisor]
+    const rangeMin = 100 * Math.max(2, Math.pow(overallLevel, 2))
+    const rangeMax = rangeMin * Math.max(2, Math.floor(operatorScore / divisor))
+    const preOperand = getRandomInteger(rangeMin, rangeMax)
+    const operand = preOperand - preOperand % divisor
+    
+    // console.log(rangeMin, '-', rangeMax, ':', divisor, ':', preOperand, '->', operand)
+    
+    return [dividend / divisor, operand]
 }
 
 function generateRandomOperandsForOperator(operator: Operator): number[] {
