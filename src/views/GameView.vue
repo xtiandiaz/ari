@@ -5,6 +5,7 @@ import scoresStore from '@/stores/scores'
 import { generateRandomOperation } from '@/services/operation-generator';
 import { clearScoreIfNeeded, saveScores } from '@/services/scores-management'
 import OperationScreen from '@/components/OperationScreen.vue'
+import LevelUpNotification from '@/components/LevelUpNotification.vue';
 import NumberPad from '@/vueties/components/pads/VuetyNumberPad.vue';
 import { isMobile } from '@/assets/tungsten/navigator';
 import { onWindowEvent } from '@vueties/composables/window-event'
@@ -64,9 +65,9 @@ function onInput(value: number) {
   }
   
   if (isInputCorrect.value) {    
-    resetInterval.value = Number(setInterval(() => {
-      resetAndSaveScoreForOperatorIfNeeded(operation.value!.operator)
-    }, 250))
+    resetInterval.value = Number(
+      setInterval(() => resetAndSaveScoreForOperatorIfNeeded(operation.value!.operator), 250)
+    )
   }
 }
 
@@ -105,9 +106,14 @@ onBeforeUnmount(() => {
 onWindowEvent('focus', onPageFocusedOrUnmounted)
 </script>
 
-<template>  
+<template> 
+  <LevelUpNotification 
+    :newLevel="scores.todayLevel" :isRecord="scores.isTodayLevelNewRecord" 
+  />
+ 
   <main>
     <OperationScreen
+      v-if="operation"
       :operation="operation"
       :input="input"
       :isInputCorrect="isInputCorrect"
@@ -121,8 +127,9 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
 
 <style scoped lang="scss">
 @use '@vueties/utils/styles' as utility-styles;
+@use '@vueties/components/bars/styles' as bar-styles;
 
-main {  
+main {
   section {
     $h-padding: 1em;
     $v-padding: 1em;
@@ -134,5 +141,13 @@ main {
     padding: $v-padding $h-padding;
     text-align: center;
   }
+}
+
+#level-up-notification {
+  height: bar-styles.$nav-bar-height;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  top: 0;
 }
 </style>

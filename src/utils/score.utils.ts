@@ -22,6 +22,6 @@ export function calculateOperatorsAverageValue(
 export function calculateLevel(operatorsScores: OperatorScores[]): number {
   return Math.max(
     1, 
-    Math.floor(calculateOperatorsAverageValue(operatorsScores, (os) => os.score) / levelScoreWeight)
+    Math.ceil(calculateOperatorsAverageValue(operatorsScores, (os) => os.score) / levelScoreWeight)
   )
 }

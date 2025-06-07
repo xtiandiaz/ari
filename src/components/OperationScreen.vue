@@ -7,7 +7,7 @@ import { clamp } from '@/assets/tungsten/math';
 import { isMobile } from '@/assets/tungsten/navigator';
 
 const { operation } = defineProps<{
-  operation?: Operation
+  operation: Operation
   input: string
   isInputCorrect: boolean
 }>()
@@ -19,14 +19,7 @@ interface Layout {
 
 const maxDigitCountSingleLineOperation = isMobile() ? 8 : 12
 
-const layout = computed<Layout>(() => {
-  if (!operation) {
-    return { 
-      maxDigitCountPerLine: maxDigitCountSingleLineOperation, 
-      responsiveWidth: 'fit-content' 
-    }
-  }
-  
+const layout = computed<Layout>(() => {  
   const digitCounts = operation?.operands.map(o => o.toString().length)  
   const digitTotal = digitCounts.reduce((sum, odc) => sum + odc, 0)
   
