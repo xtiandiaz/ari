@@ -50,13 +50,13 @@ div#level-up-notification {
   flex-direction: column;
   
   .content-wrapper {
-    > * {
-      display: inline-block;
-    }
-    
     align-items: center;
     display: flex;
     flex-direction: column;
+    
+    > * {
+      display: inline-block;
+    }
   }
   
   span {
