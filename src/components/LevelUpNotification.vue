@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import VuetySvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
+import { Icon } from '@/assets/design-tokens/iconography';
 
-const { newLevel } = defineProps<{
+const { newLevel, isRecord } = defineProps<{
   newLevel: number
   isRecord: boolean
 }>()
@@ -16,7 +18,6 @@ function hide() {
 
 watch(() => newLevel, (value, oldValue) => {
   shouldShow.value = value > oldValue
-  console.log(shouldShow.value)
   
   if (shouldShow.value) {
     visibilityInterval.value = Number(setInterval(() => hide(), 2000))
@@ -29,10 +30,10 @@ watch(() => newLevel, (value, oldValue) => {
     <div v-if="shouldShow" id="level-up-notification">
       <div class="spacer"></div>
       <div class="content-wrapper">
-        <span v-if="isRecord" class="caption">Level up</span>
         <span class="headline">
           {{ isRecord ? "New record!" : "Level up!" }}
         </span>
+        <VuetySvgIcon :icon="isRecord ? Icon.Crown : Icon.Medal" />
       </div>
       <div class="spacer"></div>
     </div>
@@ -52,10 +53,10 @@ div#level-up-notification {
   .content-wrapper {
     align-items: center;
     display: flex;
-    flex-direction: column;
+    gap: 0.5em;
     
-    > * {
-      display: inline-block;
+    .svg-icon {
+      width: 1.5em;
     }
   }
   
@@ -84,6 +85,7 @@ div#level-up-notification {
     transition: transform $duration $easing;
   }
 }
+
 .v-leave-active {
   transition: opacity 1s linear;
 }
@@ -95,6 +97,7 @@ div#level-up-notification {
     transform: translateY(1em);
   }
 }
+
 .v-leave-to {
   opacity: 0;
   
