@@ -3,8 +3,8 @@ import './assets/main.scss'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
-import hashRouter from './hash-router/plugin'
-import { HashRoutePresentationStyle } from './hash-router/models'
+import hashRouter from '@vueties/plugins/hash-router/plugin'
+import { VuetyHashRoutePresentationStyle } from '@vueties/plugins/hash-router/models'
 import GameView from './views/GameView.vue'
 import DailySummaryView from './views/DailySummaryView.vue'
 import SettingsView from './views/SettingsView.vue'
@@ -26,12 +26,12 @@ app.use(hashRouter, {
     {
       key: 'daily-summary',
       view: DailySummaryView,
-      presentationStyle: HashRoutePresentationStyle.Modal
+      presentationStyle: VuetyHashRoutePresentationStyle.Modal
     },
     {
       key: 'settings',
       view: SettingsView,
-      presentationStyle: HashRoutePresentationStyle.Modal
+      presentationStyle: VuetyHashRoutePresentationStyle.Modal
     }
   ]
 })
