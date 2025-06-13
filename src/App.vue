@@ -14,7 +14,7 @@ const navigationBarVM = computed<VuetyNavigationBarVM>(() => {
       { icon: Icon.Gear, isEnabled: true, routeKey: 'settings' }
     ],
     rightBarItems: [
-      { icon: Icon.Stats, isEnabled: score.hasAnyDailyScore, routeKey: 'daily-summary' }
+      { icon: Icon.BarChart, isEnabled: score.hasAnyDailyScore, routeKey: 'daily-summary' }
     ]
   }
 })
