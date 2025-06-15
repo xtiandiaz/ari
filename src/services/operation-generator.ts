@@ -81,7 +81,7 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
 
     case Operator.Division:
       return (() => {
-        const rangeMax = Math.max(16, Math.pow(operatorScore, 3 / 2))
+        const rangeMax = Math.max(20, Math.pow(operatorScore, 3 / 2))
         const rangeMin = Math.max(2, rangeMax / 2)
         
         const divisor = getRandomInteger(rangeMin, rangeMax)
@@ -92,7 +92,7 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
 
     case Operator.Multiplication:
       return (() => {  
-        const rangeMax = Math.max(16, Math.pow(operatorScore, 3 / 2))
+        const rangeMax = Math.max(20, Math.pow(operatorScore, 3 / 2))
         const rangeMin = Math.max(2, rangeMax / 2)
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
