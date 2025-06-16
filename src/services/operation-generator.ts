@@ -73,7 +73,7 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
     case Operator.Addition:
       return (() => {
         const mult = Math.pow(2, Math.floor(operatorScore / 4))
-        const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 2))
+        const rangeMin = Math.max(10, mult * Math.pow(operatorScore, 2))
         const rangeMax = Math.max(100, mult * Math.pow(operatorScore, 3))
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
@@ -82,7 +82,7 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
     case Operator.Division:
       return (() => {
         const rangeMin = Math.max(2, Math.pow(operatorScore, 5 / 4))
-        const rangeMax = Math.max(19, Math.pow(operatorScore, 3 / 2))
+        const rangeMax = Math.max(20, Math.pow(operatorScore, 3 / 2))
         
         const divisor = getRandomInteger(rangeMin, rangeMax)
         const dividend = getRandomInteger(rangeMin, rangeMax)
@@ -91,9 +91,9 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
       })()
 
     case Operator.Multiplication:
-      return (() => {  
+      return (() => {
         const rangeMin = Math.max(2, Math.pow(operatorScore, 5 / 4))
-        const rangeMax = Math.max(19, Math.pow(operatorScore, 3 / 2))
+        const rangeMax = Math.max(20, Math.pow(operatorScore, 3 / 2))
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
@@ -109,7 +109,7 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
     case Operator.Subtraction:
       return (() => {
         const mult = Math.pow(2, Math.floor(operatorScore / 4))
-        const rangeMin = Math.max(3, mult * Math.pow(operatorScore, 2))
+        const rangeMin = Math.max(10, mult * Math.pow(operatorScore, 2))
         const rangeMax = Math.max(100, mult * Math.pow(operatorScore, 3))
         
         const minuend = getRandomInteger(rangeMin, rangeMax)
