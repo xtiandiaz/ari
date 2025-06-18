@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue';
 import scoresStore from '@/stores/scores'
 import { Icon } from '@design-tokens/iconography'
 import { operatorIcon } from '@/view-models/math.vm';
@@ -10,15 +9,7 @@ import SvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
 import DataMark from '@/vueties/components/accessories/VuetyDataMark.vue';
 import '@/assets/tungsten/extensions/array.extensions'
 
-const emits = defineEmits<{
-  viewTitle: [string],
-}>()
-
 const scores = scoresStore()
-
-onBeforeMount(() => {
-  emits('viewTitle', `Today's Scores`)
-})
 </script>
 
 <template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue';
 import scoresStore from '@/stores/scores'
 import { clearScores, clearRecords } from '@/services/scores-management'
 import Form from '@vueties/components/form/VuetyForm.vue'
@@ -7,15 +6,7 @@ import FormSection from '@vueties/components/form/VuetyFormSection.vue'
 import ButtonFormRow from '@vueties/components/form/rows/VuetyButtonFormRow.vue'
 import { version } from '@/../package.json'
 
-const emits = defineEmits<{
-  viewTitle: [string?]
-}>()
-
 const scores = scoresStore()
-
-onBeforeMount(() => {
-  emits('viewTitle', 'Settings')
-})
 </script>
 
 <template>
