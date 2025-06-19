@@ -1,8 +1,17 @@
-import type { Operator } from '@/models/math'
+import { Operator } from '@/models/math'
 import { type OperatorScores } from '@/models/scores'
 import '@/assets/tungsten/extensions/array.extensions'
 
 export const levelScoreWeight = 3
+
+export const minLevelToPlayOperator = function(operator: Operator): number {
+  switch (operator) {
+    case Operator.Percent:
+      return 2
+    default:
+      return 1
+  }
+}
 
 export function createBlankOperatorScores(operator: Operator): OperatorScores {
   return {
