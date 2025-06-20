@@ -4,15 +4,6 @@ import '@/assets/tungsten/extensions/array.extensions'
 
 export const levelScoreWeight = 3
 
-export const minLevelToPlayOperator = function(operator: Operator): number {
-  switch (operator) {
-    case Operator.Percent:
-      return 2
-    default:
-      return 1
-  }
-}
-
 export function createBlankOperatorScores(operator: Operator): OperatorScores {
   return {
     operator,
