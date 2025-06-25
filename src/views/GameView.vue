@@ -48,7 +48,7 @@ function onInput(value: number) {
     return
   }
   
-  if (input.value.length === 0 && value === 0 && String(operation.value!.result).length > 1) {
+  if (input.value.length === 0 && value === 0) {
     return
   }
   
