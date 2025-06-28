@@ -8,7 +8,8 @@ import OperationScreen from '@/components/OperationScreen.vue'
 import LevelUpNotification from '@/components/LevelUpNotification.vue';
 import NumberPad from '@/vueties/components/pads/VuetyNumberPad.vue';
 import { isMobile } from '@/assets/tungsten/navigator';
-import { onWindowEvent } from '@vueties/composables/window-event'
+import { setUpEvent } from '@vueties/composables/set-up-event'
+import VuetyRouterModalScene from '@vueties/scenes/VuetyModalScene.vue'
 
 const scores = scoresStore()
 
@@ -103,7 +104,7 @@ onBeforeUnmount(() => {
   onPageFocusedOrUnmounted()
 })
 
-onWindowEvent('focus', onPageFocusedOrUnmounted)
+setUpEvent('focus', window, onPageFocusedOrUnmounted)
 </script>
 
 <template> 
@@ -123,6 +124,8 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
       <NumberPad @input="onInput" />
     </section>
   </main>
+  
+  <VuetyRouterModalScene />
 </template>
 
 <style scoped lang="scss">
@@ -130,17 +133,20 @@ onWindowEvent('focus', onPageFocusedOrUnmounted)
 @use '@vueties/components/bars/styles' as bar-styles;
 
 main {
-  section {
-    $h-padding: 1em;
-    $v-padding: 1em;
-    
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    height: calc(50% - $v-padding * 2);
-    padding: $v-padding $h-padding;
-    text-align: center;
-  }
+  height: calc(100% - bar-styles.$nav-bar-height);
+  z-index: 1;
+}
+
+section {
+  $h-padding: 1em;
+  $v-padding: 1em;
+  
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: calc(50% - $v-padding * 2);
+  padding: $v-padding $h-padding;
+  text-align: center;
 }
 
 #level-up-notification {

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import scoreStore from '@/stores/scores'
 import { Icon } from '@design-tokens/iconography'
 import { type VuetyNavigationBarVM } from '@vueties/components/bars/view-models'
-import VuetyRouterScene from '@vueties/scenes/VuetyRouterScene.vue'
+import VuetyNavigationBar from './vueties/components/bars/VuetyNavigationBar.vue'
 
 const score = scoreStore()
 
@@ -21,5 +21,7 @@ const navigationBarVM = computed<VuetyNavigationBarVM>(() => {
 </script>
 
 <template>
-  <VuetyRouterScene :navigationBarVM="navigationBarVM" />
+  <VuetyNavigationBar :viewModel="navigationBarVM" />
+  
+  <RouterView />
 </template>
