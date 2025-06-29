@@ -3,7 +3,7 @@ import scoresStore from '@/stores/scores'
 import { Icon } from '@design-tokens/iconography'
 import { operatorIcon } from '@/view-models/math.vm';
 import Form from '@vueties/components/form/VuetyForm.vue';
-import FormSection from '@vueties/components/form/VuetyFormSection.vue';
+import Section from '@vueties/components/form/VuetyFormSection.vue';
 import CustomFormRow from '@/vueties/components/form/rows/VuetyCustomFormRow.vue';
 import SvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
 import DataMark from '@/vueties/components/accessories/VuetyDataMark.vue';
@@ -32,7 +32,7 @@ const scores = scoresStore()
     </section>
     
     <Form id="scores">
-      <FormSection
+      <Section
         :title="`Scores`"
         :footnote="`These scores will be cleared automatically by the end of the day. Try to beat your own records every day!`"
       >
@@ -51,7 +51,7 @@ const scores = scoresStore()
             />
           </div>
         </CustomFormRow>
-      </FormSection>
+      </Section>
     </Form>
   </main>
 </template>
@@ -73,63 +73,59 @@ span.caption-all-caps {
   text-transform: uppercase;
 }
 
-main {  
-  section {
-    margin: 0 1em;
+section {
+  &#levels {
+    align-items: center;
+    display: flex;
+    gap: 1.5em;
+    justify-content: center;
+    padding: 1em;
+    @include palette.color-attribute('color', 'tertiary-body');
     
-    &#levels {
-      align-items: center;
-      display: flex;
-      gap: 1.5em;
-      justify-content: center;
-      padding: 1em;
-      @include palette.color-attribute('color', 'tertiary-body');
+    > * {
+      flex: 1;
+    }
+    
+    > :first-child {
+      text-align: right;
+    }
+    
+    h1, h4 {
+      margin: 0;
+    }
+    
+    h1 {
+      font-size: 3.75em;
+    }
+    
+    #level {
+      text-align: center;
+      flex: 0;
+      @include palette.color-attribute('color', 'body');
       
-      > * {
-        flex: 1;
+      .svg-icon {
+        display: none;
+        transform: translateY(8px);
+        width: 2em;
       }
       
-      > :first-child {
-        text-align: right;
-      }
-      
-      h1, h4 {
-        margin: 0;
-      }
-      
-      h1 {
-        font-size: 3.75em;
-      }
-      
-      #level {
-        text-align: center;
-        flex: 0;
-        @include palette.color-attribute('color', 'body');
-        
+      &.new-record {          
         .svg-icon {
-          display: none;
-          transform: translateY(8px);
-          width: 2em;
-        }
-        
-        &.new-record {          
-          .svg-icon {
-            display: inline-block;
-          }
-        }
-      }
-      
-      #record-level {
-        > :first-child {
           display: inline-block;
-          text-align: center;
         }
       }
-      
-      .new-record {
-        &, * {
-          @include palette.color-attribute('color', 'yellow');
-        }
+    }
+    
+    #record-level {
+      > :first-child {
+        display: inline-block;
+        text-align: center;
+      }
+    }
+    
+    .new-record {
+      &, * {
+        @include palette.color-attribute('color', 'yellow');
       }
     }
   }
