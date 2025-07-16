@@ -83,6 +83,10 @@ section#operation-viewport {
   padding-left: 0;
   padding-right: 0;
   
+  * {
+    line-height: 1.25;
+  }
+  
   #operation {
     font-family: 'Inter Medium', sans-serif;
     font-size: v-bind(operationFontSize);
