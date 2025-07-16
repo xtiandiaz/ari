@@ -6,8 +6,8 @@ import Form from '@vueties/components/form/VuetyForm.vue';
 import Section from '@vueties/components/form/VuetyFormSection.vue';
 import CustomFormRow from '@/vueties/components/form/rows/VuetyCustomFormRow.vue';
 import SvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
-import DataMark from '@/vueties/components/accessories/VuetyDataMark.vue';
 import '@/assets/tungsten/extensions/array.extensions'
+import VuetySvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
 
 const scores = scoresStore()
 </script>
@@ -15,7 +15,9 @@ const scores = scoresStore()
 <template>
   <main>
     <section id="levels">
-      <span class="caption-all-caps">Level</span>
+      
+      <span class="mark">Level</span>
+      
       <div 
         id="level" 
         :class="{ 'new-record': scores.recordLevel === undefined || scores.todayLevel >= scores.recordLevel }"
@@ -23,9 +25,13 @@ const scores = scoresStore()
         <SvgIcon :icon="Icon.Crown" />
         <h1>{{ scores.todayLevel }}</h1>
       </div>
+      
       <div id="record-level">
         <span>
-          <DataMark :icon="Icon.Crown" :value="`Best`" class="caption-all-caps" />
+          <span class="mark">
+            <VuetySvgIcon :icon="Icon.Crown" />
+            Best
+          </span>
           <h4>{{ scores.recordLevel ?? scores.todayLevel }}</h4>
         </span>
       </div>
@@ -42,14 +48,14 @@ const scores = scoresStore()
           class="score-row" :class="operatorScores.operator.toLowerCase()"
         >
           <SvgIcon :icon="operatorIcon(operatorScores.operator)" class="representative-icon" />
+          
           <div class="spacer"></div>
-          <div class="marks operator-colored-items">
-            <DataMark 
-              :icon="Icon.CheckmarkCircle" 
-              :value="operatorScores.score"
-              class="strong"
-            />
+          
+          <div class="mark operator-colored-items">
+            <VuetySvgIcon :icon="Icon.CheckmarkCircle" />
+            <span class="score">{{ operatorScores.score }}</span>
           </div>
+          
         </CustomFormRow>
       </Section>
     </Form>
@@ -58,7 +64,7 @@ const scores = scoresStore()
 
 <style scoped lang="scss">
 @use '@vueties/components/form/styles' as form-styles;
-@use '@vueties/components/accessories/styles' as accessory-styles;
+@use '@vueties/utils/mixins';
 @use '@design-tokens/palette';
 @use '@design-tokens/typography';
 @use '@/assets/math';
@@ -67,19 +73,12 @@ strong {
   display: inline !important;
 }
 
-span.caption-all-caps {
-  @extend .caption;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
 section {
   &#levels {
     align-items: center;
     display: flex;
-    gap: 1.5em;
+    gap: 1.75em;
     justify-content: center;
-    padding: 1em;
     @include palette.color-attribute('color', 'tertiary-body');
     
     > * {
@@ -87,10 +86,11 @@ section {
     }
     
     > :first-child {
-      text-align: right;
+      justify-content: right;
     }
     
     h1, h4 {
+      line-height: 1;
       margin: 0;
     }
     
@@ -105,8 +105,7 @@ section {
       
       .svg-icon {
         display: none;
-        transform: translateY(8px);
-        width: 2em;
+        @include mixins.size(2.25em);
       }
       
       &.new-record {          
@@ -129,5 +128,23 @@ section {
       }
     }
   }
+}
+
+.mark {
+  align-items: center;
+  display: inline-flex;
+  font-size: 0.9em;
+  gap: 0.375em;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  
+  .svg-icon {
+    @include mixins.size(1.25em);
+  }
+}
+
+.score {
+  @extend .strong;
+  font-size: 1.2em;
 }
 </style>
