@@ -81,7 +81,7 @@ function getRandomPercentAndOperand(operatorScore: number): number[] {
 
 function generateRandomOperandsForOperator(operator: Operator): number[] {
   const scores = scoresStore()
-  const operatorScore = 50//scores.getOperatorDailyScores(operator)?.score ?? 0
+  const operatorScore = scores.getOperatorDailyScores(operator)?.score ?? 0
   
   switch (operator) {
     case Operator.Addition:
