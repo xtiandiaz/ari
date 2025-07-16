@@ -4,10 +4,9 @@ import { Icon } from '@design-tokens/iconography'
 import { operatorIcon } from '@/view-models/math.vm';
 import Form from '@vueties/components/form/VuetyForm.vue';
 import Section from '@vueties/components/form/VuetyFormSection.vue';
-import CustomFormRow from '@/vueties/components/form/rows/VuetyCustomFormRow.vue';
-import SvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
-import '@/assets/tungsten/extensions/array.extensions'
+import VuetyCustomFormRow from '@/vueties/components/form/rows/VuetyCustomFormRow.vue';
 import VuetySvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
+import '@/assets/tungsten/extensions/array.extensions'
 
 const scores = scoresStore()
 </script>
@@ -22,7 +21,7 @@ const scores = scoresStore()
         id="level" 
         :class="{ 'new-record': scores.recordLevel === undefined || scores.todayLevel >= scores.recordLevel }"
       >
-        <SvgIcon :icon="Icon.Crown" />
+        <VuetySvgIcon :icon="Icon.Crown" />
         <h1>{{ scores.todayLevel }}</h1>
       </div>
       
@@ -42,12 +41,13 @@ const scores = scoresStore()
         :title="`Scores`"
         :footnote="`These scores will be cleared automatically by the end of the day. Try to beat your own records every day!`"
       >
-        <CustomFormRow 
+        <VuetyCustomFormRow 
           v-for="(operatorScores) in scores.playableOperatorsScores" 
+          class="score-row" 
           :key="operatorScores.operator" 
-          class="score-row" :class="operatorScores.operator.toLowerCase()"
+          :class="operatorScores.operator.toLowerCase()"
         >
-          <SvgIcon :icon="operatorIcon(operatorScores.operator)" class="representative-icon" />
+          <VuetySvgIcon :icon="operatorIcon(operatorScores.operator)" class="operator" />
           
           <div class="spacer"></div>
           
@@ -56,7 +56,7 @@ const scores = scoresStore()
             <span class="score">{{ operatorScores.score }}</span>
           </div>
           
-        </CustomFormRow>
+        </VuetyCustomFormRow>
       </Section>
     </Form>
   </main>
@@ -79,6 +79,7 @@ section {
     display: flex;
     gap: 1.75em;
     justify-content: center;
+    padding: 1em 0.5em 0 0.5em;
     @include palette.color-attribute('color', 'tertiary-body');
     
     > * {
@@ -146,5 +147,9 @@ section {
 .score {
   @extend .strong;
   font-size: 1.2em;
+}
+
+.operator {
+  @include mixins.size(1.625em);
 }
 </style>
