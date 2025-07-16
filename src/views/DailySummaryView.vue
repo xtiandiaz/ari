@@ -45,7 +45,7 @@ const scores = scoresStore()
           <div class="spacer"></div>
           <div class="marks operator-colored-items">
             <DataMark 
-              :icon="Icon.CheckmarkCircleFilled" 
+              :icon="Icon.CheckmarkCircle" 
               :value="operatorScores.score"
               class="strong"
             />
