@@ -47,13 +47,13 @@ const scores = scoresStore()
           :key="operatorScores.operator" 
           :class="operatorScores.operator.toLowerCase()"
         >
-          <VuetySvgIcon :icon="operatorIcon(operatorScores.operator)" class="operator" />
+          <VuetySvgIcon :icon="operatorIcon(operatorScores.operator)" class="representative-icon" />
           
           <div class="spacer"></div>
           
           <div class="mark operator-colored-items">
             <VuetySvgIcon :icon="Icon.CheckmarkCircle" />
-            <span class="score">{{ operatorScores.score }}</span>
+            <strong>{{ operatorScores.score }}</strong>
           </div>
           
         </VuetyCustomFormRow>
@@ -100,12 +100,13 @@ section {
     }
     
     #level {
-      text-align: center;
       flex: 0;
+      text-align: center;
       @include palette.color-attribute('color', 'body');
       
       .svg-icon {
         display: none;
+        transform: translateY(0.25em);
         @include mixins.size(2.25em);
       }
       
@@ -134,22 +135,8 @@ section {
 .mark {
   align-items: center;
   display: inline-flex;
-  font-size: 0.9em;
   gap: 0.375em;
   letter-spacing: 0.075em;
   text-transform: uppercase;
-  
-  .svg-icon {
-    @include mixins.size(1.25em);
-  }
-}
-
-.score {
-  @extend .strong;
-  font-size: 1.2em;
-}
-
-.operator {
-  @include mixins.size(1.625em);
 }
 </style>

@@ -1,27 +1,22 @@
+@use 'sass:map';
 @use '@design-tokens/palette';
 
-.addition {
-  .svg-icon, .operator-colored-item, .operator-colored-items * {
-    @include palette.color-attribute('color', 'sky-blue');
+$operator-color-map: (
+  'addition': 'sky-blue',
+  'division': 'purple',
+  'multiplication': 'blue',
+  'percent': 'mint',
+  'subtraction': 'pink',
+);
+
+@mixin color-operator-items() {
+  @each $operator, $color in $operator-color-map {
+    .#{$operator} {
+      .svg-icon, .operator-colored-item, .operator-colored-items, .operator-colored-items * {
+        @include palette.color-attribute('color', $color);
+      }
+    }
   }
-}
-.division {
-  .svg-icon, .operator-colored-item, .operator-colored-items * {
-    @include palette.color-attribute('color', 'purple');
-  }
-}
-.multiplication {
-  .svg-icon, .operator-colored-item, .operator-colored-items * {
-    @include palette.color-attribute('color', 'blue');
-  }
-}
-.percent {
-  .svg-icon, .operator-colored-item, .operator-colored-items * {
-    @include palette.color-attribute('color', 'mint');
-  }
-}
-.subtraction {
-  .svg-icon, .operator-colored-item, .operator-colored-items * {
-    @include palette.color-attribute('color', 'pink');
-  }
-}
+};
+
+@include color-operator-items();
