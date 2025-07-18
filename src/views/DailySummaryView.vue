@@ -79,7 +79,7 @@ section {
     display: flex;
     gap: 1.75em;
     justify-content: center;
-    padding: 1em 0.5em 0 0.5em;
+    padding: 1.5em 0.5em 0.5em 0.5em;
     @include palette.color-attribute('color', 'tertiary-body');
     
     > * {
@@ -106,7 +106,7 @@ section {
       
       .svg-icon {
         display: none;
-        transform: translateY(0.25em);
+        transform: translateY(6px);
         @include mixins.size(2.25em);
       }
       
