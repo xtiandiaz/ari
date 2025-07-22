@@ -146,10 +146,9 @@ section {
 }
 
 #level-up-notification {
-  height: bar-styles.$nav-bar-height;
   left: 50%;
-  position: absolute;
-  transform: translateX(-50%);
-  top: 0;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: calc(env(safe-area-inset-top) + bar-styles.$nav-bar-height / 2);
 }
 </style>

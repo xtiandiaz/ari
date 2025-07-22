@@ -7,7 +7,7 @@ export default createVuetyRouter([
   {
     path: '/',
     components: {
-      main: GameView
+      default: GameView
     },
     children: [
       {
