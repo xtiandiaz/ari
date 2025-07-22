@@ -7,9 +7,8 @@ import { clearScoreIfNeeded, saveScores } from '@/services/scores-management'
 import OperationScreen from '@/components/OperationScreen.vue'
 import LevelUpNotification from '@/components/LevelUpNotification.vue';
 import NumberPad from '@/vueties/components/pads/VuetyNumberPad.vue';
-import { isMobile } from '@/assets/tungsten/navigator';
 import { setUpEvent } from '@vueties/composables/set-up-event'
-import VuetyRouterModalScene from '@vueties/scenes/VuetyModalScene.vue'
+import { isMobile } from '@/assets/tungsten/navigator';
 
 const scores = scoresStore()
 
@@ -124,16 +123,13 @@ setUpEvent('focus', window, onPageFocusedOrUnmounted)
       <NumberPad @input="onInput" />
     </section>
   </main>
-  
-  <VuetyRouterModalScene />
 </template>
 
 <style scoped lang="scss">
-@use '@vueties/utils/styles' as utility-styles;
 @use '@vueties/components/bars/styles' as bar-styles;
 
 main {
-  height: calc(100% - bar-styles.$nav-bar-height);
+  height: 100%;
   z-index: 1;
 }
 

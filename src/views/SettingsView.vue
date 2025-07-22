@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted  } from 'vue'
+import { useRoute } from 'vue-router'
 import scoresStore from '@/stores/scores'
 import { clearScores, clearRecords } from '@/services/scores-management'
 import Form from '@vueties/components/form/VuetyForm.vue'
@@ -6,7 +8,12 @@ import FormSection from '@vueties/components/form/VuetyFormSection.vue'
 import ButtonFormRow from '@vueties/components/form/rows/VuetyButtonFormRow.vue'
 import { version } from '@/../package.json'
 
+const route = useRoute()
 const scores = scoresStore()
+
+onMounted(() => {
+  route.meta.setTitle("Settings", false)
+})
 </script>
 
 <template>

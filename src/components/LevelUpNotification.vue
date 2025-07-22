@@ -43,7 +43,6 @@ watch(() => newLevel, (value, oldValue) => {
 <style scoped lang="scss">
 @use '@design-tokens/typography';
 @use '@design-tokens/palette';
-@use '@vueties/utils/styles';
 
 div#level-up-notification {
   align-items: center;

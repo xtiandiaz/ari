@@ -57,7 +57,9 @@ const operationFontSize = computed(() => {
 
 <template>
   <section id="operation-viewport">
+    
     <div class="spacer"></div>
+    
     <div id="operation" v-if="operation">
       <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
         <span id="first-operand">{{ operation.operands[0].toLocaleString() }}</span>
@@ -70,12 +72,13 @@ const operationFontSize = computed(() => {
         {{ input.length > 0 ? Number(input).toLocaleString() : '?' }}
       </span>
     </div>
+    
     <div class="spacer"></div>
+    
   </section>  
 </template>
 
 <style scoped lang="scss">
-@use '@vueties/utils/styles';
 @use '@design-tokens/palette';
 @use '@/assets/math';
 
@@ -137,6 +140,10 @@ section#operation-viewport {
         @include palette.color-attribute('color', 'green');
       }
     }
+  }
+  
+  .spacer {
+    flex: auto;
   }
 }
 </style>

@@ -9,9 +9,8 @@ const score = scoreStore()
 
 const navigationBarVM = computed<VuetyNavigationBarVM>(() => {
   return {
-    isVisible: true,
     leftBarItems: [
-      { icon: Icon.Gear, isEnabled: true, path: '/settings' }
+      { icon: Icon.Gear, path: '/settings' }
     ],
     rightBarItems: [
       { icon: Icon.BarChart, isEnabled: score.hasAnyDailyScore, path: '/daily-summary' }

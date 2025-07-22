@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import scoresStore from '@/stores/scores'
 import { Icon } from '@design-tokens/iconography'
 import { operatorIcon } from '@/view-models/math.vm';
@@ -8,7 +10,12 @@ import VuetyCustomFormRow from '@/vueties/components/form/rows/VuetyCustomFormRo
 import VuetySvgIcon from '@/vueties/components/misc/VuetySvgIcon.vue';
 import '@/assets/tungsten/extensions/array.extensions'
 
+const route = useRoute()
 const scores = scoresStore()
+
+onMounted(() => {
+  route.meta.setTitle("Today's Scores", false)
+})
 </script>
 
 <template>
@@ -64,7 +71,7 @@ const scores = scoresStore()
 
 <style scoped lang="scss">
 @use '@vueties/components/form/styles' as form-styles;
-@use '@vueties/utils/mixins';
+@use '@vueties/styles/mixins';
 @use '@design-tokens/palette';
 @use '@design-tokens/typography';
 @use '@/assets/math';
