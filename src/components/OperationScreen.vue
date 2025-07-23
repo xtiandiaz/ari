@@ -88,6 +88,7 @@ section#operation-viewport {
   
   * {
     line-height: 1.25;
+    text-align: right;
   }
   
   #operation {
@@ -116,6 +117,8 @@ section#operation-viewport {
       }
       
       &.percent {
+        flex-direction: column;
+        
         #operator-and-second-operand {
           @extend .operator-colored-item;
           column-gap: 0;
