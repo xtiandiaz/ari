@@ -108,8 +108,8 @@ onMounted(() => {
       
       .crown {
         display: none;
-        height: 1.25em;
-        width: 1.75em;
+        height: 1.5em;
+        width: 2em;
       }
       
       .caption {
