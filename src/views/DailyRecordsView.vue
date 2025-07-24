@@ -25,27 +25,29 @@ onMounted(() => {
 })
 </script>
 
-<template>    
-  <VuetyForm id="scores">
-    <VuetyFormSection 
-      :title="'Level'"
-      :footnote="`These scores will be cleared automatically by the end of the day. Try to beat your own records every day!`"
-    >
-      <VuetyCustomFormRow id="level-row">
-        <div class="content-wrapper">
-          <div :class="['level', records.isTodayLevelNewRecord ? 'new-record' : undefined]">
-            <VuetyProgressRing :progress="nextLevelProgress" :size="160" :stroke-width="6" />
-            
-            <div id="level-info">
-              <VuetySvgIcon class="crown" :icon="Icon.Crown" />
-              <h1>{{ records.displayableTodayLevel }}</h1>
-              <span class="caption">
-                Best: <strong>{{ records.displayableRecordLevel }}</strong>
-              </span>
-            </div>
-          </div>
-          
-          <div class="tags">
+<template>
+  <main>
+    <div id="level-dial">
+      <div :class="['level', records.isTodayLevelNewRecord ? 'new-record' : undefined]">
+        <VuetyProgressRing :progress="nextLevelProgress" :size="176" :stroke-width="6" />
+        
+        <div id="level-info">
+          <VuetySvgIcon class="crown" :icon="Icon.Crown" />
+          <h1>{{ records.displayableTodayLevel }}</h1>
+          <span class="caption">
+            Best: <strong>{{ records.displayableRecordLevel }}</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <VuetyForm id="scores">    
+      <VuetyFormSection 
+        :title="'Scores'"
+        :footnote="`These scores will be cleared automatically by the end of the day. Try to beat your own records every day!`"
+      >
+        <VuetyCustomFormRow id="scores-row">
+          <div class="content-wrapper">
             <OperatorScoreTag
               v-for="(operatorScores) in records.playableOperatorsScores"
               :key="operatorScores.operator"
@@ -53,10 +55,10 @@ onMounted(() => {
               :score="operatorScores.score"
             />
           </div>
-        </div>
-      </VuetyCustomFormRow>
-    </VuetyFormSection>
-  </VuetyForm>
+        </VuetyCustomFormRow>
+      </VuetyFormSection>
+    </VuetyForm>
+  </main>
 </template>
 
 <style scoped lang="scss">
@@ -70,12 +72,10 @@ onMounted(() => {
   flex: auto;
 }
 
-#level-row .content-wrapper {
+#level-dial {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5em;
   justify-content: center;
-  padding: 1.5em 0;
+  padding-top: 1em;
   text-transform: uppercase;
   
   .level {
@@ -119,13 +119,14 @@ onMounted(() => {
       }
     }
   }
-  
-  .tags {
-    display: flex;
-    flex-basis: 100%;
-    flex-wrap: wrap;
-    gap: 0.5em;
-    justify-content: center;
-  }
+}
+
+#scores-row .content-wrapper {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  justify-content: start;
+  padding: 1em 0;
 }
 </style>
