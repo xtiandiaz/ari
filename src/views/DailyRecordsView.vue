@@ -34,13 +34,13 @@ onMounted(() => {
       <VuetyCustomFormRow id="level-row">
         <div class="content-wrapper">
           <div :class="['level', records.isTodayLevelNewRecord ? 'new-record' : undefined]">
-            <VuetyProgressRing :progress="nextLevelProgress" :size="144" :stroke-width="6" />
+            <VuetyProgressRing :progress="nextLevelProgress" :size="160" :stroke-width="6" />
             
             <div id="level-info">
               <VuetySvgIcon class="crown" :icon="Icon.Crown" />
               <h1>{{ records.displayableTodayLevel }}</h1>
               <span class="caption">
-                Best <strong>{{ records.displayableRecordLevel }}</strong>
+                Best: <strong>{{ records.displayableRecordLevel }}</strong>
               </span>
             </div>
           </div>
@@ -73,9 +73,9 @@ onMounted(() => {
 #level-row .content-wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 1em;
+  gap: 1.5em;
   justify-content: center;
-  padding: 1em 0;
+  padding: 1.5em 0;
   text-transform: uppercase;
   
   .level {
