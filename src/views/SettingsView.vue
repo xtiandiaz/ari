@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted  } from 'vue'
 import { useRoute } from 'vue-router'
-import scoresStore from '@/stores/scores'
-import { clearScores, clearRecords } from '@/services/scores-management'
+import scoresStore from '@/stores/records'
+import { clearScores, clearRecords } from '@/services/records-management'
 import Form from '@vueties/components/form/VuetyForm.vue'
 import FormSection from '@vueties/components/form/VuetyFormSection.vue'
 import ButtonFormRow from '@vueties/components/form/rows/VuetyButtonFormRow.vue'
@@ -35,7 +35,7 @@ onMounted(() => {
         <ButtonFormRow 
           :label="`Clear all records`" 
           :isDestructive="true"
-          :class="{ disabled: scores.recordLevel === undefined }"
+          :class="{ disabled: scores.recordLevel === 0 }"
           @click="clearRecords()"
         />
       </FormSection>

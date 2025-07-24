@@ -1,6 +1,6 @@
 import { Operator, type Operation } from "@/models/math";
 import settingsStore from '@/stores/settings'
-import scoresStore from '@/stores/scores'
+import scoresStore from '@/stores/records'
 import { getRandomInteger, getRandomChoice, getRandomWeightedChoice } from "@/assets/tungsten/randomness";
 import { gcd } from "@/assets/tungsten/math";
 import { levelScoreWeight } from "@/utils/score.utils";

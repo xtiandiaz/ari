@@ -15,8 +15,26 @@ $operator-color-map: (
       .svg-icon, .operator-colored-item, .operator-colored-items, .operator-colored-items * {
         @include palette.color-attribute('color', $color);
       }
+      
+      .operator-color-filled-item {
+        @include palette.color-attribute('background-color', $color);
+      }
     }
   }
 };
 
 @include color-operator-items();
+
+@mixin color-tags() {
+  @each $operator, $color in $operator-color-map {
+    .vuety-tag.#{$operator} {
+      &, :deep(*) {
+        @include palette.color-attribute('color', $color);
+      }
+      
+      :deep(.background) {
+        @include palette.color-attribute('background-color', $color);
+      }
+    }
+  }
+}

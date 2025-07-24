@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import type { Operation, Operator } from '@/models/math';
-import scoresStore from '@/stores/scores'
+import scoresStore from '@/stores/records'
 import { generateRandomOperation } from '@/services/operation-generator';
-import { clearScoreIfNeeded, saveScores } from '@/services/scores-management'
+import { clearScoreIfNeeded, saveScores } from '@/services/records-management'
 import OperationScreen from '@/components/OperationScreen.vue'
 import LevelUpNotification from '@/components/LevelUpNotification.vue';
 import NumberPad from '@/vueties/components/pads/VuetyNumberPad.vue';
@@ -108,7 +108,7 @@ setUpEvent('focus', window, onPageFocusedOrUnmounted)
 
 <template> 
   <LevelUpNotification 
-    :newLevel="scores.todayLevel" :isRecord="scores.isTodayLevelNewRecord" 
+    :newLevel="scores.displayableTodayLevel" :isRecord="scores.isTodayLevelNewRecord" 
   />
  
   <main>

@@ -1,6 +1,6 @@
 import type { RawDailyScores, DailyScores } from '@/models/scores'
 import { LocalStorageItemKey } from '@/models/persistence'
-import scoresStore from '@/stores/scores'
+import scoresStore from '@/stores/records'
 import { retrieve, save } from '@/assets/tungsten/local-storage'
 import '@/assets/tungsten/extensions/date.extensions'
 

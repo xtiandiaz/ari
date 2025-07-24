@@ -1,6 +1,6 @@
 import { createVuetyRouter } from '@vueties/router/vuety-router'
 import GameView from './views/GameView.vue'
-import DailySummaryView from './views/DailySummaryView.vue'
+import DailyRecordsView from './views/DailyRecordsView.vue'
 import SettingsView from './views/SettingsView.vue'
 
 export default createVuetyRouter([
@@ -11,9 +11,9 @@ export default createVuetyRouter([
     },
     children: [
       {
-        path: 'daily-summary',
+        path: 'daily-records',
         components: {
-          modal: DailySummaryView
+          modal: DailyRecordsView
         }
       },
       { 
