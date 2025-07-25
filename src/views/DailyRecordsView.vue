@@ -127,6 +127,7 @@ main {
   overflow: hidden;
   
   .card {
+    align-items: center;
     border-radius: 0.5em;
     box-sizing: border-box;
     display: flex;
@@ -136,6 +137,10 @@ main {
     
     > * {
       margin: 0;
+    }
+    
+    .svg-icon {
+      @include vs.size(1.5em);
     }
   }
 }
