@@ -31,7 +31,7 @@ export default defineStore('scores', () => {
   )
   const recordLevel = computed(() => dailyScores.value.recordLevel ?? 0)
   const displayableRecordLevel = computed(() => Math.floor(recordLevel.value) + 1)
-  const isTodayLevelNewRecord = computed(() => todayLevel.value >= recordLevel.value)
+  const isTodayLevelNewRecord = computed(() => todayLevel.value >= Math.floor(recordLevel.value))
   
   function getOperatorDailyScores(operator: Operator): OperatorScores {
     return dailyScores.value.operatorsScores.find(os => os.operator === operator)!

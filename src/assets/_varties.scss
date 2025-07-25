@@ -1,8 +1,28 @@
-$tint-color: 'body' !default;
+// COLORS
+
+$tint-color: 'body';
+
+$body-color: 'body';
+$secondary-body-color: 'secondary-body';
+$tertiary-body-color: 'tertiary-body';
+
+$background-color: 'background';
+$secondary-background-color: 'secondary-background';
+$tertiary-background-color: 'tertiary-background';
+
+$accessory-color: 'accessory';
+
+// FORM
+
+$form-section-border-radius: 1em;
+
+// PADS
+
+$keypad-key-color: 'body';
+$keypad-key-background-color: 'background';
+
+// TAGS
 
 $tag-color: 'tertiary-body';
-$tag-background-color: 'tertiary-body' !default;
+$tag-background-color: 'tertiary-body';
 $tag-background-opacity: 0.1;
-
-$key-color: 'body' !default;
-$key-background-color: 'background' !default;

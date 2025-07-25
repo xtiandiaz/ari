@@ -41,8 +41,7 @@ watch(() => newLevel, (value, oldValue) => {
 </template>
 
 <style scoped lang="scss">
-@use '@design-tokens/typography';
-@use '@design-tokens/palette';
+@use '@vueties/utils/vuetystrap' as vs;
 
 div#level-up-notification {
   align-items: center;
@@ -62,14 +61,14 @@ div#level-up-notification {
   span {
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    @include palette.color-attribute('color', 'yellow');
+    @include vs.color-attribute('color', 'yellow');
     
     &.headline {
-      @extend .strong;
+      @include vs.strong();
     }
     
     &.caption {
-      @extend .caption;
+      @include vs.caption();
     }
   }
 }

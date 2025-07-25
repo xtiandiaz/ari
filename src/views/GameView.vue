@@ -138,9 +138,10 @@ section {
   $v-padding: 1em;
   
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: calc(50% - $v-padding * 2);
+  height: 50%;
   padding: $v-padding $h-padding;
   text-align: center;
 }

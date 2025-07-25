@@ -8,7 +8,6 @@ import { Icon } from '@design-tokens/iconography'
 const records = useRecordsStore()
 
 const navigationBarVM = computed<VuetyNavigationBarVM>(() => {
-  console.log("isTodayLevelNewRecord", records.isTodayLevelNewRecord)
   return {
     leftBarItems: [
       { icon: Icon.Gear, path: '/settings' }
