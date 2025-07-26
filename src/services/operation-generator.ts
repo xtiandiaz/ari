@@ -1,16 +1,20 @@
 import { Operator, type Operation } from "@/models/math";
-import settingsStore from '@/stores/settings'
-import scoresStore from '@/stores/records'
-import { getRandomInteger, getRandomChoice, getRandomWeightedChoice } from "@/assets/tungsten/randomness";
+import type { OperationModality } from "@/models/game";
+import useSettingsStore from '@/stores/settings'
+import useRecordsStore from '@/stores/records'
+import { 
+  getRandomInteger, 
+  getRandomChoice, 
+  getRandomWeightedChoice 
+} from "@/assets/tungsten/randomness";
 import { gcd } from "@/assets/tungsten/math";
-import { levelScoreWeight } from "@/utils/score.utils";
 
-function getRandomWeightedOperator(): Operator {
-  const settings = settingsStore()
-  const scores = scoresStore()
+function getRandomWeightedOperator(modality: OperationModality): Operator {
+  const settings = useSettingsStore()
+  const records = useRecordsStore()
   
   const weights = (() => {
-    const operatorsScores = settings.playableOperators.map(o => scores.getOperatorDailyScores(o)?.score ?? 0)
+    const operatorsScores = settings.playableOperators.map(o => records.getOperatorScore(o, modality).value)
     const maxScore = operatorsScores.reduce((max, cur) => cur > max ? cur : max, operatorsScores[0])
     
     return operatorsScores.map(os => 1 + maxScore / Math.max(os, 1))
@@ -25,7 +29,8 @@ function getRandomPercentAndOperand(operatorScore: number): number[] {
     MultiplesOfFive
   }
   
-  const relativeLevel = Math.max(1, Math.ceil(operatorScore / levelScoreWeight))
+  const settings = useSettingsStore()
+  const relativeLevel = Math.max(1, Math.ceil(operatorScore / settings.levelScoreWeight))
   const figure: PercentFigure = getRandomChoice([
     PercentFigure.PowerOfTwoDivisors, 
     PercentFigure.MultiplesOfFive
@@ -79,9 +84,9 @@ function getRandomPercentAndOperand(operatorScore: number): number[] {
     return [dividend / divisor, operand]
 }
 
-function generateRandomOperandsForOperator(operator: Operator): number[] {
-  const scores = scoresStore()
-  const operatorScore = scores.getOperatorDailyScores(operator)?.score ?? 0
+function generateRandomOperandsForOperator(operator: Operator, modality: OperationModality): number[] {
+  const records = useRecordsStore()
+  const operatorScore = records.getOperatorScore(operator, modality).value
   
   switch (operator) {
     case Operator.Addition:
@@ -89,6 +94,29 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
         const mult = Math.pow(2, Math.floor(operatorScore / 4))
         const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 2))
         const rangeMax = Math.max(19, mult * Math.pow(operatorScore, 3))
+        
+        return [
+          getRandomInteger(rangeMin, rangeMax), 
+          getRandomInteger(rangeMin, rangeMax)
+        ]
+      })()
+      
+    case Operator.Subtraction:
+      return (() => {
+        const mult = Math.pow(2, Math.floor(operatorScore / 4))
+        const rangeMin = Math.max(8, mult * Math.pow(operatorScore, 2))
+        const rangeMax = Math.max(19, mult * Math.pow(operatorScore, 3))
+        
+        const minuend = getRandomInteger(rangeMin, rangeMax)
+        const subtrahend = Math.max(getRandomInteger(rangeMin / 2, minuend) - 2, 2)
+        
+        return [minuend, subtrahend]
+      })()
+      
+    case Operator.Multiplication:
+      return (() => {
+        const rangeMin = Math.max(2, Math.pow(operatorScore, 4 / 3))
+        const rangeMax = Math.max(9, Math.pow(operatorScore, 5 / 3))
         
         return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
       })()
@@ -104,32 +132,12 @@ function generateRandomOperandsForOperator(operator: Operator): number[] {
         return [dividend * divisor, divisor]
       })()
 
-    case Operator.Multiplication:
-      return (() => {
-        const rangeMin = Math.max(2, Math.pow(operatorScore, 4 / 3))
-        const rangeMax = Math.max(9, Math.pow(operatorScore, 5 / 3))
-        
-        return [getRandomInteger(rangeMin, rangeMax), getRandomInteger(rangeMin, rangeMax)]
-      })()
-
     case Operator.Percent:
       return (() => {        
         const percentAndOperand = getRandomPercentAndOperand(operatorScore)
         const percentage = Math.floor(percentAndOperand[0] * 1000) / 10
         
         return [percentAndOperand[1], percentage]
-      })()
-
-    case Operator.Subtraction:
-      return (() => {
-        const mult = Math.pow(2, Math.floor(operatorScore / 4))
-        const rangeMin = Math.max(8, mult * Math.pow(operatorScore, 2))
-        const rangeMax = Math.max(19, mult * Math.pow(operatorScore, 3))
-        
-        const minuend = getRandomInteger(rangeMin, rangeMax)
-        const subtrahend = Math.max(getRandomInteger(rangeMin / 2, minuend) - 2, 2)
-        
-        return [minuend, subtrahend]
       })()
   }
 }
@@ -149,11 +157,12 @@ function getResult(operator: Operator, operands: number[]): number {
   }
 }
 
-export function generateRandomOperation(): Operation {
-  const operator = getRandomWeightedOperator()
-  const operands = generateRandomOperandsForOperator(operator)
+export function generateRandomOperation(modality: OperationModality): Operation {
+  const operator = getRandomWeightedOperator(modality)
+  const operands = generateRandomOperandsForOperator(operator, modality)
   
   return {
+    modality,
     operands,
     operator,
     result: getResult(operator, operands)

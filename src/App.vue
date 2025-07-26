@@ -14,10 +14,9 @@ const navigationBarVM = computed<VuetyNavigationBarVM>(() => {
     ],
     rightBarItems: [
       { 
-        icon: records.isTodayLevelNewRecord ? Icon.Crown : Icon.Levels, 
+        icon: Icon.BarChart, 
         isEnabled: records.hasAnyDailyScore, 
-        path: '/daily-records',
-        label: `${records.displayableTodayLevel}`
+        path: '/daily-records'
       }
     ]
   }

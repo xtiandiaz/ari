@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { onMounted  } from 'vue'
 import { useRoute } from 'vue-router'
-import scoresStore from '@/stores/records'
-import { clearScores, clearRecords } from '@/services/records-management'
+import useRecordsStore from '@/stores/records'
+import { clearScores, clearPersonalBests } from '@/services/records-management'
 import Form from '@vueties/components/form/VuetyForm.vue'
 import FormSection from '@vueties/components/form/VuetyFormSection.vue'
 import ButtonFormRow from '@vueties/components/form/rows/VuetyButtonFormRow.vue'
 import { version } from '@/../package.json'
 
 const route = useRoute()
-const scores = scoresStore()
+const records = useRecordsStore()
 
 onMounted(() => {
   route.meta.setTitle("Settings", false)
@@ -25,7 +25,7 @@ onMounted(() => {
         <ButtonFormRow 
           :label="`Clear today's scores`" 
           :isDestructive="true"
-          :class="{ disabled: !scores.hasAnyDailyScore }"
+          :class="{ disabled: !records.hasAnyDailyScore }"
           @click="clearScores()"
         />
       </FormSection>
@@ -35,8 +35,8 @@ onMounted(() => {
         <ButtonFormRow 
           :label="`Clear all records`" 
           :isDestructive="true"
-          :class="{ disabled: scores.recordLevel === 0 }"
-          @click="clearRecords()"
+          :class="{ disabled: !records.hasAnyHistoricalBestScore }"
+          @click="clearPersonalBests()"
         />
       </FormSection>
     </Form>

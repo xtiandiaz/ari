@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { Operator, type Operation } from '@/models/math';
+import { OperationModality } from '@/models/game';
+import { useUtterer } from '@/composables/utterer';
 import { operatorIcon } from '@/view-models/math.vm'
-import SvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
+import { stringifyOperation } from '@/utils/localization.utils';
 import { clamp } from '@/assets/tungsten/math';
 import { isMobile } from '@/assets/tungsten/navigator';
+import SvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
+import VuetyIconButton from '@/vueties/components/buttons/VuetyIconButton.vue';
+import { Icon } from '@/assets/design-tokens/iconography';
 
 const { operation } = defineProps<{
   operation: Operation
@@ -24,12 +29,12 @@ const layout = computed<Layout>(() => {
   const digitTotal = digitCounts.reduce((sum, odc) => sum + odc, 0)
   
   if (operation.operator !== Operator.Percent && digitTotal <= maxDigitCountSingleLineOperation) {
-    return { 
+    return {
       maxDigitCountPerLine: Math.min(digitTotal, maxDigitCountSingleLineOperation), 
       responsiveWidth: 'fit-content'
     }
   } else {
-    return { 
+    return {
       maxDigitCountPerLine: Math.max(...digitCounts),
       responsiveWidth: 'min-content' 
     }
@@ -53,33 +58,63 @@ const operationFontSize = computed(() => {
   
   return `${clamp(rawFontSizeEm, 2, maxFontSizeEm)}em`
 })
+
+const utterer = useUtterer()
+
+function utterOperation() {
+  if (!utterer.isUttering.value) {
+    utterer.utter(stringifyOperation(operation))
+  }
+}
+
+watch(() => operation, (newOperation) => {
+  if (newOperation.modality === OperationModality.Aural) {
+    utterOperation()
+  }
+}, { immediate: true })
 </script>
 
 <template>
   <section id="operation-viewport">
+    <div class="flex-spacer"></div>
     
-    <div class="spacer"></div>
-    
-    <div id="operation" v-if="operation">
-      <div id="operands-and-operator" :class="operation.operator.toLowerCase()">
+    <div 
+      v-if="operation" 
+      id="operation"
+      :class="{ aural: operation.modality === OperationModality.Aural }"
+    >
+      <div 
+        v-if="operation.modality === OperationModality.Visual"
+        id="operands-and-operator" 
+        :class="operation.operator.toLowerCase()"
+      >
         <span id="first-operand">{{ operation.operands[0].toLocaleString() }}</span>
         <div id="operator-and-second-operand">
           <SvgIcon id="operator" :icon="operatorIcon(operation.operator)" />
           <span id="second-operand">{{ operation.operands[1].toLocaleString() }}</span>
         </div>
       </div>
+      
+      <VuetyIconButton 
+        v-else 
+        id="utterance-button"
+        :class="['filled', { disabled: utterer.isUttering.value }]"
+        :icon="Icon.EarWaves" 
+        @click="utterOperation()"
+      />
+      
       <span id="result" :class=" { isCorrect: isInputCorrect }">
         {{ input.length > 0 ? Number(input).toLocaleString() : '?' }}
       </span>
     </div>
     
-    <div class="spacer"></div>
+    <div class="flex-spacer"></div>
     
   </section>  
 </template>
 
 <style scoped lang="scss">
-@use '@design-tokens/palette';
+@use '@vueties/utils/vuetystrap' as vs;
 @use '@/assets/math';
 
 section#operation-viewport {
@@ -92,9 +127,20 @@ section#operation-viewport {
   }
   
   #operation {
+    display: flex;
+    flex-direction: column;
     font-family: 'Inter Medium', sans-serif;
     font-size: v-bind(operationFontSize);
     width: v-bind('layout.responsiveWidth');
+    
+    &.aural {
+      align-items: center;
+      gap: 0.5rem;
+      
+      #utterance-button {
+        @include vs.size(6rem);
+      }
+    }
     
     #operands-and-operator {
       $gap: 0.25rem;
@@ -106,7 +152,7 @@ section#operation-viewport {
       justify-content: right;
       
       #operator {
-        width: 1.125em;
+        @include vs.size(v-bind(operationFontSize));
       }
       
       #operator-and-second-operand {
@@ -137,16 +183,12 @@ section#operation-viewport {
     
     #result {
       float: right;
-      @include palette.color-attribute('color', 'tertiary-body');
+      @include vs.color-attribute('color', vs.$tertiary-body-color);
       
       &.isCorrect {
-        @include palette.color-attribute('color', 'green');
+        @include vs.color-attribute('color', 'green');
       }
     }
-  }
-  
-  .spacer {
-    flex: auto;
   }
 }
 </style>

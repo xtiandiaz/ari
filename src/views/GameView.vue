@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import type { Operation, Operator } from '@/models/math';
+import { type Operation } from '@/models/math';
+import { allModalities, OperationModality } from '@/models/game';
 import scoresStore from '@/stores/records'
 import { generateRandomOperation } from '@/services/operation-generator';
 import { clearScoreIfNeeded, saveScores } from '@/services/records-management'
 import OperationScreen from '@/components/OperationScreen.vue'
-import LevelUpNotification from '@/components/LevelUpNotification.vue';
 import NumberPad from '@/vueties/components/pads/VuetyNumberPad.vue';
 import { setUpEvent } from '@vueties/composables/set-up-event'
 import { isMobile } from '@/assets/tungsten/navigator';
+import { getRandomChoice } from '@/assets/tungsten/randomness';
 
-const scores = scoresStore()
+const records = scoresStore()
 
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
+const currentModality = ref<OperationModality>(OperationModality.Aural)
 const input = ref('')
 
 const isInputCorrect = computed(() => input.value != undefined
@@ -25,20 +27,22 @@ const isLocked = computed(() => resetInterval.value !== undefined)
 function reset() {
   clearInterval(resetInterval.value)
   
-  operation.value = generateRandomOperation()
+  currentModality.value = getRandomChoice(allModalities)
+  operation.value = generateRandomOperation(currentModality.value)
+  
   input.value = ''
   
   resetInterval.value = undefined
 }
 
-function resetAndSaveScoreForOperatorIfNeeded(operator: Operator) {
+function resetAndSaveScoreForOperatorIfNeeded(operation: Operation) {
   reset()
   
   if (clearScoreIfNeeded()) {
     return
   }
   
-  scores.addOperatorScore(operator)
+  records.registerOperationScore(operation)
   
   saveScores()
 }
@@ -66,7 +70,7 @@ function onInput(value: number) {
   
   if (isInputCorrect.value) {    
     resetInterval.value = Number(
-      setInterval(() => resetAndSaveScoreForOperatorIfNeeded(operation.value!.operator), 250)
+      setInterval(() => resetAndSaveScoreForOperatorIfNeeded(operation.value!), 250)
     )
   }
 }
@@ -77,7 +81,7 @@ function onPageFocusedOrUnmounted() {
   clearScoreIfNeeded()
 }
 
-watch(() => scores.hasAnyDailyScore, (stillHas) => {
+watch(() => records.hasAnyDailyScore, (stillHas) => {
   if (!stillHas) {
     reset()
   }
@@ -106,11 +110,7 @@ onBeforeUnmount(() => {
 setUpEvent('focus', window, onPageFocusedOrUnmounted)
 </script>
 
-<template> 
-  <LevelUpNotification 
-    :newLevel="scores.displayableTodayLevel" :isRecord="scores.isTodayLevelNewRecord" 
-  />
- 
+<template>
   <main>
     <OperationScreen
       v-if="operation"
@@ -119,7 +119,7 @@ setUpEvent('focus', window, onPageFocusedOrUnmounted)
       :isInputCorrect="isInputCorrect"
     />
     
-    <section>
+    <section v-if="isMobile()">
       <NumberPad @input="onInput" />
     </section>
   </main>
@@ -129,27 +129,19 @@ setUpEvent('focus', window, onPageFocusedOrUnmounted)
 @use '@vueties/components/bars/styles' as bar-styles;
 
 main {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   z-index: 1;
 }
 
-section {
-  $h-padding: 1em;
-  $v-padding: 1em;
-  
+section {  
   align-items: center;
   box-sizing: border-box;
   display: flex;
+  flex: 1 1 50%;
   flex-direction: column;
-  height: 50%;
-  padding: $v-padding $h-padding;
+  padding: 1em;
   text-align: center;
-}
-
-#level-up-notification {
-  left: 50%;
-  position: fixed;
-  transform: translate(-50%, -50%);
-  top: calc(env(safe-area-inset-top) + bar-styles.$nav-bar-height / 2);
 }
 </style>

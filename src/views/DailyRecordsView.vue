@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { OperationModality } from '@/models/game';
 import useRecordsStore from '@/stores/records'
 // import OperatorScoreTag from '@/components/OperatorScoreTag.vue';
 // import VuetyForm from '@vueties/components/form/VuetyForm.vue';
 // import VuetyFormSection from '@vueties/components/form/VuetyFormSection.vue';
 // import VuetyCustomFormRow from '@vueties/components/form/rows/VuetyCustomFormRow.vue';
 // import VuetyProgressRing from '@vueties/components/misc/VuetyProgressRing.vue';
+import OperatorScoreTag from '@/components/OperatorScoreTag.vue';
 import VuetySvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
 import '@/assets/tungsten/extensions/array.extensions'
 import { Icon } from '@/assets/design-tokens/iconography';
-// import { levelScoreWeight } from '@/utils/score.utils';
-import { operatorIcon } from '@/view-models/math.vm';
 
 const route = useRoute()
 const records = useRecordsStore()
 
+const levels = [OperationModality.Visual, OperationModality.Aural].map(mod => records.getLevel(mod))
 // const baselineScore = Math.floor(records.todayLevel) * records.playableOperatorsScores.length * levelScoreWeight
 // const targetScore = records.playableOperatorsScores.length * levelScoreWeight
 // console.log(records.todayAccumulatedScore, '-', baselineScore, '/', targetScore, "todayLevel:", records.todayLevel)
@@ -28,42 +29,27 @@ onMounted(() => {
 
 <template>
   <main>
-    <!-- <div id="level-dial">
-      <div :class="['level', records.isTodayLevelNewRecord ? 'new-record' : undefined]">
-        <VuetyProgressRing :progress="nextLevelProgress" :size="176" :stroke-width="6" />
-        
-        <div id="level-info">
-          <VuetySvgIcon class="crown" :icon="Icon.Crown" />
-          <h1>{{ records.displayableTodayLevel }}</h1>
-          <span class="caption">
-            Best: <strong>{{ records.displayableRecordLevel }}</strong>
-          </span>
-        </div>
-      </div>
-    </div> -->
-    
-    <section 
-      id="level"
-      :class="{ 'new-record': records.isTodayLevelNewRecord }"
-    >
-      <span v-if="!records.isTodayLevelNewRecord" class="caption">Level</span>
-      <VuetySvgIcon v-else :icon="Icon.Crown" />
-      
-      <h1>{{ records.displayableTodayLevel }}</h1>
-      <span class="caption best">
-        Best: <strong>{{ records.displayableRecordLevel }}</strong>
-      </span>
-    </section>
-    
-    <section id="operator-score-cards">
-      <div
-        v-for="(operatorScores) in records.playableOperatorsScores"
-        :class="['card', operatorScores.operator.toLowerCase()]"
-        :key="operatorScores.operator"
+    <section id="level-cards">
+      <div 
+        v-for="(level) of levels"
+        class="card"
+        :key="level.modality"
       >
-        <VuetySvgIcon :icon="operatorIcon(operatorScores.operator)" />
-        <div class="flex-spacer"></div>
-        <h6 class="operator-colored-item">{{ operatorScores.score }}</h6>
+        <div class="modality">
+          <VuetySvgIcon :icon="level.modality == OperationModality.Visual ? Icon.Eye : Icon.Ear" />
+        </div>
+        <span class="caption">level</span>
+        <h1>{{ level.value }}</h1>
+        <span class="caption">Best: <strong>{{ level.best }}</strong></span>
+        <div class="tags">
+          <OperatorScoreTag 
+            v-for="(score) in level.operatorScores"
+            class="small"
+            :key="score.operator"
+            :operator="score.operator"
+            :score="score.value"
+          />
+        </div>
       </div>
     </section>
     
@@ -85,6 +71,54 @@ main {
   margin-top: 1em;
   max-width: form-styles.$max-width;
   padding: 0 1em;
+}
+
+section#level-cards {
+  $cards-gap: 0.5em;
+  
+  display: flex;
+  gap: $cards-gap;
+  
+  > * {
+    @include vs.color-attribute('background-color', vs.$background-color);
+  }
+  
+  .card {
+    border-radius: 1em;
+    display: flex;
+    flex: 1 1 calc(50% - $cards-gap);
+    flex-direction: column;
+    overflow: hidden;
+    padding: 1.25em;
+    position: relative;
+    
+    h1 {
+      margin: 0;
+    }
+    
+    .modality {
+      @include vs.position(absolute, 0.5em, 0.5em);
+      @include vs.size(2.5em);
+      
+      .svg-icon {
+        @include vs.size(100%);
+        @include vs.color-attribute('color', vs.$accessory-color);
+      }
+    }
+    
+    .caption {
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      @include vs.color-attribute('color', vs.$secondary-body-color);
+    }
+    
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25em;
+      margin-top: 1em;
+    }
+  }
 }
 
 #level {
@@ -140,7 +174,7 @@ main {
     }
     
     .svg-icon {
-      @include vs.size(1.5em);
+      @include vs.size(1.75em);
     }
   }
 }
@@ -194,7 +228,7 @@ main {
       .caption {
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        @include vs.color-attribute('color', 'secondary-body');
+        @include vs.color-attribute('color', vs.$secondary-body-color);
       }
     }
   }

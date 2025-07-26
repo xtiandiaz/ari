@@ -1,15 +1,15 @@
-import type { RawDailyScores, DailyScores } from '@/models/scores'
+import type { RawDailyRecords, DailyRecords } from '@/models/records'
 import { LocalStorageItemKey } from '@/models/persistence'
-import scoresStore from '@/stores/records'
+import useRecordsStore from '@/stores/records'
 import { retrieve, save } from '@/assets/tungsten/local-storage'
 import '@/assets/tungsten/extensions/date.extensions'
 
-export function retrieveActiveDailyScores(): DailyScores {
-  const rawDailyScores = retrieve(LocalStorageItemKey.DailyScores) as RawDailyScores
+export function retrieveActiveDailyRecords(): DailyRecords {
+  const rawDailyScores = retrieve(LocalStorageItemKey.DailyScores) as RawDailyRecords
   if (!rawDailyScores) {
     return {
       date: Date.today(),
-      operatorsScores: []
+      operatorScores: [],
     }
   }
   
@@ -17,35 +17,35 @@ export function retrieveActiveDailyScores(): DailyScores {
   const isStale = (new Date()).getDaysFrom(savedDate) >= 1
   
   if (isStale) {
-    rawDailyScores.operatorsScores.forEach(os => os.score = 0)
+    rawDailyScores.operatorScores = undefined
   }
   
   return {
     date: isStale ? Date.today() : savedDate,
-    operatorsScores: rawDailyScores.operatorsScores,
-    recordLevel: rawDailyScores.recordLevel
+    operatorScores: rawDailyScores.operatorScores ?? [],
   }
 }
 
 export function saveScores() {
-  const scores = scoresStore()
+  const dailyRecords = useRecordsStore().dailyRecords
   
-  scores.dailyScores.date = Date.today()
+  dailyRecords.date = Date.today()
   
-  save(LocalStorageItemKey.DailyScores, scores.dailyScores)
+  save(LocalStorageItemKey.DailyScores, dailyRecords)
 }
 
 export function clearScores() {
-  const scores = scoresStore()
+  const dailyRecords = useRecordsStore().dailyRecords
   
-  scores.dailyScores.operatorsScores.forEach(os => os.score = 0)
+  dailyRecords.operatorScores.forEach(os => os.value = 0)
   
   saveScores()
 }
 
 export function clearScoreIfNeeded(): boolean {
-  const scores = scoresStore()
-  const isStale = (new Date()).getDaysFrom(scores.dailyScores.date) >= 1
+  const dailyRecords = useRecordsStore().dailyRecords
+  
+  const isStale = (new Date()).getDaysFrom(dailyRecords.date) >= 1
   
   if (isStale) {
     clearScores()
@@ -54,11 +54,10 @@ export function clearScoreIfNeeded(): boolean {
   return isStale
 }
 
-export function clearRecords() {
-  const scores = scoresStore()
+export function clearPersonalBests() {
+  const dailyRecords = useRecordsStore().dailyRecords
   
-  scores.dailyScores.operatorsScores.forEach(os => os.record = undefined)
-  scores.dailyScores.recordLevel = undefined
+  dailyRecords.operatorScores.forEach(os => os.best = os.value)
   
   saveScores()
 }
