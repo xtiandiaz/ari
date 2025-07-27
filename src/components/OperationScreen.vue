@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { Operator, type Operation } from '@/models/math';
 import { OperationModality } from '@/models/game';
 import { useUtterer } from '@/composables/utterer';
@@ -61,15 +61,19 @@ const operationFontSize = computed(() => {
 
 const utterer = useUtterer()
 
-function utterOperation() {
-  utterer.utter(interpolatedLocalizedString('operation', operation))
+function utterOperation(operation: Operation) {
+  if (operation.modality === OperationModality.Aural) {
+    utterer.utter(interpolatedLocalizedString('operation', operation))
+  }
 }
 
 watch(() => operation, (value) => {  
-  if (value.modality === OperationModality.Aural) {
-    utterOperation()
-  }
-}, { immediate: true })
+  utterOperation(value)
+})
+
+onMounted(() => {
+  utterOperation(operation)
+})
 </script>
 
 <template>
@@ -98,7 +102,7 @@ watch(() => operation, (value) => {
         id="utterance-button"
         :class="['filled', { disabled: utterer.isUttering.value }]"
         :icon="Icon.EarWaves" 
-        @click="utterOperation()"
+        @click="utterOperation(operation)"
       />
       
       <span id="result" :class=" { isCorrect: isInputCorrect }">

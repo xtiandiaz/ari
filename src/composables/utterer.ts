@@ -10,6 +10,7 @@ export function useUtterer() {
   function utter(message: string) {
     utterance.text = message
     
+    speechSynthesis.cancel()
     speechSynthesis.speak(utterance)
   }
   
