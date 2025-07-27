@@ -27,7 +27,7 @@ export const interpolatedLocalizedString = (key: string, ...options: unknown[]):
       
       return partialString.replace(
         /{operand(\d+)}/g, 
-        (_, i) => `${(operation.operands[i]).toLocaleString()}`
+        (_, i) => `${operation.operands[i]}`
       )
   }
   
