@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { type Operation } from '@/models/math';
-import { allModalities } from '@/models/game';
 import useRecordsStore from '@/stores/records'
 import useGameStore from '@/stores/game'
 import { generateRandomOperation } from '@/services/operation-generator';
@@ -12,7 +11,7 @@ import ModalitySelector from '@/components/ModalitySelector.vue';
 import NumberPad from '@vueties/components/pads/VuetyNumberPad.vue';
 import { setUpEvent } from '@vueties/composables/set-up-event'
 import { isMobile } from '@/assets/tungsten/navigator';
-import { getRandomChoice } from '@/assets/tungsten/randomness';
+import { getRandomWeightedChoice } from '@/assets/tungsten/randomness';
 
 const records = useRecordsStore()
 const settings = useGameStore().settings
@@ -30,9 +29,14 @@ const isLocked = computed(() => resetInterval.value !== undefined)
 function reset() {
   clearInterval(resetInterval.value)
   
-  operation.value = generateRandomOperation(
-    settings.modality ?? getRandomChoice(allModalities)
-  )
+  operation.value = generateRandomOperation(settings.modality ?? (() => {
+    const levels = records.levels
+    const modalities = levels.map(l => l.modality)
+    const weights = levels.map(l => l.value).reversed()
+    
+    // console.log(modalities, weights)
+    return getRandomWeightedChoice(modalities, weights)
+  })())
   
   input.value = ''
   

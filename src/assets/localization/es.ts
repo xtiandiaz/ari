@@ -7,7 +7,7 @@ export default new Map<string, string>([
   ['operation-percent', '{operand1} porciento de {operand0}'],
   ['label-clear-scores', 'Borrar puntajes de hoy'],
   ['label-clear-records', 'Borrar récords'],
-  ['title-daily-records', 'Récords de hoy'],
+  ['title-daily-records', 'Puntajes de hoy'],
   ['title-language', 'Idioma'],
   ['title-level', 'Nivel'],
   ['title-level-abbr', 'Nvl'],
