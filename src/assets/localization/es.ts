@@ -3,7 +3,7 @@ export default new Map<string, string>([
   ['operation-addition', '{operand0} más {operand1}'],
   ['operation-subtraction', '{operand0} menos {operand1}'],
   ['operation-multiplication', '{operand0} multiplicado por {operand1}'],
-  ['operation-division', '{operand0} dividido por {operand1}'],
+  ['operation-division', '{operand0} dividido entre {operand1}'],
   ['operation-percent', '{operand1} porciento de {operand0}'],
   ['label-clear-scores', 'Borrar puntajes de hoy'],
   ['label-clear-records', 'Borrar récords'],
