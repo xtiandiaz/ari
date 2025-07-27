@@ -32,17 +32,16 @@ onBeforeUnmount(() => {
 <template>
   <main>
     <VuetyForm>
-      <VuetyFormSection
-        :title="localizedString('title-language')"
-      >
+      <VuetyFormSection>
         <VuetySegmentedButtonFormRow
           :choice="settings.language"
           :segments="languageSegments"
+          :title="localizedString('title-language')"
           @select="(lang) => settings.language = lang"
         />
       </VuetyFormSection>
       
-      <div style="height: 3rem"></div>
+      <div style="height: 2rem"></div>
       
       <VuetyFormSection :footnote="localizedString('text-clear-scores')">
         <VuetyButtonFormRow 

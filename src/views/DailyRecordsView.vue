@@ -83,12 +83,13 @@ section#level-cards {
     padding: 1.25em;
     position: relative;
     
-    &.best {
-      border: 2px solid;
-      @include vs.color-attribute('border-color', 'yellow', 0.25);
-      
+    &.best {      
       &, .caption, .modality .svg-icon {
         @include vs.color-attribute('color', 'yellow');
+      }
+      
+      .svg-icon {
+        opacity: 0.5;
       }
     }
     
