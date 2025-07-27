@@ -1,21 +1,24 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { type Operation } from '@/models/math';
-import { allModalities, OperationModality } from '@/models/game';
-import scoresStore from '@/stores/records'
+import { allModalities } from '@/models/game';
+import useRecordsStore from '@/stores/records'
+import useGameStore from '@/stores/game'
 import { generateRandomOperation } from '@/services/operation-generator';
-import { clearScoreIfNeeded, saveScores } from '@/services/records-management'
+import { clearScoresIfNeeded, saveScores } from '@/services/records-management'
+import { saveSettings } from '@/services/settings-management';
 import OperationScreen from '@/components/OperationScreen.vue'
-import NumberPad from '@/vueties/components/pads/VuetyNumberPad.vue';
+import ModalitySelector from '@/components/ModalitySelector.vue';
+import NumberPad from '@vueties/components/pads/VuetyNumberPad.vue';
 import { setUpEvent } from '@vueties/composables/set-up-event'
 import { isMobile } from '@/assets/tungsten/navigator';
 import { getRandomChoice } from '@/assets/tungsten/randomness';
 
-const records = scoresStore()
+const records = useRecordsStore()
+const settings = useGameStore().settings
 
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
-const currentModality = ref<OperationModality>(OperationModality.Aural)
 const input = ref('')
 
 const isInputCorrect = computed(() => input.value != undefined
@@ -27,8 +30,9 @@ const isLocked = computed(() => resetInterval.value !== undefined)
 function reset() {
   clearInterval(resetInterval.value)
   
-  currentModality.value = getRandomChoice(allModalities)
-  operation.value = generateRandomOperation(currentModality.value)
+  operation.value = generateRandomOperation(
+    settings.modality ?? getRandomChoice(allModalities)
+  )
   
   input.value = ''
   
@@ -38,7 +42,7 @@ function reset() {
 function resetAndSaveScoreForOperatorIfNeeded(operation: Operation) {
   reset()
   
-  if (clearScoreIfNeeded()) {
+  if (clearScoresIfNeeded()) {
     return
   }
   
@@ -78,13 +82,18 @@ function onInput(value: number) {
 function onPageFocusedOrUnmounted() {
   console.log("Game View focused or unmounted...")
   
-  clearScoreIfNeeded()
+  clearScoresIfNeeded()
 }
 
 watch(() => records.hasAnyDailyScore, (stillHas) => {
   if (!stillHas) {
     reset()
   }
+})
+
+watch(() => settings.modality, () => {  
+  reset()
+  saveSettings()
 })
 
 onMounted(async () => {  
@@ -112,13 +121,19 @@ setUpEvent('focus', window, onPageFocusedOrUnmounted)
 
 <template>
   <main>
+    <ModalitySelector 
+      id="modality-selector" 
+      :choice="settings.modality" 
+      @select="(modality) => settings.modality = modality"
+    />
+    
     <OperationScreen
       v-if="operation"
       :operation="operation"
       :input="input"
       :isInputCorrect="isInputCorrect"
     />
-    
+        
     <section v-if="isMobile()">
       <NumberPad @input="onInput" />
     </section>
@@ -126,6 +141,7 @@ setUpEvent('focus', window, onPageFocusedOrUnmounted)
 </template>
 
 <style scoped lang="scss">
+@use '@vueties/utils/vuetystrap' as vs;
 @use '@vueties/components/bars/styles' as bar-styles;
 
 main {
@@ -133,6 +149,7 @@ main {
   flex-direction: column;
   height: 100%;
   z-index: 1;
+  overflow: visible;
 }
 
 section {  
@@ -143,5 +160,17 @@ section {
   flex-direction: column;
   padding: 1em;
   text-align: center;
+}
+
+#modality-selector {
+  transform: translate(-50%, -50%);
+  z-index: calc(bar-styles.$nav-bar-z-index + 1);
+  @include vs.position(
+    absolute, 
+    calc(env(safe-area-inset-top) + bar-styles.$nav-bar-height / 2),
+    null,
+    null,
+    50%
+  );
 }
 </style>

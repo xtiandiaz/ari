@@ -1,6 +1,6 @@
 import { Operator, type Operation } from "@/models/math";
 import type { OperationModality } from "@/models/game";
-import useSettingsStore from '@/stores/settings'
+import useGameStore from '@/stores/game'
 import useRecordsStore from '@/stores/records'
 import { 
   getRandomInteger, 
@@ -10,7 +10,7 @@ import {
 import { gcd } from "@/assets/tungsten/math";
 
 function getRandomWeightedOperator(modality: OperationModality): Operator {
-  const settings = useSettingsStore()
+  const settings = useGameStore()
   const records = useRecordsStore()
   
   const weights = (() => {
@@ -29,7 +29,7 @@ function getRandomPercentAndOperand(operatorScore: number): number[] {
     MultiplesOfFive
   }
   
-  const settings = useSettingsStore()
+  const settings = useGameStore()
   const relativeLevel = Math.max(1, Math.ceil(operatorScore / settings.levelScoreWeight))
   const figure: PercentFigure = getRandomChoice([
     PercentFigure.PowerOfTwoDivisors, 

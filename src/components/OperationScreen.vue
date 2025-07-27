@@ -4,7 +4,7 @@ import { Operator, type Operation } from '@/models/math';
 import { OperationModality } from '@/models/game';
 import { useUtterer } from '@/composables/utterer';
 import { operatorIcon } from '@/view-models/math.vm'
-import { stringifyOperation } from '@/utils/localization.utils';
+import { interpolatedLocalizedString } from '@/utils/localization.utils';
 import { clamp } from '@/assets/tungsten/math';
 import { isMobile } from '@/assets/tungsten/navigator';
 import SvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
@@ -62,13 +62,11 @@ const operationFontSize = computed(() => {
 const utterer = useUtterer()
 
 function utterOperation() {
-  if (!utterer.isUttering.value) {
-    utterer.utter(stringifyOperation(operation))
-  }
+  utterer.utter(interpolatedLocalizedString('operation', operation))
 }
 
-watch(() => operation, (newOperation) => {
-  if (newOperation.modality === OperationModality.Aural) {
+watch(() => operation, (value) => {  
+  if (value.modality === OperationModality.Aural) {
     utterOperation()
   }
 }, { immediate: true })

@@ -1,17 +1,35 @@
+import { Language } from "@/models/localization"
 import type { Operation } from "@/models/math";
-import { Operator } from "@/models/math";
+import useGameStore from '@/stores/game'
+import EN from "@/assets/localization/en";
+import ES from "@/assets/localization/es";
 
-export function stringifyOperation(operation: Operation): string {
-  switch (operation.operator) {
-    case Operator.Addition:
-      return `${operation.operands[0]} plus ${operation.operands[1]}`
-    case Operator.Subtraction:
-      return `${operation.operands[0]} minus ${operation.operands[1]}`
-    case Operator.Multiplication:
-      return `${operation.operands[0]} multiplied by ${operation.operands[1]}`
-    case Operator.Division:
-      return `${operation.operands[0]} divided by ${operation.operands[1]}`
-    case Operator.Percent:
-      return `${operation.operands[1]} percent of ${operation.operands[0]}`
+export const languageSelection = [Language.English, Language.Spanish]
+
+export const localizedStringInLanguage = (key: string, language: Language): string => {
+  return (() => {
+    switch (language) {
+    case Language.English: return EN.get(key)
+    case Language.Spanish: return ES.get(key)
+    }
+  })() ?? `{${key} :: ${language}}`
+}
+
+export const localizedString = (key: string): string => {
+  return localizedStringInLanguage(key, useGameStore().settings.language)
+}
+
+export const interpolatedLocalizedString = (key: string, ...options: unknown[]): string => {
+  switch (key) {
+    case 'operation':
+      const operation = options[0] as Operation
+      const partialString = localizedString(`${key}-${operation.operator}`)
+      
+      return partialString.replace(
+        /{operand(\d+)}/g, 
+        (_, i) => `${(operation.operands[i]).toLocaleString()}`
+      )
   }
+  
+  return localizedString(key)
 }

@@ -1,12 +1,10 @@
-import { ref } from 'vue'
-import useSettingsStore from '@/stores/settings'
+import { ref, watch } from 'vue'
+import useGameStore from '@/stores/game'
 
-export function useUtterer() {
-  const settings = useSettingsStore()
+export function useUtterer() {  
+  const settings = useGameStore().settings
   
   const utterance = new SpeechSynthesisUtterance()
-  utterance.lang = settings.language
-  
   const isUttering = ref(false)
   
   function utter(message: string) {
@@ -17,6 +15,10 @@ export function useUtterer() {
   
   utterance.addEventListener('start', () => isUttering.value = true)
   utterance.addEventListener('end', () => isUttering.value = false)
+  
+  watch(() => settings.language, (lang) => {
+    utterance.lang = lang
+  }, { immediate: true })
   
   return {
     isUttering,

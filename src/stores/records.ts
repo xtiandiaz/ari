@@ -1,21 +1,19 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import useSettingsStore from '@/stores/settings'
-import { type Operation, type Operator } from '@/models/math'
+import type { Operation, Operator } from '@/models/math'
 import { OperationModality } from '@/models/game'
 import type { Level, OperatorScore } from '@/models/records'
+import useGameStore from '@/stores/game'
 import { retrieveActiveDailyRecords } from '@/services/records-management'
 import { fillInDailyRecords } from '@/utils/records.utils'
+import { modalitiesInPlayabilityOrder } from '@/utils/game.utils'
 import '@/assets/tungsten/extensions/array.extensions'
 
 export default defineStore('records', () => {  
-  const settings = useSettingsStore()
+  const settings = useGameStore()
   const dailyRecords = ref(fillInDailyRecords(retrieveActiveDailyRecords()))
   
-  const hasAnyDailyScore = computed(() => dailyRecords.value.operatorScores.first(os => os.value > 0))
-  const hasAnyHistoricalBestScore = computed(() => dailyRecords.value.operatorScores.first(os => os.best > os.value))
-  
-  function getLevel(modality: OperationModality): Level {
+  const levels = computed<Level[]>(() => modalitiesInPlayabilityOrder.map(modality => {
     const operatorScores = dailyRecords.value.operatorScores.filter(os => os.modality === modality)
     const value = Math.ceil(operatorScores.reduce((acc, os) => acc + os.value, 0) / settings.levelScoreWeight)
     const best = Math.max(
@@ -23,13 +21,15 @@ export default defineStore('records', () => {
       value
     )
     
-    return {
-      best,
-      modality,
-      operatorScores,
-      value,
-    }
-  }
+    return { best, modality, operatorScores, value }
+  }))
+  
+  const hasAnyDailyScore = computed(
+    () => dailyRecords.value.operatorScores.findIndex(os => os.value > 0) !== -1
+  )
+  const hasAnyHistoricalBestScore = computed(
+    () => dailyRecords.value.operatorScores.findIndex(os => os.best > os.value) !== -1
+  )
   
   function getOperatorScore(operator: Operator, modality: OperationModality): OperatorScore {
     return {
@@ -50,8 +50,8 @@ export default defineStore('records', () => {
     dailyRecords,
     hasAnyHistoricalBestScore,
     hasAnyDailyScore,
+    levels,
     
-    getLevel,
     getOperatorScore,
     registerOperationScore,
   }
