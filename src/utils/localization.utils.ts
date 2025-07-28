@@ -33,3 +33,10 @@ export const interpolatedLocalizedString = (key: string, ...options: unknown[]):
   
   return localizedString(key)
 }
+
+export const preferredSpeechLanguageCode = (language: Language): string => {
+  switch (language) {
+    case Language.English: return 'en-US'
+    case Language.Spanish: return 'es-419'
+  }
+}
