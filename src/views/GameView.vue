@@ -11,7 +11,6 @@ import ModalitySelector from '@/components/ModalitySelector.vue';
 import NumberPad from '@vueties/components/pads/VuetyNumberPad.vue';
 import { setUpEvent } from '@vueties/composables/set-up-event'
 import { isMobile } from '@/assets/tungsten/navigator';
-import { getRandomModality } from '@/utils/game.utils';
 
 const records = useRecordsStore()
 const settings = useGameStore().settings
@@ -29,7 +28,7 @@ const isLocked = computed(() => resetInterval.value !== undefined)
 function reset() {
   clearInterval(resetInterval.value)
   
-  operation.value = generateRandomOperation(settings.modality ?? getRandomModality())
+  operation.value = generateRandomOperation(settings.modality)
   
   input.value = ''
   

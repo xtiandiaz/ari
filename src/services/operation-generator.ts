@@ -1,5 +1,5 @@
 import { Operator, type Operation } from "@/models/math";
-import type { OperationModality } from "@/models/game";
+import { allModalities, OperationModality } from "@/models/game";
 import useGameStore from '@/stores/game'
 import useRecordsStore from '@/stores/records'
 import { 
@@ -9,18 +9,18 @@ import {
 } from "@/assets/tungsten/randomness";
 import { gcd } from "@/assets/tungsten/math";
 
-function getRandomWeightedOperator(modality: OperationModality): Operator {
-  const settings = useGameStore()
+function getRandomWeightedOperator(modality?: OperationModality): [Operator, OperationModality] {
   const records = useRecordsStore()
   
-  const weights = (() => {
-    const operatorsScores = settings.playableOperators.map(o => records.getOperatorScore(o, modality).value)
-    const maxScore = operatorsScores.reduce((max, cur) => cur > max ? cur : max, operatorsScores[0])
-    
-    return operatorsScores.map(os => 1 + maxScore / Math.max(os, 1))
-  })()
+  const modalities = modality ? [modality] : allModalities
+  const scores = records.dailyRecords.operatorScores.filter(os => modalities.includes(os.modality))
+  const maxScore = scores.reduce((max, os) => os.value > max.value ? os : max, scores[0])
+  const weights = scores.map(s => 1 + maxScore.value / Math.max(s.value, 1))
+  // console.log(Array.zip(scores.map(s => `${s.operator}:${s.modality}`), weights))
   
-  return getRandomWeightedChoice(settings.playableOperators, weights)
+  const choice = getRandomWeightedChoice(scores, weights)
+  
+  return [ choice.operator, choice.modality ]
 }
 
 function getRandomPercentAndOperand(operatorScore: number): number[] {
@@ -157,14 +157,14 @@ function getResult(operator: Operator, operands: number[]): number {
   }
 }
 
-export function generateRandomOperation(modality: OperationModality): Operation {
-  const operator = getRandomWeightedOperator(modality)
-  const operands = generateRandomOperandsForOperator(operator, modality)
+export function generateRandomOperation(selectedModality?: OperationModality): Operation {
+  const om = getRandomWeightedOperator(selectedModality)
+  const operands = generateRandomOperandsForOperator(om[0], om[1])
   
   return {
-    modality,
+    modality: om[1],
     operands,
-    operator,
-    result: getResult(operator, operands)
+    operator: om[0],
+    result: getResult(om[0], operands)
   }
 }
