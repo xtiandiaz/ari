@@ -2,20 +2,24 @@
 import { computed, onMounted, watch } from 'vue';
 import { Operator, type Operation } from '@/models/math';
 import { OperationModality } from '@/models/game';
-import { useUtterer } from '@/composables/utterer';
+import useGameStore from '@/stores/game'
 import { operatorIcon } from '@/view-models/math.vm'
-import { interpolatedLocalizedString } from '@/utils/localization.utils';
-import { clamp } from '@/assets/tungsten/math';
-import { isMobile } from '@/assets/tungsten/navigator';
+import { interpolatedLocalizedString, preferredSpeechLanguageCode } from '@/utils/localization.utils';
 import SvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
 import VuetyIconButton from '@/vueties/components/buttons/VuetyIconButton.vue';
-import { Icon } from '@/assets/design-tokens/iconography';
+import { useUtterer } from '@vueties/composables/utterer';
+import { Icon } from '@design-tokens/iconography';
+import { isMobile } from '@/assets/tungsten/navigator';
+import { clamp } from '@/assets/tungsten/math';
 
 const { operation } = defineProps<{
   operation: Operation
   input: string
   isInputCorrect: boolean
 }>()
+
+const settings = useGameStore().settings
+const utterer = useUtterer()
 
 interface Layout {
   maxDigitCountPerLine: number
@@ -59,11 +63,12 @@ const operationFontSize = computed(() => {
   return `${clamp(rawFontSizeEm, 2, maxFontSizeEm)}em`
 })
 
-const utterer = useUtterer()
-
 function utterOperation(operation: Operation) {
   if (operation.modality === OperationModality.Aural) {
-    utterer.utter(interpolatedLocalizedString('operation', operation))
+    utterer.utter(
+      interpolatedLocalizedString('operation', operation), 
+      preferredSpeechLanguageCode(settings.language)
+    )
   }
 }
 

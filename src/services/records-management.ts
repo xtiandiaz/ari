@@ -3,8 +3,10 @@ import useRecordsStore from '@/stores/records'
 import { retrieve, save } from '@/assets/tungsten/local-storage'
 import '@/assets/tungsten/extensions/date.extensions'
 
-export function retrieveActiveDailyRecords(): DailyRecords {
-  const rawDailyRecords = retrieve('daily-records') as RawDailyRecords
+const dailyRecordsKey = 'daily-records'
+
+export function retrieveDailyRecords(): DailyRecords {
+  const rawDailyRecords = retrieve(dailyRecordsKey) as RawDailyRecords
   if (!rawDailyRecords) {
     return {
       date: Date.today(),
@@ -30,7 +32,7 @@ export function saveScores() {
   
   dailyRecords.date = Date.today()
   
-  save('daily-records', dailyRecords)
+  save(dailyRecordsKey, dailyRecords)
 }
 
 export function clearScores() {

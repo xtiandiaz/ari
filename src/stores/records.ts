@@ -4,14 +4,14 @@ import type { Operation, Operator } from '@/models/math'
 import { OperationModality } from '@/models/game'
 import type { Level, OperatorScore } from '@/models/records'
 import useGameStore from '@/stores/game'
-import { retrieveActiveDailyRecords } from '@/services/records-management'
+import { retrieveDailyRecords } from '@/services/records-management'
 import { fillInDailyRecords } from '@/utils/records.utils'
 import { modalitiesInPlayabilityOrder } from '@/utils/game.utils'
 import '@/assets/tungsten/extensions/array.extensions'
 
 export default defineStore('records', () => {  
   const settings = useGameStore()
-  const dailyRecords = ref(fillInDailyRecords(retrieveActiveDailyRecords()))
+  const dailyRecords = ref(fillInDailyRecords(retrieveDailyRecords()))
   
   const levels = computed<Level[]>(() => modalitiesInPlayabilityOrder.map(modality => {
     const operatorScores = dailyRecords.value.operatorScores.filter(os => os.modality === modality)
