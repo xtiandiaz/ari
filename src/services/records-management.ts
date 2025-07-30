@@ -18,7 +18,7 @@ export function retrieveDailyRecords(): DailyRecords {
   const isStale = (new Date()).getDaysFrom(savedDate) >= 1
   
   if (isStale) {
-    rawDailyRecords.operatorScores = undefined
+    rawDailyRecords.operatorScores?.forEach(os => os.value = 0)
   }
   
   return {

@@ -81,8 +81,8 @@ function onPageFocusedOrUnmounted() {
   clearScoresIfNeeded()
 }
 
-watch(() => records.hasAnyDailyScore, (stillHas) => {
-  if (!stillHas) {
+watch(() => records.hasAnyDailyScore, (hasAny) => {
+  if (!hasAny) {
     reset()
   }
 })
