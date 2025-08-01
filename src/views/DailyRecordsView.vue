@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import useRecordsStore from '@/stores/records'
 import OperatorScoreTag from '@/components/OperatorScoreTag.vue';
 import VuetySvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
 import { localizedString } from '@/utils/localization.utils';
+import { composeLevelCards, modalityIcon } from '@/utils/game.utils';
 import '@/assets/tungsten/extensions/array.extensions'
-// import { Icon } from '@/assets/design-tokens/iconography';
-import { modalityIcon } from '@/utils/game.utils';
 
 const route = useRoute()
-const records = useRecordsStore()
 
 onMounted(() => {
   route.meta.setTitle(localizedString('title-daily-records'), false)
@@ -21,20 +18,19 @@ onMounted(() => {
   <main>
     <section id="level-cards">
       <div 
-        v-for="(level) of records.levels"
-        :class="['card', { best: level.value > 0 && level.value >= level.best }]"
-        :key="level.modality"
+        v-for="(card) of composeLevelCards()"
+        :class="['card', { best: card.level > 0 && card.level >= card.personalBest }]"
+        :key="card.modality"
       >
         <div class="modality">
-          <!-- <VuetySvgIcon class="crown" :icon="Icon.Crown" /> -->
-          <VuetySvgIcon :icon="modalityIcon(level.modality)" />
+          <VuetySvgIcon :icon="modalityIcon(card.modality)" />
         </div>
         <span class="caption">{{ localizedString('title-level') }}</span>
-        <h1>{{ level.value }}</h1>
-        <span class="caption">{{ localizedString('title-personal-best') }} <span class="h6">{{ level.best }}</span></span>
+        <h1>{{ card.level }}</h1>
+        <span class="caption">{{ localizedString('title-personal-best') }} <span class="h6">{{ card.personalBest }}</span></span>
         <div class="tags">
           <OperatorScoreTag
-            v-for="(score) in level.operatorScores"
+            v-for="(score) in card.operatorScores"
             class="small"
             :key="score.operator"
             :operator="score.operator"
@@ -89,7 +85,7 @@ section#level-cards {
       }
       
       .svg-icon {
-        opacity: 0.5;
+        opacity: 0.75;
       }
     }
     

@@ -1,10 +1,8 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { allOperators } from '@/models/math'
-import type { Settings } from '@/models/settings'
+import { Language, OperationModality, allOperators } from '@/enums'
+import type { Settings } from '@/models'
 import { retrieveSavedSettings } from '@/services/settings-management'
-import { Language } from '@/models/localization'
-import { OperationModality } from '@/models/game'
 
 const defaultSettings: Settings = {
   language: Language.English,

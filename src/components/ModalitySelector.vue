@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Icon } from '@/assets/design-tokens/iconography';
-import { OperationModality } from '@/models/game';
+import { OperationModality } from '@/enums';
 import { modalityIcon } from '@/utils/game.utils';
 import type { VuetySelectionOption } from '@vueties/components/shared.vm';
 import VuetySegmentedButton from '@vueties/components/buttons/VuetySegmentedButton.vue';
+import { Icon } from '@/assets/design-tokens/iconography';
 
 defineProps<{
   choice?: OperationModality

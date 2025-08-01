@@ -15,5 +15,5 @@ export default new Map<string, string>([
   ['title-settings', 'Configuración'],
   ['text-about-scores', 'Estos puntajes se borrarán automáticamente al final del día. ¡Trata de batir tus propios récords cada día!'],
   ['text-clear-scores', 'Los puntajes de hoy serán borrados automáticamente al final del día. Aunque si deseas recomenzar el día, bórralos ahora.'],
-  ['text-clear-records', 'Usa los récords para comparar y evaluar tu propio desempeño a diario. Aunque si deseas re-establecer tu marca, bórralos ahora.'],
+  ['text-clear-records', 'Usa los récords para comparar y evaluar a diario tu desempeño. Aunque si deseas re-establecer tu marca, bórralos ahora.'],
 ])

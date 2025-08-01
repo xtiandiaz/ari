@@ -1,16 +1,17 @@
-import type { RawDailyRecords, DailyRecords } from '@/models/records'
+import type { RawDailyRecords, DailyRecords, PersonalBests } from '@/models'
 import useRecordsStore from '@/stores/records'
 import { retrieve, save } from '@/assets/tungsten/local-storage'
 import '@/assets/tungsten/extensions/date.extensions'
 
 const dailyRecordsKey = 'daily-records'
+const personalBestsKey = 'personal-bests'
 
 export function retrieveDailyRecords(): DailyRecords {
-  const rawDailyRecords = retrieve(dailyRecordsKey) as RawDailyRecords
+  const rawDailyRecords = retrieve< RawDailyRecords>(dailyRecordsKey)
   if (!rawDailyRecords) {
     return {
       date: Date.today(),
-      operatorScores: [],
+      operatorScores: []
     }
   }
   
@@ -18,21 +19,34 @@ export function retrieveDailyRecords(): DailyRecords {
   const isStale = (new Date()).getDaysFrom(savedDate) >= 1
   
   if (isStale) {
-    rawDailyRecords.operatorScores?.forEach(os => os.value = 0)
+    rawDailyRecords.operatorScores?.forEach(os => os.value = 0) 
   }
   
   return {
     date: isStale ? Date.today() : savedDate,
-    operatorScores: rawDailyRecords.operatorScores ?? [],
+    operatorScores: rawDailyRecords.operatorScores ?? []
   }
 }
 
-export function saveScores() {
-  const dailyRecords = useRecordsStore().dailyRecords
+export function retrievePersonalBests(): PersonalBests {
+  const personalBests = retrieve<PersonalBests>(personalBestsKey)
+  if (!personalBests) {
+    return {
+      levels: [],
+      operatorScores: []
+    }
+  }
   
-  dailyRecords.date = Date.today()
+  return personalBests
+}
+
+export function saveRecords() {
+  const records = useRecordsStore()
   
-  save(dailyRecordsKey, dailyRecords)
+  records.dailyRecords.date = Date.today()
+  
+  save(dailyRecordsKey, records.dailyRecords)
+  save(personalBestsKey, records.personalBests)
 }
 
 export function clearScores() {
@@ -40,7 +54,7 @@ export function clearScores() {
   
   dailyRecords.operatorScores.forEach(os => os.value = 0)
   
-  saveScores()
+  saveRecords()
 }
 
 export function clearScoresIfNeeded(): boolean {
@@ -56,9 +70,10 @@ export function clearScoresIfNeeded(): boolean {
 }
 
 export function clearPersonalBests() {
-  const dailyRecords = useRecordsStore().dailyRecords
+  const records = useRecordsStore()
   
-  dailyRecords.operatorScores.forEach(os => os.best = os.value)
+  records.personalBests.levels = records.levels
+  records.personalBests.operatorScores = records.dailyRecords.operatorScores
   
-  saveScores()
+  saveRecords()
 }

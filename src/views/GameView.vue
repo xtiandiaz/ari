@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import { type Operation } from '@/models/math';
+import type { Operation } from '@/models';
 import useRecordsStore from '@/stores/records'
 import useGameStore from '@/stores/game'
 import { generateRandomOperation } from '@/services/operation-generator';
-import { clearScoresIfNeeded, saveScores } from '@/services/records-management'
+import { clearScoresIfNeeded, saveRecords } from '@/services/records-management'
 import { saveSettings } from '@/services/settings-management';
 import OperationScreen from '@/components/OperationScreen.vue'
 import ModalitySelector from '@/components/ModalitySelector.vue';
@@ -44,7 +44,7 @@ function resetAndSaveScoreForOperatorIfNeeded(operation: Operation) {
   
   records.registerOperationScore(operation)
   
-  saveScores()
+  saveRecords()
 }
 
 function onInput(value: number) {

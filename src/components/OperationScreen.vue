@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue';
-import { Operator, type Operation } from '@/models/math';
-import { OperationModality } from '@/models/game';
+import { OperationModality, Operator } from '@/enums';
+import type { Operation } from '@/models';
 import useGameStore from '@/stores/game'
-import { operatorIcon } from '@/view-models/math.vm'
-import { interpolatedLocalizedString, preferredSpeechLanguageCode } from '@/utils/localization.utils';
 import SvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
 import VuetyIconButton from '@/vueties/components/buttons/VuetyIconButton.vue';
 import { useUtterer } from '@vueties/composables/utterer';
-import { Icon } from '@design-tokens/iconography';
+import { interpolatedLocalizedString, preferredSpeechLanguageCode } from '@/utils/localization.utils';
+import { operatorIcon } from '@/utils/game.utils';
 import { isMobile } from '@/assets/tungsten/navigator';
 import { clamp } from '@/assets/tungsten/math';
+import { Icon } from '@design-tokens/iconography';
 
 const { operation } = defineProps<{
   operation: Operation

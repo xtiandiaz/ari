@@ -1,5 +1,5 @@
-import { Operator, type Operation } from "@/models/math";
-import { allModalities, OperationModality } from "@/models/game";
+import { Operator, OperationModality, allModalities } from "@/enums";
+import type { Operation } from "@/models";
 import useGameStore from '@/stores/game'
 import useRecordsStore from '@/stores/records'
 import { 

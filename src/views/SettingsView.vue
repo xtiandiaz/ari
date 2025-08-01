@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { Language } from '@/enums'
 import useRecordsStore from '@/stores/records'
 import useGameStore from '@/stores/game'
-import { Language } from '@/models/localization'
 import { clearScores, clearPersonalBests } from '@/services/records-management'
 import { saveSettings } from '@/services/settings-management'
 import type { VuetySelectionOption } from '@/vueties/components/shared.vm'
@@ -57,7 +57,7 @@ onBeforeUnmount(() => {
         <VuetyButtonFormRow 
           :label="localizedString('label-clear-records')" 
           :isDestructive="true"
-          :class="{ disabled: !records.hasAnyHistoricalBestScore }"
+          :class="{ disabled: !records.hasAnyPersonalBest }"
           @click="clearPersonalBests()"
         />
       </VuetyFormSection>

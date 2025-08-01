@@ -1,4 +1,4 @@
-import type { Settings } from '@/models/settings'
+import type { Settings } from '@/models'
 import useGameStore from '@/stores/game'
 import { retrieve, save } from '@/assets/tungsten/local-storage'
 

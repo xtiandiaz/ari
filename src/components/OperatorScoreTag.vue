@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Operator } from '@/models/math';
-import { operatorIcon } from '@/view-models/math.vm';
+import { Operator } from '@/enums';
 import VuetyTag from '@/vueties/components/misc/VuetyTag.vue';
+import { operatorIcon } from '@/utils/game.utils';
 
 defineProps<{
   operator: Operator,

@@ -1,5 +1,5 @@
-import { Language } from "@/models/localization"
-import type { Operation } from "@/models/math";
+import { Language } from "@/enums"
+import type { Operation } from "@/models";
 import useGameStore from '@/stores/game'
 import EN from "@/assets/localization/en";
 import ES from "@/assets/localization/es";
