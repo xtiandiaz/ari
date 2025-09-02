@@ -3,6 +3,8 @@ import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import OperatorScoreTag from '@/components/OperatorScoreTag.vue';
 import VuetySvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
+import { closeNavBarItem } from '@/vueties/components/shared/view-models'
+import VuetyNavigationalView from '@/vueties/views/VuetyNavigationalView.vue';
 import { localizedString } from '@/utils/localization.utils';
 import { composeLevelCards, modalityIcon } from '@/utils/game.utils';
 import '@/assets/tungsten/extensions/array.extensions'
@@ -15,35 +17,40 @@ onMounted(() => {
 </script>
 
 <template>
-  <main>
-    <section id="level-cards">
-      <div 
-        v-for="(card) of composeLevelCards()"
-        :class="['card', { best: card.level > 0 && card.level >= card.personalBest }]"
-        :key="card.modality"
-      >
-        <div class="modality">
-          <VuetySvgIcon :icon="modalityIcon(card.modality)" />
+  <VuetyNavigationalView
+    :nav-bar-items="[closeNavBarItem('/')]"
+    :title="localizedString('title-daily-records')"
+  >
+    <main>
+      <section id="level-cards">
+        <div 
+          v-for="(card) of composeLevelCards()"
+          :class="['card', { best: card.level > 0 && card.level >= card.personalBest }]"
+          :key="card.modality"
+        >
+          <div class="modality">
+            <VuetySvgIcon :icon="modalityIcon(card.modality)" />
+          </div>
+          <span class="caption">{{ localizedString('title-level') }}</span>
+          <h1>{{ card.level }}</h1>
+          <span class="caption">{{ localizedString('title-personal-best') }} <span class="h6">{{ card.personalBest }}</span></span>
+          <div class="tags">
+            <OperatorScoreTag
+              v-for="(score) in card.operatorScores"
+              class="small"
+              :key="score.operator"
+              :operator="score.operator"
+              :score="score.value"
+            />
+          </div>
         </div>
-        <span class="caption">{{ localizedString('title-level') }}</span>
-        <h1>{{ card.level }}</h1>
-        <span class="caption">{{ localizedString('title-personal-best') }} <span class="h6">{{ card.personalBest }}</span></span>
-        <div class="tags">
-          <OperatorScoreTag
-            v-for="(score) in card.operatorScores"
-            class="small"
-            :key="score.operator"
-            :operator="score.operator"
-            :score="score.value"
-          />
-        </div>
-      </div>
-    </section>
-    
-    <section class="footnote">
-      {{ localizedString('text-about-scores') }}
-    </section>
-  </main>
+      </section>
+      
+      <section class="footnote">
+        {{ localizedString('text-about-scores') }}
+      </section>
+    </main>
+  </VuetyNavigationalView>
 </template>
 
 <style scoped lang="scss">

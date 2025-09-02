@@ -6,7 +6,7 @@ export default new Map<string, string>([
   ['operation-division', '{operand0} divided by {operand1}'],
   ['operation-percent', '{operand1} percent of {operand0}'],
   ['label-clear-scores', 'Clear today\'s scores'],
-  ['label-clear-records', 'Clear records'],
+  ['label-clear-records', 'Clear personal bests'],
   ['title-daily-records', 'Today\'s scores'],
   ['title-language', 'Language'],
   ['title-level', 'Level'],
@@ -15,5 +15,5 @@ export default new Map<string, string>([
   ['title-settings', 'Settings'],
   ['text-about-scores', 'These scores will be cleared automatically by the end of the day. Try to beat your own records every day!'],
   ['text-clear-scores', 'Daily scores will be cleared automatically by the end of the day. But, clear them now if you want to start today over.'],
-  ['text-clear-records', 'Use the records to assess your daily achievements. Clear them only if you\'d like to re-establish your personal records.'],
+  ['text-clear-records', 'Use your personal bests to assess your daily achievements. Clear them only if you\'d like to re-establish your personal bests.'],
 ])

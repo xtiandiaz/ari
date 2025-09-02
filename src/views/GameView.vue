@@ -9,8 +9,11 @@ import { saveSettings } from '@/services/settings-management';
 import OperationScreen from '@/components/OperationScreen.vue'
 import ModalitySelector from '@/components/ModalitySelector.vue';
 import NumberPad from '@vueties/components/pads/VuetyNumberPad.vue';
-import { setUpEvent } from '@vueties/composables/set-up-event'
+import { useEvent } from '@vueties/composables/event'
 import { isMobile } from '@/assets/tungsten/navigator';
+import VuetyNavigationalView from '@/vueties/views/VuetyNavigationalView.vue';
+import { navBarItem } from '@/vueties/components/shared/view-models';
+import { Icon } from '@design-tokens/iconography';
 
 const records = useRecordsStore()
 const settings = useGameStore().settings
@@ -112,28 +115,35 @@ onBeforeUnmount(() => {
   onPageFocusedOrUnmounted()
 })
 
-setUpEvent('focus', window, onPageFocusedOrUnmounted)
+useEvent('focus', window, onPageFocusedOrUnmounted)
 </script>
 
 <template>
-  <main>
-    <ModalitySelector 
-      id="modality-selector" 
-      :choice="settings.modality" 
-      @select="(modality) => settings.modality = modality"
-    />
-    
-    <OperationScreen
-      v-if="operation"
-      :operation="operation"
-      :input="input"
-      :isInputCorrect="isInputCorrect"
-    />
-        
-    <section v-if="isMobile()">
-      <NumberPad @input="onInput" />
-    </section>
-  </main>
+  <VuetyNavigationalView
+    :nav-bar-items="[
+      navBarItem('/settings', -1, undefined, Icon.Gear),
+      navBarItem('/daily-records', 1, `${records.levels.map(l => l.value).join(' • ')}`, Icon.BarChart, records.hasAnyDailyScore),
+    ]"
+  >
+    <main>
+      <ModalitySelector 
+        id="modality-selector" 
+        :choice="settings.modality" 
+        @select="(modality) => settings.modality = modality"
+      />
+      
+      <OperationScreen
+        v-if="operation"
+        :operation="operation"
+        :input="input"
+        :isInputCorrect="isInputCorrect"
+      />
+          
+      <section v-if="isMobile()">
+        <NumberPad @input="onInput" />
+      </section>
+    </main>
+  </VuetyNavigationalView>
 </template>
 
 <style scoped lang="scss">
@@ -144,8 +154,8 @@ main {
   display: flex;
   flex-direction: column;
   height: 100%;
-  z-index: 1;
   overflow: visible;
+  z-index: 1;
 }
 
 section {  
