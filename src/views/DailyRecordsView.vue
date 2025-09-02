@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 import OperatorScoreTag from '@/components/OperatorScoreTag.vue';
 import VuetySvgIcon from '@vueties/components/misc/VuetySvgIcon.vue';
 import { closeNavBarItem } from '@/vueties/components/shared/view-models'
@@ -8,12 +6,6 @@ import VuetyNavigationalView from '@/vueties/views/VuetyNavigationalView.vue';
 import { localizedString } from '@/utils/localization.utils';
 import { composeLevelCards, modalityIcon } from '@/utils/game.utils';
 import '@/assets/tungsten/extensions/array.extensions'
-
-const route = useRoute()
-
-onMounted(() => {
-  route.meta.setTitle(localizedString('title-daily-records'), false)
-})
 </script>
 
 <template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onBeforeUnmount } from 'vue'
+import { storeToRefs } from 'pinia'
 import { Language } from '@/enums'
 import useRecordsStore from '@/stores/records'
 import useGameStore from '@/stores/game'
 import { clearScores, clearPersonalBests } from '@/services/records-management'
 import { saveSettings } from '@/services/settings-management'
-import type { VuetySelectionOption } from '@/vueties/components/shared.vm'
 import VuetyForm from '@vueties/components/form/VuetyForm.vue'
 import VuetyFormSection from '@vueties/components/form/VuetyFormSection.vue'
 import VuetyButtonFormRow from '@vueties/components/form/rows/VuetyButtonFormRow.vue'
@@ -13,8 +13,8 @@ import VuetySegmentedButtonFormRow from '@vueties/components/form/rows/VuetySegm
 import VuetyNavigationalView from '@/vueties/views/VuetyNavigationalView.vue'
 import { languageSelection, localizedString, localizedStringInLanguage } from '@/utils/localization.utils'
 import { closeNavBarItem } from '@/vueties/components/shared/view-models'
+import type { VuetySelectionOption } from '@vueties/components/shared/view-models'
 import { version } from '@/../package.json'
-import { storeToRefs } from 'pinia'
 
 const game = useGameStore()
 const { settings } = storeToRefs(game)
