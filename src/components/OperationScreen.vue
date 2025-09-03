@@ -63,7 +63,11 @@ const operationFontSize = computed(() => {
   return `${clamp(rawFontSizeEm, 2, maxFontSizeEm)}em`
 })
 
-function utterOperation(operation: Operation) {
+function utterOperation() {
+  _utterOperation(operation)
+}
+
+function _utterOperation(operation: Operation) {
   if (operation.modality === OperationModality.Aural) {
     utterer.utter(
       interpolatedLocalizedString('operation', operation), 
@@ -73,11 +77,15 @@ function utterOperation(operation: Operation) {
 }
 
 watch(() => operation, (value) => {  
-  utterOperation(value)
+  _utterOperation(value)
 })
 
 onMounted(() => {
-  utterOperation(operation)
+  utterOperation()
+})
+
+defineExpose({
+  utterOperation
 })
 </script>
 
@@ -107,7 +115,7 @@ onMounted(() => {
         id="utterance-button"
         :class="['filled', { disabled: utterer.isUttering.value }]"
         :icon="Icon.EarWaves" 
-        @click="utterOperation(operation)"
+        @click="_utterOperation(operation)"
       />
       
       <span id="result" :class=" { isCorrect: isInputCorrect }">

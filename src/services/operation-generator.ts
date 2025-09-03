@@ -91,7 +91,7 @@ function generateRandomOperandsForOperator(operator: Operator, modality: Operati
   switch (operator) {
     case Operator.Addition:
       return (() => {
-        const mult = Math.pow(2, Math.floor(operatorScore / 4))
+        const mult = modality == OperationModality.Visual ? Math.pow(2, Math.floor(operatorScore / 4)) : 1
         const rangeMin = Math.max(2, mult * Math.pow(operatorScore, 2))
         const rangeMax = Math.max(19, mult * Math.pow(operatorScore, 3))
         
@@ -103,7 +103,7 @@ function generateRandomOperandsForOperator(operator: Operator, modality: Operati
       
     case Operator.Subtraction:
       return (() => {
-        const mult = Math.pow(2, Math.floor(operatorScore / 4))
+        const mult = modality == OperationModality.Visual ? Math.pow(2, Math.floor(operatorScore / 4)) : 1
         const rangeMin = Math.max(8, mult * Math.pow(operatorScore, 2))
         const rangeMax = Math.max(19, mult * Math.pow(operatorScore, 3))
         

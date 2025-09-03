@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, useTemplateRef } from 'vue'
 import type { Operation } from '@/models';
 import useRecordsStore from '@/stores/records'
 import useGameStore from '@/stores/game'
@@ -21,6 +21,7 @@ const settings = useGameStore().settings
 const operation = ref<Operation>()
 const resetInterval = ref<number>()
 const input = ref('')
+const display = useTemplateRef('display')
 
 const isInputCorrect = computed(() => input.value != undefined
   && operation.value != undefined 
@@ -105,8 +106,15 @@ onMounted(async () => {
   window.addEventListener("keydown", (e: KeyboardEvent) => {    
     if (/^Digit\d|Backspace$/.test(e.code)) {
       onInput(e.code === 'Backspace' ? -1 : Number(e.key))
-    } else if (e.code === 'Escape') {
-      reset()
+    } else {
+      switch (e.code) {
+        case 'Escape':
+          reset()
+          break
+        case 'KeyR': // Repeat
+          display.value?.utterOperation()
+          break
+      }
     }
   })
 })
@@ -134,6 +142,7 @@ useEvent('focus', window, onPageFocusedOrUnmounted)
       
       <OperationScreen
         v-if="operation"
+        ref="display"
         :operation="operation"
         :input="input"
         :isInputCorrect="isInputCorrect"
