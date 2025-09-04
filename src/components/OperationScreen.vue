@@ -71,13 +71,14 @@ function _utterOperation(operation: Operation) {
   if (operation.modality === OperationModality.Aural) {
     utterer.utter(
       interpolatedLocalizedString('operation', operation), 
-      preferredSpeechLanguageCode(settings.language)
+      preferredSpeechLanguageCode(settings.language),
+      settings.utteranceSpeed ?? 1
     )
   }
 }
 
-watch(() => operation, (value) => {  
-  _utterOperation(value)
+watch([() => operation, () => settings.utteranceSpeed, () => settings.language], ([newOperation]) => {
+  _utterOperation(newOperation)
 })
 
 onMounted(() => {

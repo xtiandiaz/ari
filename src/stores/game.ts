@@ -6,7 +6,8 @@ import { retrieveSavedSettings } from '@/services/settings-management'
 
 const defaultSettings: Settings = {
   language: Language.English,
-  modality: OperationModality.Visual
+  modality: OperationModality.Visual,
+  utteranceSpeed: 1
 }
 
 export default defineStore('game', () => {

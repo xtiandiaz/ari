@@ -133,13 +133,7 @@ useEvent('focus', window, onPageFocusedOrUnmounted)
       navBarItem('/daily-records', 1, `${records.levels.map(l => l.value).join(' • ')}`, Icon.BarChart, records.hasAnyDailyScore),
     ]"
   >
-    <main>
-      <ModalitySelector 
-        id="modality-selector" 
-        :choice="settings.modality" 
-        @select="(modality) => settings.modality = modality"
-      />
-      
+    <main>      
       <OperationScreen
         v-if="operation"
         ref="display"

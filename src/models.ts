@@ -2,7 +2,9 @@ import { Language, OperationModality, Operator } from "@/enums"
 
 export interface Settings {
   language: Language
+  
   modality?: OperationModality
+  utteranceSpeed?: number
 }
 
 export interface Operation {

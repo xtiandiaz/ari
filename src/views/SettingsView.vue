@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onBeforeUnmount } from 'vue'
+import { ref, computed, onBeforeUnmount, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Language } from '@/enums'
+import { Language, OperationModality } from '@/enums'
 import useRecordsStore from '@/stores/records'
 import useGameStore from '@/stores/game'
 import { clearScores, clearPersonalBests } from '@/services/records-management'
@@ -11,17 +11,48 @@ import VuetyFormSection from '@vueties/components/form/VuetyFormSection.vue'
 import VuetyButtonFormRow from '@vueties/components/form/rows/VuetyButtonFormRow.vue'
 import VuetySegmentedButtonFormRow from '@vueties/components/form/rows/VuetySegmentedButtonFormRow.vue'
 import VuetyNavigationalView from '@/vueties/views/VuetyNavigationalView.vue'
-import { languageSelection, localizedString, localizedStringInLanguage } from '@/utils/localization.utils'
 import { closeNavBarItem } from '@/vueties/components/shared/view-models'
 import type { VuetySelectionOption } from '@vueties/components/shared/view-models'
+import VuetySelectionFormSection from '@/vueties/components/form/VuetySelectionFormSection.vue'
+import VuetyRangeSliderFormRow from '@/vueties/components/form/rows/VuetyRangeSliderFormRow.vue'
+import { languageSelection, localizedString, localizedStringInLanguage } from '@/utils/localization.utils'
+import { modalityIcon } from '@/utils/game.utils'
+import { Icon } from '@/assets/design-tokens/iconography'
 import { version } from '@/../package.json'
 
 const game = useGameStore()
 const { settings } = storeToRefs(game)
 const records = useRecordsStore()
 
+const modalityOptions: VuetySelectionOption<OperationModality | undefined>[] = [
+  OperationModality.Visual,
+  OperationModality.Aural,
+  undefined
+].map(m => {
+  if (m) {
+    return { title: localizedString(`modality-${m}`), value: m, icon: modalityIcon(m) }
+  } else {
+    return { title: localizedString('modality-shuffled'), value: undefined, icon: Icon.ArrowShuffle }
+  }
+})
+
+const modality = ref([settings.value.modality])
+
+const utteranceSpeed = computed({
+  get: () => settings.value.utteranceSpeed ?? 1,
+  set: (val) => settings.value.utteranceSpeed = val
+})
+
 const languageOptions: VuetySelectionOption<Language>[] = languageSelection.map(l => { 
   return { title: localizedStringInLanguage('language-name', l), value: l } 
+})
+
+watch(modality, (newValue) => {
+  settings.value.modality = newValue.first()
+}, { deep: true })
+
+watch(utteranceSpeed, (val) => {
+  console.log(val)
 })
 
 onBeforeUnmount(() => {
@@ -36,11 +67,29 @@ onBeforeUnmount(() => {
   >
     <main>
       <VuetyForm>
+        <VuetySelectionFormSection
+          v-model="modality"
+          :choice-range="{ min: 1, max: 1 }"
+          :options="modalityOptions"
+          :title="localizedString('title-modality')"
+        />
+        <VuetyFormSection
+          v-if="settings.modality !== OperationModality.Visual"
+          :title="localizedString('title-utterance-speed')"
+        >
+          <VuetyRangeSliderFormRow
+            v-model="utteranceSpeed"
+            :range="{ min: 0.5, max: 2 }"
+            :step="0.1"
+            :min-icon="Icon.Tortoise"
+            :max-icon="Icon.Hare"
+          />
+        </VuetyFormSection>
         <VuetyFormSection :title="localizedString('title-language')">
           <VuetySegmentedButtonFormRow
             :choice="settings.language"
             :options="languageOptions"
-            @select="(lang) => settings.language = lang"
+            @selected="(lang) => settings.language = lang"
           />
         </VuetyFormSection>
         
