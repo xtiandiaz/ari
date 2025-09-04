@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount, watch } from 'vue'
+import { ref, onBeforeUnmount, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Language, OperationModality } from '@/enums'
 import useRecordsStore from '@/stores/records'
@@ -38,11 +38,6 @@ const modalityOptions: VuetySelectionOption<OperationModality | undefined>[] = [
 
 const modality = ref([settings.value.modality])
 
-const utteranceSpeed = computed({
-  get: () => settings.value.utteranceSpeed ?? 1,
-  set: (val) => settings.value.utteranceSpeed = val
-})
-
 const languageOptions: VuetySelectionOption<Language>[] = languageSelection.map(l => { 
   return { title: localizedStringInLanguage('language-name', l), value: l } 
 })
@@ -50,10 +45,6 @@ const languageOptions: VuetySelectionOption<Language>[] = languageSelection.map(
 watch(modality, (newValue) => {
   settings.value.modality = newValue.first()
 }, { deep: true })
-
-watch(utteranceSpeed, (val) => {
-  console.log(val)
-})
 
 onBeforeUnmount(() => {
   saveSettings()
@@ -78,7 +69,7 @@ onBeforeUnmount(() => {
           :title="localizedString('title-utterance-speed')"
         >
           <VuetyRangeSliderFormRow
-            v-model="utteranceSpeed"
+            v-model="settings.utteranceSpeed"
             :range="{ min: 0.5, max: 2 }"
             :step="0.1"
             :min-icon="Icon.Tortoise"
@@ -87,9 +78,8 @@ onBeforeUnmount(() => {
         </VuetyFormSection>
         <VuetyFormSection :title="localizedString('title-language')">
           <VuetySegmentedButtonFormRow
-            :choice="settings.language"
+            v-model="settings.language"
             :options="languageOptions"
-            @selected="(lang) => settings.language = lang"
           />
         </VuetyFormSection>
         

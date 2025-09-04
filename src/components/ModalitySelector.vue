@@ -5,13 +5,7 @@ import type { VuetySelectionOption } from '@vueties/components/shared/view-model
 import VuetySegmentedButton from '@vueties/components/buttons/VuetySegmentedButton.vue';
 import { Icon } from '@/assets/design-tokens/iconography';
 
-defineProps<{
-  choice?: OperationModality
-}>()
-
-const emits = defineEmits<{
-  select: [choice?: OperationModality]
-}>()
+const model = defineModel<OperationModality>()
 
 const options: VuetySelectionOption<OperationModality | undefined>[] = [
   OperationModality.Visual, 
@@ -29,9 +23,8 @@ const options: VuetySelectionOption<OperationModality | undefined>[] = [
 <template>
   <div class="wrapper">
     <VuetySegmentedButton 
-      :choice="choice"
+      v-model="model"
       :options="options"
-      @select="(modality) => emits('select', modality)"
     />
   </div>
 </template>
