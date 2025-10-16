@@ -7,7 +7,6 @@ import { generateRandomOperation } from '@/services/operation-generator';
 import { clearScoresIfNeeded, saveRecords } from '@/services/records-management'
 import { saveSettings } from '@/services/settings-management';
 import OperationScreen from '@/components/OperationScreen.vue'
-import ModalitySelector from '@/components/ModalitySelector.vue';
 import NumberPad from '@vueties/components/pads/VuetyNumberPad.vue';
 import { useEvent } from '@vueties/composables/event'
 import { isMobile } from '@/assets/tungsten/navigator';
