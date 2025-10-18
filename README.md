@@ -10,6 +10,8 @@ or _shuffled_ to mix both modalities randomly.
 
 The operations (+, -, ×, ÷, %) get more complex the more you solve. This will set a daily level that will always reset at the end of your day. However, the best record is persisted (locally) for you to (try to) beat your personal best everyday.
 
+Try it out: https://xtiandiaz.github.io/ari
+
 ## More about...
 
 The operation generation was developed by means of heuristics, and to the level of complexity that pleases me in daily time frame (around 20 min.). 
